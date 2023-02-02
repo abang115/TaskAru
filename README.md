@@ -17,3 +17,13 @@ Back-End Engineers:
 ---
 
 Aaron Song and Amanda Yu
+
+Instructions
+---
+The front-end is located in the client folder and the back-end is located in the server folder. 
+1. Clone the repo into the directory of your choice
+2. Install [Node.js](https://nodejs.org/en/), [Go](https://go.dev/), and the [Angular CLI](https://angular.io/cli)
+3. Navigate to the **Client** folder and run ```npm install``` to install all dependencies
+4. Then start the front-end using ```ng serve``` 
+5. Then navigate to the **Server** folder and run ```go run main.go``` to start the server
+6. The website can then be accessed at http://localhost:4200/ in your browser
