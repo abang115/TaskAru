@@ -34,5 +34,11 @@
 
 17. As a member, I want to be able to change my password so that it is secure or if I stop using a certain password
 
+# What issues your team planned to address
+The issues that our team is planning to address would be the ones about the login page.
+
+# Which ones were successfully completed
 
 
+# Which ones didn't and why?
+The issues that weren't related to  logining in weren't completed yet because we're focusing on the login page.
