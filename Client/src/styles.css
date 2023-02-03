@@ -7,35 +7,3 @@ body{
     background-color: #424242;
 }
 
-
-
-.form-container {
-    display: block;
-    max-width: 300px;
-    margin-top: 32px;
-    margin-bottom: auto;
-    margin-right: auto;
-    margin-left: auto;
-
-    background: #eceff134;
-    padding: 48px;
-    border-radius: 16px;
-}
-
-.form-container{
-    width: 100%;
-}
-
-.center{
-    display: flex;
-    justify-content: center;
-    margin-top: 16px;
-}
-
-.margin-top{
-    margin-top: 16px;
-}
-
-.text-center{
-    text-align: center;
-}
