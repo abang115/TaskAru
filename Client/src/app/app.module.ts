@@ -7,19 +7,22 @@ import {MatButtonModule} from '@angular/material/button';
 import {MatCardModule} from '@angular/material/card'; 
 import {MatFormFieldModule} from '@angular/material/form-field'; 
 import {MatInputModule} from '@angular/material/input'; 
+import {MatCheckboxModule} from '@angular/material/checkbox'; 
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NavigationBarComponent } from './navigation-bar/navigation-bar.component';
 import { SignInComponent } from './sign-in/sign-in.component';
 import { SignUpComponent } from './sign-up/sign-up.component';
 import { ReactiveFormsModule } from '@angular/forms';
+import { HomeComponent } from './home/home.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     NavigationBarComponent,
     SignInComponent,
-    SignUpComponent
+    SignUpComponent,
+    HomeComponent
   ],
   imports: [
     BrowserModule,
@@ -31,6 +34,7 @@ import { ReactiveFormsModule } from '@angular/forms';
     MatFormFieldModule,
     MatInputModule,
     ReactiveFormsModule,
+    MatCheckboxModule,
   ],
   providers: [],
   bootstrap: [AppComponent]
