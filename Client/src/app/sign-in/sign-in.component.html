@@ -2,10 +2,17 @@
     <h1 style="color: white">Sign In</h1>
     <form [formGroup]="signinForm">
         <mat-form-field [style.width.px]=300>
-            <input matInput placeholder="Email Address" formControlName="email"/>
+            <mat-label>Enter your email</mat-label>
+            <input matInput placeholder="johnsmith123@example.com" formControlName="email">
+            <mat-error *ngIf="signinForm.controls.email.hasError('required')">
+                Please enter a valid email
+            </mat-error>
         </mat-form-field>
         <mat-form-field [style.width.px]=300>
             <input matInput placeholder="Password" formControlName="password" type="password"/>
+            <mat-error *ngIf="signinForm.controls.email.hasError('required')">
+                Please enter a password
+            </mat-error>
         </mat-form-field>
         <mat-checkbox class="remember">Remember Me</mat-checkbox>
         <div class="center">
