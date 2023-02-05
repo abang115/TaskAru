@@ -1,47 +1,64 @@
-// package main
+package main
 
-// import (
-// 	"fmt"
-// 	"log"
-// 	"net/http"
-// )
+import (
+	"html/template"
+	"net/http"
 
-// //Hello
+	"github.com/go-redis/redis"
+	"github.com/gorilla/mux"
+	"github.com/gorilla/sessions"
+)
 
-// func formHandler(w http.ResponseWriter, r *http.Request) {
-// 	if err := r.ParseForm(); err != nil {
-// 		fmt.Fprintf(w, "ParseForm() err: %v", err)
-// 		return
-// 	}
-// 	fmt.Fprintf(w, "POST request successful")
-// 	name := r.FormValue("name")
-// 	address := r.FormValue("address")
-// 	fmt.Fprintf(w, "Name = %s\n", name)
-// 	fmt.Fprintf(w, "Address = %s\n", address)
+var client *redis.Client
+var store = sessions.NewCookieStore([]byte("T$KR012623"))
+var templates *template.Template
+
+func main() {
+	client = redis.NewClient(&redis.Options{
+		Addr: "localhost:6379",
+	})
+	templates = template.Must(template.ParseGlob("templates/*.html"))
+	r := mux.NewRouter()
+	//r.HandleFunc("/", homeHandler)
+	//r.HandleFunc("/createAccount", createAccountHandler)
+	r.HandleFunc("/login", loginGetHandler).Methods("GET")
+	r.HandleFunc("/login", loginPostHandler).Methods("POST")
+	r.HandleFunc("/test", testGetHandler).Methods("GET")
+	fs := http.FileServer(http.Dir("./static/"))
+	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", fs))
+	http.Handle("/", r)
+	http.ListenAndServe(":8080", nil)
+}
+
+// func homeHandler() {
+// 	templates.ExecuteTemplate(w, "placeholder.html", nil)
 // }
 
-// func helloHandler(w http.ResponseWriter, r *http.Request) {
-// 	if r.URL.Path != "/hello" {
-// 		http.Error(w, "404 not found.", http.StatusNotFound)
-// 		return
-// 	}
-
-// 	if r.Method != "GET" {
-// 		http.Error(w, "Method is not supported.", http.StatusNotFound)
-// 		return
-// 	}
-
-// 	fmt.Fprintf(w, "Hello!")
+// func createAccountHandler(w http.ResponseWriter, r *http.Request) {
+// 	templates.ExecuteTemplate(w, "placeholder.html", nil)
 // }
 
-// func main() {
-// 	fileServer := http.FileServer(http.Dir("./static"))
-// 	http.Handle("/", fileServer)
-// 	http.HandleFunc("/form", formHandler)
-// 	http.HandleFunc("/hello", helloHandler)
+func loginGetHandler(w http.ResponseWriter, r *http.Request) {
+	templates.ExecuteTemplate(w, "login.html", nil)
+}
 
-// 	fmt.Printf("Starting server at port 8080\n")
-// 	if err := http.ListenAndServe(":8080", nil); err != nil {
-// 		log.Fatal(err)
-// 	}
-// }
+func loginPostHandler(w http.ResponseWriter, r *http.Request) {
+	r.ParseForm()
+	username := r.PostForm.Get("username")
+	session, _ := store.Get(r, "session")
+	session.Values["username"] = username
+	session.Save(r, w)
+}
+
+func testGetHandler(w http.ResponseWriter, r *http.Request) {
+	session, _ := store.Get(r, "session")
+	untyped, ok := session.Values["username"]
+	if !ok {
+		return
+	}
+	username, ok := untyped.(string)
+	if !ok {
+		return
+	}
+	w.Write([]byte(username))
+}
