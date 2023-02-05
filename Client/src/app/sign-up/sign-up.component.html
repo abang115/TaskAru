@@ -1,1 +1,52 @@
-<p>sign-up works!</p>
+<div class="form-container">
+    <h1 style="color: white">Sign Up</h1>
+    <form [formGroup]="signupForm">
+        <div class="row">
+            <div class="col">
+                <mat-form-field>
+                    <mat-label>Enter your first name</mat-label>
+                    <input matInput placeholder="Enter your first name" formControlName="firstName">
+                </mat-form-field>
+            </div>
+            <div class="col">
+                <mat-form-field>
+                    <mat-label>Enter your last name</mat-label>
+                    <input matInput placeholder="Enter your last name" formControlName="lastName">
+                </mat-form-field>
+            </div>
+        </div> 
+        <div class="row">
+            <mat-form-field>
+                <mat-label>Enter your email</mat-label>
+                <input matInput placeholder="Ex. johnsmith123@example.com" formControlName="email">
+                <mat-error *ngIf="signupForm.controls.email.hasError('required')">
+                    Please enter a valid email
+                </mat-error>
+            </mat-form-field>
+        </div>
+        <div class="row">
+            <mat-form-field>
+                <mat-label>Enter your password</mat-label>
+                <input matInput placeholder="Minimum 8 characters" formControlName="password" type="password"/>
+                <mat-error *ngIf="signupForm.controls.email.hasError('required')">
+                    Please enter a valid password
+                </mat-error>
+            </mat-form-field>
+        </div>
+        <div class="row">
+            <mat-form-field>
+                <mat-label>Re-enter your password</mat-label>
+                <input matInput placeholder="Minimum 8 characters" formControlName="password" type="password"/>
+                <mat-error *ngIf="signupForm.controls.email.hasError('required')">
+                    Please enter a valid password
+                </mat-error>
+            </mat-form-field>
+        </div>
+        <div class="center">
+            <button mat-raised-button color="primary" type="submit">
+                Sign Up
+            </button>
+        </div>
+        <span></span>
+    </form>
+</div>
