@@ -20,7 +20,7 @@ Aaron Song and Amanda Yu
 
 Instructions
 ---
-The front-end is located in the client folder and the back-end is located in the TaskAru folder. 
+The front-end is located in the Client folder and the back-end is located in the TaskAru folder. 
 1. Clone the repo into the directory of your choice
 2. Install [Node.js](https://nodejs.org/en/), [Go](https://go.dev/), and the [Angular CLI](https://angular.io/cli)
 3. Navigate to the **Client** folder and run ```npm install``` to install all dependencies
