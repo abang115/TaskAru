@@ -25,5 +25,5 @@ The front-end is located in the Client folder and the back-end is located in the
 2. Install [Node.js](https://nodejs.org/en/), [Go](https://go.dev/), and the [Angular CLI](https://angular.io/cli)
 3. Navigate to the **Client** folder and run ```npm install``` to install all dependencies
 4. Then start the front-end using ```ng serve``` 
-5. Then navigate to the **TaskAru** folder and run ```go run serve.go``` to start the server
+5. Then navigate to the **TaskAru** folder and run ```go run server.go``` to start the server
 6. The website can then be accessed at http://localhost:4200/ in your browser
