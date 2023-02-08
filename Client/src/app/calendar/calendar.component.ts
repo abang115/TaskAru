@@ -6,6 +6,7 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import listPlugin from '@fullcalendar/list';
 import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
+
 @Component({
   selector: 'calendar',
   templateUrl: './calendar.component.html',
@@ -22,8 +23,16 @@ export class CalendarComponent implements OnInit{
       timeGridPlugin,
       listPlugin,
     ],
+    customButtons:{
+      myCustomButton:{
+        text: 'Add Event',
+        click: function(){
+          alert('Clicked add Event');
+        }
+      }
+    },
     headerToolbar: {
-      left: 'prev,next today',
+      left: 'prev,next today myCustomButton',
       center: 'title',
       right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
     },
@@ -49,7 +58,6 @@ export class CalendarComponent implements OnInit{
   constructor(private modalService: BsModalService) { }
 
   ngOnInit(): void {
-    
   }
   handleDateClick(arg:any){
     console.log(arg);
