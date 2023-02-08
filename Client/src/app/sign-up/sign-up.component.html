@@ -28,7 +28,7 @@
             <mat-form-field>
                 <mat-label>Enter your password</mat-label>
                 <input matInput placeholder="Minimum 8 characters" formControlName="password" type="password"/>
-                <mat-error *ngIf="signupForm.controls.email.hasError('required')">
+                <mat-error *ngIf="signupForm.controls.password.hasError('required')">
                     Please enter a valid password
                 </mat-error>
             </mat-form-field>
@@ -36,9 +36,9 @@
         <div class="row">
             <mat-form-field>
                 <mat-label>Re-enter your password</mat-label>
-                <input matInput placeholder="Minimum 8 characters" formControlName="password" type="password"/>
-                <mat-error *ngIf="signupForm.controls.email.hasError('required')">
-                    Please enter a valid password
+                <input matInput placeholder="Minimum 8 characters" formControlName="confirmPassword" type="password"/>
+                <mat-error *ngIf="signupForm.controls.confirmPassword.hasError('matching')">
+                    Passwords do not match
                 </mat-error>
             </mat-form-field>
         </div>
