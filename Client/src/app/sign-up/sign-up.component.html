@@ -27,9 +27,12 @@
         <div class="row">
             <mat-form-field>
                 <mat-label>Enter your password</mat-label>
-                <input matInput placeholder="Minimum 8 characters" formControlName="password" type="password"/>
+                <input matInput placeholder="Minimum 8 characters" formControlName="password" type="password" required minlength="8"/>
                 <mat-error *ngIf="signupForm.controls.password.hasError('required')">
                     Please enter a valid password
+                </mat-error>
+                <mat-error *ngIf="signupForm.controls.password.hasError('minlength')">
+                    Password must be at least 8 characters
                 </mat-error>
             </mat-form-field>
         </div>
