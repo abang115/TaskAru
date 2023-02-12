@@ -16,6 +16,7 @@ export class CalendarComponent implements OnInit{
   modalRef?: BsModalRef;
   calendarVisible = true;
   title: any;
+  start: any;
   calendarOptions: CalendarOptions = {
     plugins: [
       interactionPlugin,
@@ -26,9 +27,7 @@ export class CalendarComponent implements OnInit{
     customButtons:{
       myCustomButton:{
         text: 'Add Event',
-        click: function(){
-          alert('Clicked add Event');
-        }
+        click: this.addEventClick.bind(this)
       }
     },
     headerToolbar: {
@@ -37,7 +36,7 @@ export class CalendarComponent implements OnInit{
       right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
     },
     initialView: 'dayGridMonth',
-    initialEvents: INITIAL_EVENTS, // alternatively, use the `events` setting to fetch from a feed
+    initialEvents: INITIAL_EVENTS, 
     weekends: true,
     editable: true,
     selectable: true,
@@ -53,20 +52,27 @@ export class CalendarComponent implements OnInit{
   config ={
     animated: true
   };
+  @ViewChild('addEventModal') addEventModal!: string;
   @ViewChild('template') template!: string;
-  start: any;
   constructor(private modalService: BsModalService) { }
 
   ngOnInit(): void {
+    this.calendarOptions = this.calendarOptions;
   }
+
   handleDateClick(arg:any){
     console.log(arg);
     console.log(arg.event._def.title);
     this.title = arg.event.def_title;
     this.modalRef = this.modalService.show(this.template, this.config);
   }
-  openModal(template: TemplateRef<any>) {
-    this.modalRef = this.modalService.show(template);
+  
+  addEventClick(){
+    console.log('add events clicked');
+    this.modalRef = this.modalService.show(this.addEventModal);
+  }
+  addEvent(){
+
   }
 }
 

@@ -15,3 +15,20 @@
     Event Details
   </div>
 </ng-template>
+
+<ng-template #addEventModal let-modal>
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">Add Event</h4>
+        <button type="button" class="btn-close close pull-right" aria-label="Close" (click)="modalRef?.hide()">
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <!--TODO: EVENT FORM variables and parameters-->>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" (click)="addEvent()">Add Event</button>
+      </div>
+    </ng-template>
