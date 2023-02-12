@@ -1,11 +1,12 @@
-import { Component, OnInit, ViewChild, TemplateRef  } from "@angular/core";
-import { CalendarOptions, DateSelectArg, EventClickArg, EventApi } from '@fullcalendar/core';
+import { Component, OnInit, ViewChild, TemplateRef,ChangeDetectorRef  } from "@angular/core";
+import { CalendarOptions, DateSelectArg, EventClickArg, EventApi, Calendar } from '@fullcalendar/core';
 import { INITIAL_EVENTS, createEventId } from "./event.utils";
 import interactionPlugin from '@fullcalendar/interaction';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import listPlugin from '@fullcalendar/list';
 import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
+import { FormControl, FormGroup, Validators } from "@angular/forms";
 
 @Component({
   selector: 'calendar',
@@ -15,6 +16,7 @@ import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
 export class CalendarComponent implements OnInit{
   modalRef?: BsModalRef;
   calendarVisible = true;
+  currentEvents: EventApi[] = [];
   title: any;
   start: any;
   calendarOptions: CalendarOptions = {
@@ -27,7 +29,7 @@ export class CalendarComponent implements OnInit{
     customButtons:{
       myCustomButton:{
         text: 'Add Event',
-        click: this.addEventClick.bind(this)
+        click: this.handleAddEventClick.bind(this)
       }
     },
     headerToolbar: {
@@ -43,17 +45,15 @@ export class CalendarComponent implements OnInit{
     selectMirror: true,
     dayMaxEvents: true,
     eventClick: this.handleDateClick.bind(this),
-    /* you can update a remote database when these fire:
-    eventAdd:
-    eventChange:
-    eventRemove:
-    */
   };
+  
   config ={
     animated: true
   };
+
   @ViewChild('addEventModal') addEventModal!: string;
   @ViewChild('template') template!: string;
+
   constructor(private modalService: BsModalService) { }
 
   ngOnInit(): void {
@@ -64,15 +64,27 @@ export class CalendarComponent implements OnInit{
     console.log(arg);
     console.log(arg.event._def.title);
     this.title = arg.event.def_title;
+    
     this.modalRef = this.modalService.show(this.template, this.config);
   }
   
-  addEventClick(){
+  handleAddEventClick(){
     console.log('add events clicked');
     this.modalRef = this.modalService.show(this.addEventModal);
   }
+
   addEvent(){
+    console.log('add events clicked');
 
   }
+
+  addEventForm = new FormGroup({
+    eventTitle: new FormControl('',[Validators.required]),
+    eventDate: new FormControl('',[Validators.required]),
+    // startTime: new FormControl(''),
+    // endTime: new FormControl(''),
+    // reoccuring: new FormControl(''),
+
+  })
 }
 

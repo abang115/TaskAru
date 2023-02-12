@@ -25,10 +25,22 @@
       </div>
       <div class="modal-body">
         <form>
-          <!--TODO: EVENT FORM variables and parameters-->>
+          <form [formGroup]="addEventForm">
+            <div class="row">
+                <div class = "form-group">
+                  <label for="event-title">Event Title</label>
+                  <input id="event-title" type = "text" formControlName="eventTitle" class="titleinp form-control">
+                </div>
+                <div class = "form-group">
+                  <label for="event-date"> Event Date</label>
+                  <input id="event-date" type = "text" formControlName="eventDate" class="titleinp form-control">
+                </div>
+            </div>
+          </form>
         </form>
+        <p>Form Status: {{ addEventForm.status }}</p>
       </div>
       <div class="modal-footer">
-        <button class="btn btn-primary" (click)="addEvent()">Add Event</button>
+        <button type="button" class="btn btn-primary" (click)="addEvent()">Add Event</button>
       </div>
     </ng-template>
