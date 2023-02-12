@@ -35,10 +35,10 @@
 17. As a member, I want to be able to change my password so that it is secure or if I stop using a certain password
 
 # What issues your team planned to address
-The issues that our team is planning to address would be the ones about the login page.
+The issues our team planned to address are issues 1, 2, 9, 11, 12, 13, 14, and 17. Mainly our issues were comprised of getting the user sign-in and sign-up to work with the calendar on the side before our full implementation of it during later sprints.
 
 # Which ones were successfully completed
-test
+Of the issues which we successfully completed, issues 9, 12, 14 were fully completed. In particular for issues 12, and 14 we were able to create a sign-up form using Angular Material on the front-end side to allow users to enter in their info to enter in their info and made sure that the form had password restraints and validations. Issue 9 was completed by implementing the full-calendar library to our project which had a working calendar able to be separated into days, weeks, and months. 
 
 # Which ones didn't and why?
-The issues that weren't related to  logining in weren't completed yet because we're focusing on the login page.
+Issues 1 and 11 were partially completed with the front-end portion of the sign-in and sign-up form being done but the back-end aspect of saving the info onto a database not having been completed yet with plans on it being done in a later sprint. As for issues 2, 13, and 17, functionality to those has not been added as a result of the time constraint of the first sprint and not being familiar with how to work with Angular or Golang. We plan on implementing these features as soon as the next sprint starts.
