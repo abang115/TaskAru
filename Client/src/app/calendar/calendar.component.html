@@ -1,9 +1,10 @@
 <div class="row-boxng ser">
   <div class="center">
-    <full-calendar [options]="calendarOptions" style="color:aliceblue"></full-calendar>
+    <full-calendar #cal [options]="calendarOptions" style="color:aliceblue"></full-calendar>
   </div>
 </div>
- 
+
+<div #calendarContainer id="calendar"></div>
 <ng-template #template>
   <div class="modal-header">
     <h4 class="modal-title pull-left">This is a Event</h4>
@@ -16,7 +17,7 @@
   </div>
 </ng-template>
 
-<ng-template #addEventModal let-modal>
+<ng-template #eventModal>
       <div class="modal-header">
         <h4 class="modal-title pull-left">Add Event</h4>
         <button type="button" class="btn-close close pull-right" aria-label="Close" (click)="modalRef?.hide()">
@@ -41,6 +42,8 @@
         <p>Form Status: {{ addEventForm.status }}</p>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-primary" (click)="addEvent()">Add Event</button>
+        <button type="submit" class="btn btn-primary" (click)="addEvent()">Add Event</button>
       </div>
     </ng-template>
+
+    <div #calendarEl></div>
