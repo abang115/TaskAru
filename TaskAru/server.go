@@ -1,39 +1,45 @@
 package main
 
 import (
-	"html/template"
+	"log"
 	"net/http"
 
-	"github.com/go-redis/redis"
+	"TaskAru/controllers"
+	"TaskAru/models"
+
 	"github.com/gorilla/mux"
 	"github.com/gorilla/sessions"
-	"golang.org/x/crypto/bcrypt"
+	"github.com/rs/cors"
 )
 
-var client *redis.Client
 var store = sessions.NewCookieStore([]byte("T$KR012623"))
-var templates *template.Template
 
 func main() {
-	client = redis.NewClient(&redis.Options{
-		Addr: "localhost:6379",
+	//templates = template.Must(template.ParseGlob("templates/*.html"))
+	handler := cors.New(cors.Options{
+		AllowedOrigins:     []string{"http://localhost:4200"},
+		AllowedMethods:     []string{"GET", "OPTIONS", "POST"},
+		AllowedHeaders:     []string{"Accept", "Content-Type", "Content-Length", "Accept-Encoding", "Authorization", "X-CSRF-Token", "Origin"},
+		OptionsPassthrough: true,
+		AllowCredentials:   true,
 	})
-	templates = template.Must(template.ParseGlob("templates/*.html"))
+
 	r := mux.NewRouter()
-	r.HandleFunc("/", homeGetHandler).Methods("GET")
-	r.HandleFunc("/", homePostHandler).Methods("POST")
-	r.HandleFunc("/register", registerGetHandler).Methods("GET")
-	r.HandleFunc("/register", registerPostHandler).Methods("POST")
-	r.HandleFunc("/login", loginGetHandler).Methods("GET")
-	r.HandleFunc("/login", loginPostHandler).Methods("POST")
+	models.Init()
+	//r.HandleFunc("/", homeGetHandler).Methods("GET")
+	//r.HandleFunc("/", homePostHandler).Methods("POST")
+	r.HandleFunc("/register", controllers.RegisterPostHandler).Methods("POST")
+	//r.HandleFunc("/login", loginGetHandler).Methods("GET")
+	//r.HandleFunc("/login", loginPostHandler).Methods("POST")
 	//r.HandleFunc("/test", testGetHandler).Methods("GET")
-	fs := http.FileServer(http.Dir("./static/"))
-	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", fs))
-	http.Handle("/", r)
-	http.ListenAndServe(":8080", nil)
+	//fs := http.FileServer(http.Dir("./static/"))
+	//r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", fs))
+	//http.Handle("/", r)
+	log.Fatal(http.ListenAndServe(":8080", handler.Handler(r)))
+
 }
 
-func homeGetHandler(w http.ResponseWriter, r *http.Request) {
+/*func homeGetHandler(w http.ResponseWriter, r *http.Request) {
 	session, _ := store.Get(r, "session")
 	_, ok := session.Values["username"]
 	if !ok {
@@ -85,16 +91,4 @@ func loginPostHandler(w http.ResponseWriter, r *http.Request) {
 func registerGetHandler(w http.ResponseWriter, r *http.Request) {
 	templates.ExecuteTemplate(w, "register.html", nil)
 }
-
-func registerPostHandler(w http.ResponseWriter, r *http.Request) {
-	r.ParseForm()
-	username := r.PostForm.Get("username")
-	password := r.PostForm.Get("password")
-	cost := bcrypt.DefaultCost
-	hash, err := bcrypt.GenerateFromPassword([]byte(password), cost)
-	if err != nil {
-		return
-	}
-	client.Set("user:" + username, hash, 0)
-	http.Redirect(w, r, "/login", 302)
-}
+*/
