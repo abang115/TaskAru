@@ -19,7 +19,7 @@
             <mat-form-field>
                 <mat-label>Enter your email</mat-label>
                 <input matInput placeholder="Ex. johnsmith123@example.com" formControlName="email">
-                <mat-error *ngIf="signupForm.controls.email.hasError('required')">
+                <mat-error *ngIf="signupForm.get('email')!.hasError('required')">
                     Please enter a valid email
                 </mat-error>
             </mat-form-field>
@@ -28,10 +28,10 @@
             <mat-form-field>
                 <mat-label>Enter your password</mat-label>
                 <input matInput placeholder="Minimum 8 characters" formControlName="password" type="password" required minlength="8"/>
-                <mat-error *ngIf="signupForm.controls.password.hasError('required')">
+                <mat-error *ngIf="signupForm.get('password')!.hasError('required')">
                     Please enter a valid password
                 </mat-error>
-                <mat-error *ngIf="signupForm.controls.password.hasError('minlength')">
+                <mat-error *ngIf="signupForm.get('password')!.hasError('minlength')">
                     Password must be at least 8 characters
                 </mat-error>
             </mat-form-field>
@@ -40,13 +40,13 @@
             <mat-form-field>
                 <mat-label>Re-enter your password</mat-label>
                 <input matInput placeholder="Minimum 8 characters" formControlName="confirmPassword" type="password"/>
-                <mat-error *ngIf="signupForm.controls.confirmPassword.hasError('matching')">
+                <mat-error *ngIf="signupForm.get('confirmPassword')!.hasError('matching')">
                     Passwords do not match
                 </mat-error>
             </mat-form-field>
         </div>
         <div class="center">
-            <button mat-raised-button color="primary" type="submit">
+            <button mat-raised-button color="primary" type="submit" (click)="register()">
                 Sign Up
             </button>
         </div>
