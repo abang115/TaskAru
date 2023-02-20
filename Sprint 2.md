@@ -4,9 +4,9 @@ Detail work completed in Sprint 2
 
 -Create user function was added
 
-  -Verifies that the first name, last name, password, and email fields are present
+-Verifies that the first name, last name, password, and email fields are present
   
-  -Adds the user if password can be hashed and user doesn't exist yet
+-Adds the user if password can be hashed and user doesn't exist yet
 
 Unit tests and Cypress tests for frontend
 ---
