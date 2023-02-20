@@ -3,7 +3,6 @@ package controllers
 import (
 	"encoding/json"
 	"net/http"
-
 	// "errors"
 	// "fmt"
 	// "strconv"
@@ -25,25 +24,25 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	var user models.User
 	json.NewDecoder(r.Body).Decode(&user)
 
-	// Ensure all fields are there
+	// checks to see if first name, last name, password, and email fields are present
 	if user.FirstName == "" || user.LastName == "" || user.Password == "" || user.Email == "" {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("Request Body Missing Fields"))
 		return
 	}
 
-	// Create User
+	// creates user
 	userCreated, userErr := models.CreateUser(user)
 
 	if userErr != nil {
-		// If password could not be hashed
+		// if password can't be hashed
 		if userErr.Error() == "could not hash password" {
 			w.WriteHeader(http.StatusNotFound)
 			w.Write([]byte(userErr.Error()))
 			return
 		}
 
-		// If user already exists
+		// if the user already exists
 		if userErr.Error() == "User Already Exists" {
 			w.WriteHeader(http.StatusConflict)
 			w.Write([]byte(userErr.Error()))
