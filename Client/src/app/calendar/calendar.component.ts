@@ -88,7 +88,6 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
       start: toEventFormat(this.eventForm.value.eventDate, this.eventForm.value.startTime) || '',
       end: toEventFormat(this.eventForm.value.eventDate, this.eventForm.value.endTime) || ''
     }
-    console.log(INITIAL_EVENTS);
     console.log(newEvent);
     this.fullCalendarComponent.getApi().addEvent(newEvent);
     this.modalRef?.hide();  

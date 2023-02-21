@@ -29,8 +29,13 @@ export function createEventId() {
 }
 
 export function toEventFormat(date:any, time:any){
+  console.log(date);
+  console.log(time);
   let modifiedDate = moment(date).format('YYYY-MM-DD');
-  let modifiedTime = moment(time, 'hh:mm A').format('HH:mm:ss');
-  let finishedFormat = modifiedDate + 'T' + modifiedTime;
-  return finishedFormat;
+  if(time != ''){
+    let modifiedTime = moment(time, 'hh:mm A').format('HH:mm:ss');
+    let finishedFormat = modifiedDate + 'T' + modifiedTime;
+    return finishedFormat;
+  }
+  return modifiedDate;
 }
