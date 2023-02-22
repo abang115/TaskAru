@@ -26,20 +26,34 @@
       </div>
       <div class="modal-body">
         <form>
-          <form [formGroup]="addEventForm">
+          <form [formGroup]="eventForm">
             <div class="row">
                 <div class = "form-group">
                   <label for="event-title">Event Title</label>
                   <input id="event-title" type = "text" formControlName="eventTitle" class="titleinp form-control">
                 </div>
+            </div>
+            <div class="row">
+              <div class = "form-group">
+                <label for="event-date"> Event Date</label>
+                <input id="event-date" type = "date" formControlName="eventDate" class="titleinp form-control">
+              </div>
+            </div>
+            <div class="row">
+              <div class = "form-group">
+                <label for="event-time"> Event Time</label>
+              </div>
+              <div class="col">
                 <div class = "form-group">
-                  <label for="event-date"> Event Date</label>
-                  <input id="event-date" type = "text" formControlName="eventDate" class="titleinp form-control">
+                  <input id="event-start" type = "time" formControlName="startTime" class="titleinp form-control">
                 </div>
+              </div>
+              <div class="col">
+                <input id="event-start" type = "time" formControlName="endTime" class="titleinp form-control">
+              </div>
             </div>
           </form>
         </form>
-        <p>Form Status: {{ addEventForm.status }}</p>
       </div>
       <div class="modal-footer">
         <button type="submit" class="btn btn-primary" (click)="addEvent()">Add Event</button>
