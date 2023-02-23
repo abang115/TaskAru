@@ -1,11 +1,11 @@
 <div class="form-container">
     <h1 style="color: white">Sign In</h1>
-    <form [formGroup]="signinForm">
+    <form [formGroup]="signinForm" (ngSubmit)="signIn()">
         <div class="row">
             <mat-form-field>
                 <mat-label>Enter your email</mat-label>
                 <input matInput placeholder="Ex. johnsmith123@example.com" formControlName="email">
-                <mat-error *ngIf="signinForm.controls.email.hasError('required')">
+                <mat-error *ngIf="signinForm.get('email')!.hasError('required')">
                     Please enter a valid email
                 </mat-error>
             </mat-form-field>
@@ -13,9 +13,12 @@
         <div class="row">
             <mat-form-field>
                 <mat-label>Enter your password</mat-label>
-                <input matInput placeholder="Minimum 8 characters" formControlName="password" type="password"/>
-                <mat-error *ngIf="signinForm.controls.password.hasError('required')">
+                <input matInput placeholder="Minimum 8 characters" formControlName="password" type="password" required minlength="8"/>
+                <mat-error *ngIf="signinForm.get('password')!.hasError('required')">
                     Please enter a valid password
+                </mat-error>
+                <mat-error *ngIf="signinForm.get('password')!.hasError('minlength')">
+                    Password must be at least 8 characters
                 </mat-error>
             </mat-form-field>
         </div>

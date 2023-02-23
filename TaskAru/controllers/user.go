@@ -38,3 +38,34 @@ func RegisterPostHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(newUser)
 }
+
+func SignInPostHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "*")
+
+	var signin models.UserSignIn
+	var user models.User
+
+	_ = json.NewDecoder(r.Body).Decode(&signin)
+
+	searchErr := models.DB.Where("email = ?", signin.Email).First(&user).Error
+
+	if searchErr != nil {
+		w.WriteHeader(http.StatusNotFound)
+		errorMessage := map[string]string{"error": "could not find email"}
+		json.NewEncoder(w).Encode(errorMessage)
+		return
+	}
+
+	passwordErr := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(signin.Password))
+
+	if passwordErr != nil {
+		w.WriteHeader(http.StatusUnauthorized)
+		errorMessage := map[string]string{"error": "wrong password"}
+		json.NewEncoder(w).Encode(errorMessage)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	message := map[string]string{"message": "successful login"}
+	json.NewEncoder(w).Encode(message)
+}

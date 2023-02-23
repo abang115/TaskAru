@@ -41,7 +41,7 @@ export class SignUpComponent implements OnInit{
   }
 
   register(){
-    if(!this.signupForm.invalid){
+    if(!this.signupForm.invalid) {
         const user = {
           first_name: this.signupForm.get('first_name')!.value, 
           last_name: this.signupForm.get('last_name')!.value,

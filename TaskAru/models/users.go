@@ -7,7 +7,7 @@ type User struct {
 	Password  string `json:"password"`
 }
 
-type userLogin struct {
+type UserLogin struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
 }
