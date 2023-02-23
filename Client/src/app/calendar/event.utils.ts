@@ -29,13 +29,20 @@ export function createEventId() {
 }
 
 export function toEventFormat(date:any, time:any){
-  console.log(date);
-  console.log(time);
   let modifiedDate = moment(date).format('YYYY-MM-DD');
-  if(time != ''){
+  if(time != '' && time != null){
     let modifiedTime = moment(time, 'hh:mm A').format('HH:mm:ss');
     let finishedFormat = modifiedDate + 'T' + modifiedTime;
     return finishedFormat;
   }
   return modifiedDate;
+}
+
+export function getRandomColor() {
+  const letters = '0123456789ABCDEF';
+  let color = '#';
+  for (let i = 0; i < 6; i++) {
+    color += letters[Math.floor(Math.random() * 16)];
+  }
+  return color;
 }
