@@ -24,5 +24,6 @@ func main() {
 
 	models.Init()
 	r.HandleFunc("/register", controllers.RegisterPostHandler).Methods("POST")
+	r.HandleFunc("/signin", controllers.SignInPostHandler).Methods("POST")
 	log.Fatal(http.ListenAndServe(":8080", handler.Handler(r)))
 }
