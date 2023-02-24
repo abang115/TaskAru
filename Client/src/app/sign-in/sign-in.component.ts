@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup, Validators, FormBuilder,} from '@angular/forms';
+import { FormControl, FormGroup, Validators, FormBuilder } from '@angular/forms';
 import { Router } from '@angular/router'
 import { HttpClient } from '@angular/common/http';
 import { SignInService } from '../sign-in.service';
@@ -13,7 +13,6 @@ import { SignInService } from '../sign-in.service';
 export class SignInComponent implements OnInit{
 
   constructor(private formBuilder: FormBuilder, public http: HttpClient, private router: Router, public signInService: SignInService) { }
-
   signinForm: FormGroup = this.formBuilder.group({
     email: new FormControl('', [Validators.required, Validators.email]),
     password: new FormControl('', [Validators.required]),
@@ -21,7 +20,7 @@ export class SignInComponent implements OnInit{
 
   ngOnInit(): void {
   }
-  
+
   signIn() {
     if(!this.signinForm.invalid) {
       const userSignIn = {
@@ -40,6 +39,9 @@ export class SignInComponent implements OnInit{
         },
         error: err => {
           console.error('Error: ', err)
+          this.signinForm.get('email')!.setErrors({
+            'invalidEmail': true
+          })
         }
       });
     }

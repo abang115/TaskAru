@@ -5,8 +5,11 @@
             <mat-form-field>
                 <mat-label>Enter your email</mat-label>
                 <input matInput placeholder="Ex. johnsmith123@example.com" formControlName="email">
-                <mat-error *ngIf="signinForm.get('email')!.hasError('required')">
+                <mat-error *ngIf="signinForm.get('email')!.hasError('required') || signinForm.get('email')!.hasError('email')">
                     Please enter a valid email
+                </mat-error>
+                <mat-error *ngIf="signinForm.get('email')!.hasError('invalidEmail')">
+                    Account with this email not found
                 </mat-error>
             </mat-form-field>
         </div>
