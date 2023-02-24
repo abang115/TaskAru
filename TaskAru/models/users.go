@@ -5,6 +5,7 @@ type User struct {
 	LastName  string `json:"last_name"`
 	Email     string `json:"email"`
 	Password  string `json:"password"`
+	details   Event
 }
 
 type UserSignIn struct {
