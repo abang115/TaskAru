@@ -20,8 +20,6 @@ func RegisterPostHandler(w http.ResponseWriter, r *http.Request) {
 	for _, entry := range users {
 		if entry.Email == newUser.Email {
 			w.WriteHeader(http.StatusConflict)
-			errorMessage := map[string]string{"error": "Email already exists"}
-			json.NewEncoder(w).Encode(errorMessage)
 			return
 		}
 	}
