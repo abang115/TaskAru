@@ -1,10 +1,11 @@
 import { Component, OnInit, AfterViewInit, ViewChild, ChangeDetectorRef, ElementRef  } from "@angular/core";
 import { CalendarOptions, DateSelectArg, EventClickArg, EventApi, Calendar } from '@fullcalendar/core';
-import { INITIAL_EVENTS, createEventId, toEventFormat, getRandomColor } from "./event.utils";
+import { INITIAL_EVENTS, createEventId, toEventFormat, parseToRRule, getRandomColor } from "./event.utils";
 import interactionPlugin from '@fullcalendar/interaction';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import listPlugin from '@fullcalendar/list';
+import rrulePlugin from '@fullcalendar/rrule';
 import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
 import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { FullCalendarComponent } from "@fullcalendar/angular";
@@ -38,6 +39,7 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
         dayGridPlugin,
         timeGridPlugin,
         listPlugin,
+        rrulePlugin
       ],
       customButtons:{
         myCustomButton:{
@@ -48,7 +50,7 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
       headerToolbar: {
         left: 'prev,next today myCustomButton',
         center: 'title',
-        right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
+        right: 'dayGridMonth,timeGridWeek,timeGridDay,listMonth'
       },
       initialView: 'dayGridMonth',
       initialEvents: INITIAL_EVENTS, 
@@ -74,14 +76,16 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
   }
 
   addEvent(){
+    let formVars = this.eventForm.value;
     console.log('add events clicked');
-    console.log(this.eventForm.value);
+    console.log(formVars);
     let newEvent = {
       id: createEventId(),
-      title: this.eventForm.value.eventTitle || '',
-      description: this.eventForm.value.eventDescription || '',
-      start: toEventFormat(this.eventForm.value.eventDate, this.eventForm.value.startTime) || '',
-      end: toEventFormat(this.eventForm.value.eventDate, this.eventForm.value.endTime) || '',
+      title: formVars.eventTitle || '',
+      description: formVars.eventDescription || '',
+      start: toEventFormat(formVars.eventDate, formVars.startTime) || '',
+      end: toEventFormat(formVars.eventDate, formVars.endTime) || '',
+      rrule: parseToRRule(formVars.eventDate, formVars.reoccuring),
       backgroundColor: getRandomColor()
     }
     console.log(newEvent);
@@ -96,7 +100,7 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
     eventDescription: new FormControl(''),
     startTime: new FormControl(''),
     endTime: new FormControl(''),
-    // reoccuring: new FormControl(''),
+    reoccuring: new FormControl('once'),
   })
 }
 
