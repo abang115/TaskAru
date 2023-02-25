@@ -6,7 +6,7 @@
     margin-bottom: auto;
     margin-right: auto;
     margin-left: auto;
-
+    color:aliceblue;
     background: #eceff134;
     padding: 48px;
     border-radius: 16px;
@@ -28,4 +28,14 @@
 
 .text-center{
     text-align: center;
+}
+
+.cen {
+    display: flex;
+    justify-content: center;
+    margin-top: 16px;
+}
+
+a {
+    color:white;
 }

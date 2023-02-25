@@ -1,11 +1,11 @@
 <mat-toolbar color = "primary">
     <span>TaskAru</span> &nbsp;&nbsp;
-    <a mat-button routerLinkActive="active" routerLink="home">Home</a> &nbsp;&nbsp;
+    <a mat-button routerLinkActive="active" routerLink="/home">Home</a> &nbsp;&nbsp;
 
-    <a mat-button routerLinkActive="active" routerLink="calendar">Calendar</a>&nbsp;&nbsp;
+    <a mat-button routerLinkActive="active" routerLink="/calendar">Calendar</a>&nbsp;&nbsp;
     <div class = "spacer"></div>
 
-    <a mat-button routerLinkActive="active" routerLink="signin" *ngIf="!signedIn">Sign In</a> &nbsp;&nbsp;
-    <a mat-raised-button routerLinkActive="active" routerLink="signup" *ngIf="!signedIn">Sign Up</a>
+    <a mat-button routerLinkActive="active" routerLink="/signin" *ngIf="!signedIn">Sign In</a> &nbsp;&nbsp;
+    <a mat-raised-button routerLinkActive="active" routerLink="/signup" *ngIf="!signedIn">Sign Up</a>
 </mat-toolbar>
   

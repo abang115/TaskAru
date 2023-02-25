@@ -20,6 +20,8 @@ import { HomeComponent } from './home/home.component';
 import { FullCalendarModule } from '@fullcalendar/angular';
 import { CalendarComponent } from './calendar/calendar.component'; 
 import { ModalModule } from 'ngx-bootstrap/modal';
+import { RouterModule } from '@angular/router';
+import { ResetPasswordComponent } from './reset-password/reset-password.component';
 
 @NgModule({
   declarations: [
@@ -29,6 +31,7 @@ import { ModalModule } from 'ngx-bootstrap/modal';
     SignUpComponent,
     HomeComponent,
     CalendarComponent,
+    ResetPasswordComponent,
   ],
   imports: [
     HttpClientModule,
@@ -44,6 +47,7 @@ import { ModalModule } from 'ngx-bootstrap/modal';
     FullCalendarModule,
     ModalModule.forRoot(), 
     MatCheckboxModule,
+    RouterModule,
   ],
   providers: [],
   bootstrap: [AppComponent]
