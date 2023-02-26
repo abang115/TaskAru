@@ -32,11 +32,17 @@
           <form [formGroup]="eventForm">
             <div class="form-group">
               <label>Title:</label>
-              <input id="event-title" type="text" formControlName="eventTitle" class="form-control">
+              <input id="event-title" type="text" formControlName="eventTitle" class="form-control" [ngClass]="{'is-invalid': eventForm.get('eventTitle')!.invalid && eventForm.get('eventTitle')!.touched}">
+              <div class="error-message" style="color:red" *ngIf="eventForm.get('eventTitle')!.invalid && eventForm.get('eventTitle')!.touched">
+                Please enter a name.
+              </div>
             </div>
             <div class="form-group">
                 <label>Date:</label>
-                <input id="event-date" type="date" formControlName="eventDate" class="form-control">
+                <input id="event-date" type="date" formControlName="eventDate" class="form-control" [ngClass]="{'is-invalid': eventForm.get('eventDate')!.invalid && eventForm.get('eventDate')!.touched}">
+                <div class="error-message" style="color:red" *ngIf="eventForm.get('eventDate')!.invalid && eventForm.get('eventDate')!.touched">
+                  Please enter or select a date.
+                </div>
             </div>  
             <div class="row">
               <div class="col">
@@ -55,7 +61,7 @@
               <div class="form-group">
                 <label>Frequency:</label>
                 <select formControlName="reoccuring" class="custom-select">
-                  <option value="once">Once</option>
+                  <option value="once"selected>Once</option>
                   <option value="daily">Daily</option>
                   <option value="weekly">Weekly</option>
                   <option value="monthly">Monthly</option>
