@@ -15,6 +15,9 @@
   <div class="modal-body">
     <h4>{{selectedEvent?.extendedProps?.description}}</h4>
   </div>
+  <div class="modal-footer">
+    <button type="submit" class="btn btn-primary" (click)="removeEvent()">Remove Event</button>
+  </div>
 </ng-template>
 
 <ng-template #eventModal>
@@ -29,7 +32,7 @@
           <form [formGroup]="eventForm">
             <div class="form-group">
               <label>Title:</label>
-              <input id="event-title" type = "text" formControlName="eventTitle" class="form-control">
+              <input id="event-title" type="text" formControlName="eventTitle" class="form-control">
             </div>
             <div class="form-group">
                 <label>Date:</label>
@@ -50,7 +53,7 @@
               </div>
             <div class="col">
               <div class="form-group">
-                <label>Reoccurring:</label>
+                <label>Frequency:</label>
                 <select formControlName="reoccuring" class="custom-select">
                   <option value="once">Once</option>
                   <option value="daily">Daily</option>

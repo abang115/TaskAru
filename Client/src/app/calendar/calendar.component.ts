@@ -75,6 +75,11 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
     this.modalRef = this.modalService.show(this.eventModal);
   }
 
+  removeEvent(){
+   this.selectedEvent.remove(); 
+   this.modalRef?.hide(); 
+  }
+
   addEvent(){
     let formVars = this.eventForm.value;
     console.log('add events clicked');
