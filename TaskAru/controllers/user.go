@@ -3,6 +3,7 @@ package controllers
 import (
 	"TaskAru/models"
 	"encoding/json"
+	"errors"
 	"net/http"
 
 	"golang.org/x/crypto/bcrypt"
@@ -20,8 +21,8 @@ func RegisterPostHandler(w http.ResponseWriter, r *http.Request) {
 	for _, entry := range users {
 		if entry.Email == newUser.Email {
 			w.WriteHeader(http.StatusConflict)
-			errorMessage := map[string]string{"error": "Email already exists"}
-			json.NewEncoder(w).Encode(errorMessage)
+			existErr := errors.New("Email already exists")
+			w.Write([]byte(existErr.Error()))
 			return
 		}
 	}

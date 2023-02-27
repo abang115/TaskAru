@@ -8,6 +8,7 @@ import {MatCardModule} from '@angular/material/card';
 import {MatFormFieldModule} from '@angular/material/form-field'; 
 import {MatInputModule} from '@angular/material/input'; 
 import {MatCheckboxModule} from '@angular/material/checkbox'; 
+import {MatButtonToggleModule} from '@angular/material/button-toggle'; 
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -19,7 +20,10 @@ import { SignUpComponent } from './sign-up/sign-up.component';
 import { HomeComponent } from './home/home.component';
 import { FullCalendarModule } from '@fullcalendar/angular';
 import { CalendarComponent } from './calendar/calendar.component'; 
+import {MatIcon, MatIconModule} from '@angular/material/icon'; 
 import { ModalModule } from 'ngx-bootstrap/modal';
+import { RouterModule } from '@angular/router';
+import { ResetPasswordComponent } from './reset-password/reset-password.component';
 
 @NgModule({
   declarations: [
@@ -29,6 +33,7 @@ import { ModalModule } from 'ngx-bootstrap/modal';
     SignUpComponent,
     HomeComponent,
     CalendarComponent,
+    ResetPasswordComponent,
   ],
   imports: [
     HttpClientModule,
@@ -40,10 +45,13 @@ import { ModalModule } from 'ngx-bootstrap/modal';
     MatCardModule,
     MatFormFieldModule,
     MatInputModule,
+    MatIconModule,
+    MatButtonToggleModule,
     ReactiveFormsModule,
     FullCalendarModule,
     ModalModule.forRoot(), 
     MatCheckboxModule,
+    RouterModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

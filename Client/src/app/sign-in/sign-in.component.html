@@ -5,8 +5,11 @@
             <mat-form-field>
                 <mat-label>Enter your email</mat-label>
                 <input matInput placeholder="Ex. johnsmith123@example.com" formControlName="email">
-                <mat-error *ngIf="signinForm.get('email')!.hasError('required')">
+                <mat-error *ngIf="signinForm.get('email')!.hasError('required') || signinForm.get('email')!.hasError('email')">
                     Please enter a valid email
+                </mat-error>
+                <mat-error *ngIf="signinForm.get('email')!.hasError('invalidEmail')">
+                    Account with this email not found
                 </mat-error>
             </mat-form-field>
         </div>
@@ -24,10 +27,16 @@
         </div>
         <mat-checkbox class="remember">Remember Me</mat-checkbox>
         <div class="center">
-            <button mat-raised-button color="primary" type="submit">
+            <button mat-raised-button data-cy="Submit SignIn" color="primary" type="submit">
                 Sign In
             </button>
         </div>
         <span></span>
+        <div class="cen">
+            <p>Don't have an account?</p> &nbsp;
+            <span class="signup">
+                <a data-cy="Go SignUp" routerLink="/signup">Sign Up!</a>
+            </span>
+        </div>
     </form>
 </div>
