@@ -5,8 +5,8 @@
     <a mat-button routerLinkActive="active" routerLink="/calendar">Calendar</a>&nbsp;&nbsp;
     <div class = "spacer"></div>
 
-    <a mat-button routerLinkActive="active" routerLink="/signin" *ngIf="!signedIn">Sign In</a> &nbsp;&nbsp;
-    <a mat-raised-button routerLinkActive="active" routerLink="/signup" *ngIf="!signedIn">Sign Up</a> &nbsp;&nbsp;
+    <a mat-button data-cy="Sign In" routerLinkActive="active" routerLink="/signin" *ngIf="!signedIn">Sign In</a> &nbsp;&nbsp;
+    <a mat-raised-button data-cy="Sign Up" routerLinkActive="active" routerLink="/signup" *ngIf="!signedIn">Sign Up</a> &nbsp;&nbsp;
     <mat-button-toggle-group>
         <mat-button-toggle value="left">
             <mat-icon>
