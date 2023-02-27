@@ -1,6 +1,6 @@
 import { Component, OnInit, AfterViewInit, ViewChild, ChangeDetectorRef, ElementRef  } from "@angular/core";
 import { CalendarOptions, DateSelectArg, EventClickArg, EventApi, Calendar } from '@fullcalendar/core';
-import { INITIAL_EVENTS, createEventId } from "./event.utils";
+import { INITIAL_EVENTS, createEventId, toEventFormat, getRandomColor } from "./event.utils";
 import interactionPlugin from '@fullcalendar/interaction';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
@@ -18,8 +18,7 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
   modalRef?: BsModalRef;
   calendarVisible = true;
   currentEvents: EventApi[] = [];
-  title: any;
-  start: any;
+  selectedEvent: any;
   calendarOptions: any;
   
   config ={
@@ -28,7 +27,7 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
 
   @ViewChild('eventModal') eventModal!: string;
   @ViewChild('template') template!: string;
-  @ViewChild('cal') fullCalendarComponent!:FullCalendarComponent;
+  @ViewChild('cal') fullCalendarComponent!:FullCalendarComponent; // Access the Calendar as an object
 
   constructor(private modalService: BsModalService, private el: ElementRef) {     }
 
@@ -43,7 +42,7 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
       customButtons:{
         myCustomButton:{
           text: 'Add Event',
-          click: this.handleAddEventClick.bind(this)
+          click: this.handleAddEventButtonClick.bind(this)
         }
       },
       headerToolbar: {
@@ -60,44 +59,44 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
       dayMaxEvents: true,
       eventClick: this.handleDateClick.bind(this),
     };
-    this.addEvent();
     }
 
   ngAfterViewInit(): void{
-    console.log(this.fullCalendarComponent);
   }
 
   handleDateClick(arg:any){
-    console.log(arg);
-    console.log(arg.event._def.title);
-    this.title = arg.event.def_title;
+    this.selectedEvent = arg.event;
     this.modalRef = this.modalService.show(this.template, this.config);
   }
 
-  handleAddEventClick(){
-    console.log('add events clicked');
+  handleAddEventButtonClick(){
     this.modalRef = this.modalService.show(this.eventModal);
   }
 
   addEvent(){
     console.log('add events clicked');
-    console.log(this.addEventForm.value);
+    console.log(this.eventForm.value);
     let newEvent = {
       id: createEventId(),
-      title: this.addEventForm.value.eventTitle || '',
-      start: this.addEventForm.value.eventDate || '',
+      title: this.eventForm.value.eventTitle || '',
+      description: this.eventForm.value.eventDescription || '',
+      start: toEventFormat(this.eventForm.value.eventDate, this.eventForm.value.startTime) || '',
+      end: toEventFormat(this.eventForm.value.eventDate, this.eventForm.value.endTime) || '',
+      backgroundColor: getRandomColor()
     }
+    console.log(newEvent);
     this.fullCalendarComponent.getApi().addEvent(newEvent);
+    this.eventForm.reset();
     this.modalRef?.hide();  
   }
 
-  addEventForm = new FormGroup({
+  eventForm = new FormGroup({
     eventTitle: new FormControl('', [Validators.required]),
     eventDate: new FormControl('', [Validators.required]),
-    // startTime: new FormControl(''),
-    // endTime: new FormControl(''),
+    eventDescription: new FormControl(''),
+    startTime: new FormControl(''),
+    endTime: new FormControl(''),
     // reoccuring: new FormControl(''),
-
   })
 }
 

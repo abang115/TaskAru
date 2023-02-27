@@ -1,4 +1,5 @@
 import { EventInput } from '@fullcalendar/core';
+import * as moment from 'moment'; // import moment library
 
 let eventGuid = 0;
 const TODAY_STR = new Date().toISOString().replace(/T.*$/, ''); // YYYY-MM-DD of today
@@ -25,4 +26,23 @@ export const INITIAL_EVENTS: EventInput[] = [
 
 export function createEventId() {
   return String(eventGuid++);
+}
+
+export function toEventFormat(date:any, time:any){
+  let modifiedDate = moment(date).format('YYYY-MM-DD');
+  if(time != '' && time != null){
+    let modifiedTime = moment(time, 'hh:mm A').format('HH:mm:ss');
+    let finishedFormat = modifiedDate + 'T' + modifiedTime;
+    return finishedFormat;
+  }
+  return modifiedDate;
+}
+
+export function getRandomColor() {
+  const letters = '0123456789ABCDEF';
+  let color = '#';
+  for (let i = 0; i < 6; i++) {
+    color += letters[Math.floor(Math.random() * 16)];
+  }
+  return color;
 }

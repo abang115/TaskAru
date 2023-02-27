@@ -7,13 +7,13 @@
 <div #calendarContainer id="calendar"></div>
 <ng-template #template>
   <div class="modal-header">
-    <h4 class="modal-title pull-left">This is a Event</h4>
+    <h2 class="modal-title pull-left">{{selectedEvent?.title}} on {{selectedEvent?.start | date}} </h2>
     <button type="button" class="btn-close close pull-right" aria-label="Close" (click)="modalRef?.hide()">
       <span aria-hidden="true" class="visually-hidden">&times;</span>
     </button>
   </div>
   <div class="modal-body">
-    Event Details
+    <h4>{{selectedEvent?.extendedProps?.description}}</h4>
   </div>
 </ng-template>
 
@@ -26,24 +26,40 @@
       </div>
       <div class="modal-body">
         <form>
-          <form [formGroup]="addEventForm">
+          <form [formGroup]="eventForm">
             <div class="row">
                 <div class = "form-group">
                   <label for="event-title">Event Title</label>
-                  <input id="event-title" type = "text" formControlName="eventTitle" class="titleinp form-control">
+                  <input id="event-title" type = "text" formControlName="eventTitle" class="form-control">
                 </div>
-                <div class = "form-group">
-                  <label for="event-date"> Event Date</label>
-                  <input id="event-date" type = "text" formControlName="eventDate" class="titleinp form-control">
+            </div>
+            <div class="row">
+              <div class = "form-group">
+                <label for="event-date">Event Date</label>
+                <input id="event-date" type = "date" formControlName="eventDate" class="form-control">
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="row">
+                <label for="event-time">Event Time</label>
+                <div class="col">
+                  <input id="event-start" type = "time" formControlName="startTime" class="form-control">
                 </div>
+                <div class="col">
+                  <input id="event-start" type = "time" formControlName="endTime" class="form-control">
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class = "form-group">
+                <label>Event Description</label>
+                <textarea id="event-description" rows="2" formControlName="eventDescription" class="form-control"></textarea>
+              </div>
             </div>
           </form>
         </form>
-        <p>Form Status: {{ addEventForm.status }}</p>
       </div>
       <div class="modal-footer">
         <button type="submit" class="btn btn-primary" (click)="addEvent()">Add Event</button>
       </div>
     </ng-template>
-
-    <div #calendarEl></div>

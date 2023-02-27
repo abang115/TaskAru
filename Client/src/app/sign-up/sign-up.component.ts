@@ -12,8 +12,8 @@ export class SignUpComponent implements OnInit{
   constructor(private formBuilder: FormBuilder, public http: HttpClient) { }
 
   signupForm: FormGroup = this.formBuilder.group({
-    firstName: new FormControl('', [Validators.required]),
-    lastName: new FormControl('', [Validators.required]),
+    first_name: new FormControl('', [Validators.required]),
+    last_name: new FormControl('', [Validators.required]),
     email: new FormControl('', [Validators.required, Validators.email]),
     password: new FormControl('', [Validators.required]),
     confirmPassword: new FormControl('', [Validators.required]),
@@ -41,20 +41,23 @@ export class SignUpComponent implements OnInit{
   }
 
   register(){
-    const user = {
-      firstName: this.signupForm.get('firstName')!.value, 
-      lastName: this.signupForm.get('lastName')!.value,
-      email: this.signupForm.get('email')!.value, 
-      password: this.signupForm.get('password')!.value
-    }
-    
-    this.http.post('http://localhost:8080/register', user).subscribe({
-        next: response => {
-          console.log('User successfully created', response)
-        },
-        error: err => {
-          console.error('Error creating user: ', err)
+    if(!this.signupForm.invalid) {
+        const user = {
+          first_name: this.signupForm.get('first_name')!.value, 
+          last_name: this.signupForm.get('last_name')!.value,
+          email: this.signupForm.get('email')!.value, 
+          password: this.signupForm.get('password')!.value
         }
-      });
-  }
+        console.log(user);
+        
+        this.http.post('http://localhost:8080/register', user).subscribe({
+            next: response => {
+              console.log('Backend successfully reached: ', response)
+            },
+            error: err => {
+              console.error('Error: ', err)
+            }
+          });
+      }
+    }
 }
