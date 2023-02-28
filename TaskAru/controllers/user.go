@@ -11,7 +11,6 @@ import (
 
 func RegisterPostHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "*")
-	w.WriteHeader(http.StatusOK)
 
 	var newUser models.User
 	var users []models.User
