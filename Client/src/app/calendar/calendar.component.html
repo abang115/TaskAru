@@ -3,7 +3,9 @@
     <full-calendar #cal [options]="calendarOptions" style="color:aliceblue"></full-calendar>
   </div>
 </div>
-
+<head>
+  <link rel="stylesheet" type="text/css" href="./calendar.component.css">
+</head>
 <div #calendarContainer id="calendar"></div>
 <ng-template #template>
   <div class="modal-header">
@@ -60,7 +62,7 @@
             <div class="col">
               <div class="form-group">
                 <label>Frequency:</label>
-                <select formControlName="reoccuring" class="custom-select">
+                <select id="event-reoccuring" formControlName="reoccuring" class="custom-select">
                   <option value="once"selected>Once</option>
                   <option value="daily">Daily</option>
                   <option value="weekly">Weekly</option>
@@ -78,6 +80,6 @@
         </form>
       </div>
       <div class="modal-footer">
-        <button type="submit" class="btn btn-primary" (click)="addEvent()">Add Event</button>
+        <button id="event-button-submit" type="submit" class="btn btn-primary" (click)="addEvent()">Add Event</button>
       </div>
     </ng-template>
