@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, ViewChild, ChangeDetectorRef, ElementRef  } from "@angular/core";
+import { Component, OnInit, AfterViewInit, ViewChild,   } from "@angular/core";
 import { CalendarOptions, DateSelectArg, EventClickArg, EventApi, Calendar } from '@fullcalendar/core';
 import { INITIAL_EVENTS, createEventId, toEventFormat, parseToRRule, getRandomColor } from "./event.utils";
 import interactionPlugin from '@fullcalendar/interaction';
@@ -30,7 +30,7 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
   @ViewChild('template') template!: string;
   @ViewChild('cal') fullCalendarComponent!:FullCalendarComponent; // Access the Calendar as an object
 
-  constructor(private modalService: BsModalService, private el: ElementRef) {     }
+  constructor(private modalService: BsModalService) {     }
 
   ngOnInit(): void {
     this.calendarOptions = {
@@ -96,6 +96,7 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
     console.log(newEvent);
     this.fullCalendarComponent.getApi().addEvent(newEvent);
     this.eventForm.reset();
+    this.eventForm.get('reoccuring')?.setValue('once');
     this.modalRef?.hide();  
   }
 
