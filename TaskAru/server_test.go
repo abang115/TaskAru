@@ -1,17 +1,10 @@
 package main
 
 import (
-	"fmt"
-	"log"
-	"os"
-	"testing"
-
-	"github.com/joho/godotenv"
-	"gorm.io/driver/mysql"
-	"gorm.io/gorm"
-
 	"TaskAru/controllers"
 	"TaskAru/models"
+	"os"
+	"testing"
 
 	"github.com/gorilla/mux"
 
@@ -27,30 +20,12 @@ import (
 
 var testRouter = mux.NewRouter()
 
+func deleteFromUsersTable() {
+	models.DB.Exec("delete from users")
+}
+
 func TestMain(m *testing.M) {
-	err := godotenv.Load(".env")
-
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
-
-	host := os.Getenv("HOST")
-	user := os.Getenv("USER")
-	password := os.Getenv("PASSWORD")
-
-	var dsn = fmt.Sprintf("%s:%s@tcp(%s:3306)/taskarudb_test?charset=utf8mb4", user, password, host)
-	database, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
-	if err != nil {
-		log.Fatal(err)
-		panic("Cannot connect to DB")
-	}
-	log.Println("Connected to DB")
-
-	err = database.AutoMigrate(&models.User{})
-	if err != nil {
-		return
-	}
-
+	models.Init("taskarudb_test")
 	testRouter.HandleFunc("/register", controllers.RegisterPostHandler).Methods("POST")
 	testRouter.HandleFunc("/signin", controllers.SignInPostHandler).Methods("POST")
 
@@ -58,19 +33,27 @@ func TestMain(m *testing.M) {
 	os.Exit(test)
 }
 
-// correct email and password
+// test to register successfully with email and password
 func TestRegisterPostHandler(t *testing.T) {
 	rBody := []byte(`{"first_name": "jane", "last_name": "doe", "email": "janedoe@ufl.edu", "password": "janedoe"}`)
 
-	wr := httptest.NewRecorder()
+	rr := httptest.NewRecorder()
 	req := httptest.NewRequest(http.MethodPost, "/register", bytes.NewBuffer(rBody))
-	controllers.RegisterPostHandler(wr, req)
+	testRouter.ServeHTTP(rr, req)
 
 	var user models.User
 	result := models.DB.Where("email = ?", "janedoe@ufl.edu").First(&user)
 
 	if result.Error != nil {
 		t.Errorf("test failed! unable to get user %v", result.Error)
+	}
+
+	if user.FirstName != "jane" {
+		t.Errorf("test failed! incorrect first name in database")
+	}
+
+	if user.LastName != "doe" {
+		t.Errorf("test failed! incorrect last name in database")
 	}
 
 	err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte("janedoe"))
@@ -80,22 +63,36 @@ func TestRegisterPostHandler(t *testing.T) {
 	}
 }
 
-// duplicate email
+// test to register with duplicate email
 func Test2RegisterPostHandler(t *testing.T) {
-	rBody := []byte(`{"first_name": "jane2", "last_name": "doe2", "email": "janedoe@ufl.edu", "password": "janedoe2"}`)
+	deleteFromUsersTable()
 
-	wr := httptest.NewRecorder()
+	rBody := []byte(`{"first_name": "jane", "last_name": "doe", "email": "janedoe@ufl.edu", "password": "janedoe"}`)
+	rr := httptest.NewRecorder()
 	req := httptest.NewRequest(http.MethodPost, "/register", bytes.NewBuffer(rBody))
-	controllers.RegisterPostHandler(wr, req)
+	testRouter.ServeHTTP(rr, req)
+
+	rBody = []byte(`{"first_name": "jane2", "last_name": "doe2", "email": "janedoe@ufl.edu", "password": "janedoe2"}`)
+	rr = httptest.NewRecorder()
+	req = httptest.NewRequest(http.MethodPost, "/register", bytes.NewBuffer(rBody))
+	testRouter.ServeHTTP(rr, req)
 
 	var user models.User
 	result := models.DB.Where("email = ?", "janedoe@ufl.edu").First(&user)
 
 	if result.Error != nil {
-		t.Errorf("test passed! duplicate email, error caught %v", result.Error)
+		t.Errorf("test failed! duplicate email not found, error caught %v", result.Error)
 	}
 
-	err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte("janedoe2"))
+	if user.FirstName != "jane" {
+		t.Errorf("test failed! incorrect first name in database")
+	}
+
+	if user.LastName != "doe" {
+		t.Errorf("test failed! incorrect last name in database")
+	}
+
+	err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte("janedoe"))
 
 	if err != nil {
 		t.Errorf("test failed! unable to compared hashed password %v", err)
@@ -106,9 +103,9 @@ func Test2RegisterPostHandler(t *testing.T) {
 func TestSignInPostHandler(t *testing.T) {
 	rBody := []byte(`{"email": "janedoe@ufl.edu", "password": "janedoe"}`)
 
-	wr := httptest.NewRecorder()
+	rr := httptest.NewRecorder()
 	req := httptest.NewRequest(http.MethodPost, "/signin", bytes.NewBuffer(rBody))
-	controllers.RegisterPostHandler(wr, req)
+	testRouter.ServeHTTP(rr, req)
 
 	var user models.User
 	result := models.DB.Where("email = ?", "janedoe@ufl.edu").First(&user)
@@ -128,9 +125,9 @@ func TestSignInPostHandler(t *testing.T) {
 func TestSignInPostHandler2(t *testing.T) {
 	rBody := []byte(`{"email": "janedoe@ufl.edu", "password": "janedoe2"}`)
 
-	wr := httptest.NewRecorder()
+	rr := httptest.NewRecorder()
 	req := httptest.NewRequest(http.MethodPost, "/signin", bytes.NewBuffer(rBody))
-	controllers.RegisterPostHandler(wr, req)
+	testRouter.ServeHTTP(rr, req)
 
 	var user models.User
 	result := models.DB.Where("email = ?", "janedoe@ufl.edu").First(&user)
@@ -141,8 +138,8 @@ func TestSignInPostHandler2(t *testing.T) {
 
 	err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte("janedoe2"))
 
-	if err != nil {
-		t.Errorf("test passed! wrong password, error caught %v", err)
+	if err == nil {
+		t.Errorf("test failed! correct password was entered, error caught")
 	}
 }
 
@@ -150,42 +147,14 @@ func TestSignInPostHandler2(t *testing.T) {
 func TestSignInPostHandler3(t *testing.T) {
 	rBody := []byte(`{"email": "janedoe2@ufl.edu", "password": "janedoe"}`)
 
-	wr := httptest.NewRecorder()
+	rr := httptest.NewRecorder()
 	req := httptest.NewRequest(http.MethodPost, "/signin", bytes.NewBuffer(rBody))
-	controllers.RegisterPostHandler(wr, req)
+	testRouter.ServeHTTP(rr, req)
 
 	var user models.User
 	result := models.DB.Where("email = ?", "janedoe2@ufl.edu").First(&user)
 
-	if result.Error != nil {
-		t.Errorf("test passed! wrong email, error caught %v", result.Error)
-	}
-
-	err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte("janedoe"))
-
-	if err != nil {
-		t.Errorf("test failed! %v", err)
-	}
-}
-
-// wrong email, wrong password
-func TestSignInPostHandler4(t *testing.T) {
-	rBody := []byte(`{"email": "janedoe2@ufl.edu", "password": "janedoe2"}`)
-
-	wr := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodPost, "/signin", bytes.NewBuffer(rBody))
-	controllers.RegisterPostHandler(wr, req)
-
-	var user models.User
-	result := models.DB.Where("email = ?", "janedoe2@ufl.edu").First(&user)
-
-	if result.Error != nil {
-		t.Errorf("test passed! wrong email, error caught %v", result.Error)
-	}
-
-	err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte("janedoe2"))
-
-	if err != nil {
-		t.Errorf("test passed! wrong password, error caught %v", err)
+	if result.Error == nil {
+		t.Errorf("test failed! right email, error caught %v", result.Error)
 	}
 }
