@@ -15,22 +15,28 @@ Back-End
   - Sign-in and Register handler functions were implmented to handle post requests to connect the front-end to the back-end
   - Utilized bcrypt to securely hash passwords and store them in the database
   - Created calendar and event structs to handle events users add to the calendar
-  - Throws an error if the password constraints aren't followed
-  - Throws an  error if the password can't be hashed
-  - Adds the user if password can be hashed and user doesn't exist yet
   - Stores event information into event objects, stores these objects and calendar information into calendar objects, and stores calendar objects with users
 
 Unit Tests and Cypress Tests for Frontend
 ---
 
+  - Cypress e2e tests for sign-in
+    - Catches when a user tries to press the sign-in buttons if no fields are entered
+    - Successfully signs-in a user if their email and password are found in the database
+    - Successfully visits sign-up page when sign-up link is clicked  
+  - Cypress component tests for sign-in
+    - Successfully mounts the sign-in component 
+  - Cypress component tests for sign-up
+    - Successfully mounts the sign-up component
+  - Cypress component tests for calendar
 
 Unit Tests for Backend
 ---
 
-  - Unit tests register post handler
-    - Successfully regsiters a user when email and password are valid
+  - Unit tests for RegisterPostHandler()
+    - Successfully registers a user when email and password are valid
     - Catches when a user attempts to register with an email that exists in the database
-  - Unit tests for sign in handler
+  - Unit tests for SignInPostHandler()
     - Successfully signs in a user when email and password are valid
     - Catches when a user attempts to sign in with the correct email, but wrong password
     - Catches when a user attempts to sign in with the wrong email, but right password
