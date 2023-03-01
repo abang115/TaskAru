@@ -17,7 +17,7 @@ Back-End
   - Created calendar and event structs to handle events users add to the calendar
   - Stores event information into event objects, stores these objects and calendar information into calendar objects, and stores calendar objects with users
 
-Unit Tests and Cypress Tests for Frontend
+Unit(Cypress Component) Tests and Cypress E2E Tests for Frontend
 ---
 
   - Cypress e2e tests for sign-in
