@@ -6,7 +6,7 @@ Front-End
   - Post requests were added to the sign-in and sign-up components to connect front-end to back-end
   - Created sign-in service to determine whether a user was signed in and used that to determine whether to show the sign-in and sign-up buttons on the navigation bar
   - Made more error handling in sign-in component to address if user tries to sign in with an email not found in the database
-  - Added quick link to sign-up page on sign-in page if a user clicks sign-in but doesn't have an account yet
+  - Added quick link to sign-up page on sign-in page if a user clicks sign-in, but doesn't have an account yet
   - Configured cypress and implemented several e2e tests as well as started implementing component tests for the calendar
 
 Back-End
@@ -17,16 +17,16 @@ Back-End
   - Created calendar and event structs to handle events users add to the calendar
   - Stores event information into event objects, stores these objects and calendar information into calendar objects, and stores calendar objects with users
 
-Unit(Cypress Component) Tests and Cypress E2E Tests for Frontend
+Unit (Cypress Component) Tests and Cypress E2E Tests for Frontend
 ---
 
   - Cypress e2e tests for sign-in
-    - Catches when a user tries to press the sign-in button if no fields are entered
+    - Catches when a user attempts to press the sign-in button if no fields are entered
     - Successfully tests whether it signs-in a user if their email and password are found in the database
     - Successfully tests whether it visits sign-up page when sign-up link is clicked  
   -Cypress e2e tests for sign-up
-    - Catches when a user tries to press the sign-up button if no fields are entered
-    - Successfully tests whether it registers a user if their email is not found in the database and 
+    - Catches when a user attempts to press the sign-up button if no fields are entered
+    - Successfully tests whether it registers a user if their email is not found in the database
     - Catches when a user tries to register but have non-matching passwords
   - Cypress component tests for sign-in
     - Successfully tests whether it mounts the sign-in component 
@@ -52,3 +52,7 @@ Unit Tests for Backend
 Documentation for Backend API
 ---
 
+User Authentication Routes
+
+  - Integrated RegisterPostHandler() function which is a POST request. This function allows the backend team to create new users on TaskAru and stores their first name, last name, email address, and password in the database. The function uses an empty User struct and stores the user's information into the database after hashing the password and checking if the email exists in the database already.
+  - Integrated SignInPostHandler() function which is a POST request. This function allows the user to sign in to their account utlizing the information they registered with. When the user enters their email address and password the function checks whether they match and exist in the database. If the email address or password don't match, it will notify the user that either the email address or password is incorrect.
