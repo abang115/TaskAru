@@ -21,13 +21,17 @@ Unit(Cypress Component) Tests and Cypress E2E Tests for Frontend
 ---
 
   - Cypress e2e tests for sign-in
-    - Catches when a user tries to press the sign-in buttons if no fields are entered
-    - Successfully signs-in a user if their email and password are found in the database
-    - Successfully visits sign-up page when sign-up link is clicked  
+    - Catches when a user tries to press the sign-in button if no fields are entered
+    - Successfully tests whether it signs-in a user if their email and password are found in the database
+    - Successfully tests whether it visits sign-up page when sign-up link is clicked  
+  -Cypress e2e tests for sign-up
+    - Catches when a user tries to press the sign-up button if no fields are entered
+    - Successfully tests whether it registers a user if their email is not found in the database and 
+    - Catches when a user tries to register but have non-matching passwords
   - Cypress component tests for sign-in
-    - Successfully mounts the sign-in component 
+    - Successfully tests whether it mounts the sign-in component 
   - Cypress component tests for sign-up
-    - Successfully mounts the sign-up component
+    - Successfully tests whether it mounts the sign-up component
   - Cypress component tests for calendar
 
 Unit Tests for Backend
