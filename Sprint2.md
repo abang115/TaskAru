@@ -33,6 +33,10 @@ Unit (Cypress Component) Tests and Cypress E2E Tests for Frontend
   - Cypress component tests for sign-up
     - Successfully tests whether it mounts the sign-up component
   - Cypress component tests for calendar
+    - Successfully tests whether it mounts the calendar component
+    - Successfully tests opening the add event modal 
+    - Successfully tests filling out the event from, submitting, and creating a new event
+    - Successfully tests opening an existing event modal
 
 Unit Tests for Backend
 ---
