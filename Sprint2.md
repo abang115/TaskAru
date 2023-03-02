@@ -23,7 +23,7 @@ Back-End
   - Sign-in and Register handler functions were implmented to handle post requests to connect the front-end to the back-end
   - Utilized bcrypt to securely hash passwords and store them in the database
   - Created calendar and event structs to handle events users add to the calendar
-  - Stores event information into event objects, stores these objects and calendar information into calendar objects, and stores calendar objects with users
+  - Started storing event information into event objects, stores these objects and calendar information into calendar objects, and store calendar objects with users using nested structs
 
 Unit (Cypress Component) Tests and Cypress E2E Tests for Frontend
 ---
@@ -35,7 +35,7 @@ Unit (Cypress Component) Tests and Cypress E2E Tests for Frontend
   -Cypress e2e tests for sign-up
     - Catches when a user attempts to press the sign-up button if no fields are entered
     - Successfully tests whether it registers a user if their email is not found in the database
-    - Catches when a user tries to register but have non-matching passwords
+    - Catches when a user attempts to register, but have non-matching passwords
   - Cypress component tests for sign-in
     - Successfully tests whether it mounts the sign-in component 
   - Cypress component tests for sign-up
