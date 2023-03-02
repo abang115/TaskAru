@@ -23,7 +23,7 @@ func main() {
 	})
 
 	models.Init("taskarudb")
-	r.HandleFunc("/register", controllers.RegisterPostHandler).Methods("POST")
-	r.HandleFunc("/signin", controllers.SignInPostHandler).Methods("POST")
+	r.HandleFunc("/api/register", controllers.RegisterPostHandler).Methods("POST")
+	r.HandleFunc("/api/signin", controllers.SignInPostHandler).Methods("POST")
 	log.Fatal(http.ListenAndServe(":8080", handler.Handler(r)))
 }

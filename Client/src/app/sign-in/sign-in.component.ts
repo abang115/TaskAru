@@ -29,7 +29,7 @@ export class SignInComponent implements OnInit{
       }
       console.log(userSignIn)
       
-      this.http.post('http://localhost:8080/signin', userSignIn).subscribe({
+      this.http.post('http://localhost:8080/api/signin', userSignIn).subscribe({
         next: response => {
           console.log('Backend successfully reached: ', response)
           this.signInService.signIn()

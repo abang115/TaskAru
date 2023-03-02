@@ -54,7 +54,7 @@ export class SignUpComponent implements OnInit{
         }
         console.log(user);
         
-        this.http.post('http://localhost:8080/register', user).subscribe({
+        this.http.post('http://localhost:8080/api/register', user).subscribe({
             next: response => {
               console.log('Backend successfully reached: ', response)
               setTimeout(() => {
