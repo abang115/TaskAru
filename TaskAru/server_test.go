@@ -175,3 +175,32 @@ func TestSignInPostHandler3(t *testing.T) {
 	assert.Equal(t, http.MethodPost, req.Method, "HTTP request method error")
 	assert.Equal(t, http.StatusNotFound, rr.Code, "HTTP request status code error")
 }
+
+func TestEventPutHandler(t *testing.T) {
+	//deleteFromUsersTable()
+	rBody := []byte(`{"eventID": "1", "eventTitle": "Birthday", "eventDescription": "It's a my Birthday", "eventDate": "3/9", "startTime": "10:00 AM", "endTime": "11:00 AM"}`)
+
+	rr := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodPut, "/api/event", bytes.NewBuffer(rBody)) // once routing set up can change to /api/calendar???
+	testRouter.ServeHTTP(rr, req)
+
+	//var event models.Event
+	//result := models.DB.Where("eventID = ?", "1").First(&event)
+
+	// var user models.User
+	// result := models.DB.Where("email = ?", "janedoe@ufl.edu").First(&user)
+	// if result.Error != nil {
+	// 	t.Errorf("test failed! unable to get user %v", result.Error)
+	// }
+
+	//assert.Equal(t, "jane", user.FirstName, "incorrect first name error")
+	//assert.Equal(t, "doe", user.LastName, "incorrect last name error")
+	//assert.Equal(t, "janedoe@ufl.edu", user.Email, "incorrect email error")
+
+	assert.Equal(t, http.MethodPost, req.Method, "HTTP request method error")
+	assert.Equal(t, http.StatusOK, rr.Code, "HTTP request status code error")
+}
+
+// func TestEditEventPostHandler(t *testing.T) {
+// 	rBody := []byte(`{""}`)
+// }

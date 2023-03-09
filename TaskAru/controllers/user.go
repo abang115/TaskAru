@@ -69,3 +69,35 @@ func SignInPostHandler(w http.ResponseWriter, r *http.Request) {
 	message := map[string]string{"message": "successful login"}
 	json.NewEncoder(w).Encode(message)
 }
+
+func ForgotPasswordPutHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "*")
+	w.WriteHeader(http.StatusOK)
+
+	// gets the ID of the event that needs to be edited
+	// id := r.URL.Query().Get("id")
+
+	// // does it need to be newEvent?
+	// var updateUser models.User
+	// var users []models.Event
+
+	// searchErr := models.DB.Where("eventID = ?", updateUser.UserID).First(&users, id).Error
+
+	// if searchErr != nil {
+	// 	w.WriteHeader(http.StatusNotFound)
+	// 	errorMessage := map[string]string{"error": "could not find event"}
+	// 	json.NewEncoder(w).Encode(errorMessage)
+	// 	return
+	// }
+
+	// if err := models.DB.Where("eventID = ?", updateUser.UserID).Update(models.User{Password: updateUser.Password}).Error; err != nil {
+	// 	// check error message
+	// 	w.WriteHeader(http.StatusInternalServerError)
+	// 	errorMessage := map[string]string{"error": "could not update evnet"}
+	// 	json.NewEncoder(w).Encode(errorMessage)
+	// 	return
+	// }
+
+	// w.WriteHeader(http.StatusOK)
+	// json.NewEncoder(w).Encode(updateUser)
+}

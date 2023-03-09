@@ -25,5 +25,8 @@ func main() {
 	models.Init("taskarudb")
 	r.HandleFunc("/api/register", controllers.RegisterPostHandler).Methods("POST")
 	r.HandleFunc("/api/signin", controllers.SignInPostHandler).Methods("POST")
+	//r.HandleFunc("/api/forgotPass", controller.).Methods("PUT")
+	r.HandleFunc("/api/event", controllers.EventPostHandler).Methods("POST")
+	r.HandleFunc("/api/event", controllers.EditEventPutHandler).Methods("PUT")
 	log.Fatal(http.ListenAndServe(":8080", handler.Handler(r)))
 }
