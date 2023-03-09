@@ -1,11 +1,23 @@
 <mat-toolbar color = "primary">
-<span>TaskAru</span> &nbsp;&nbsp;
-<a mat-button routerLinkActive="active" routerLink="home">Home</a> &nbsp;&nbsp;
+    <span>TaskAru</span> &nbsp;&nbsp;
+    <a mat-button routerLinkActive="active" routerLink="/home">Home</a> &nbsp;&nbsp;
 
-<a mat-button routerLinkActive="active" routerLink="calendar">Calendar</a>&nbsp;&nbsp;
-<div class = "spacer"></div>
+    <a mat-button routerLinkActive="active" routerLink="/calendar">Calendar</a>&nbsp;&nbsp;
+    <div class = "spacer"></div>
 
-<a mat-button routerLinkActive="active" routerLink="signin">Sign In</a> &nbsp;&nbsp;
-<a mat-raised-button routerLinkActive="active" routerLink="signup">Sign Up</a>
+    <a mat-button data-cy="Sign In" routerLinkActive="active" routerLink="/signin" *ngIf="!signedIn">Sign In</a> &nbsp;&nbsp;
+    <a mat-raised-button data-cy="Sign Up" routerLinkActive="active" routerLink="/signup" *ngIf="!signedIn">Sign Up</a> &nbsp;&nbsp;
+    <mat-button-toggle-group>
+        <mat-button-toggle value="left">
+            <mat-icon>
+                panorama_fish_eye
+            </mat-icon>
+        </mat-button-toggle>
+        <mat-button-toggle value="right">
+            <mat-icon>
+                wb_sunny
+            </mat-icon>
+        </mat-button-toggle>
+    </mat-button-toggle-group>
 </mat-toolbar>
   

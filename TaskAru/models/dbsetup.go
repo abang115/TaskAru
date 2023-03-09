@@ -12,7 +12,7 @@ import (
 
 var DB *gorm.DB
 
-func Init() {
+func Init(dbname string) {
 	err := godotenv.Load(".env")
 
 	if err != nil {
@@ -22,7 +22,6 @@ func Init() {
 	host := os.Getenv("HOST")
 	user := os.Getenv("USER")
 	password := os.Getenv("PASSWORD")
-	dbname := os.Getenv("DBNAME")
 
 	var dsn = fmt.Sprintf("%s:%s@tcp(%s:3306)/%s?charset=utf8mb4", user, password, host, dbname)
 	database, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})

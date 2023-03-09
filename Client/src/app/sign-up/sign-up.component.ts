@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators, AbstractControl, ValidatorFn, FormBuilder } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router'
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 @Component({
   selector: 'app-sign-up',
@@ -9,7 +10,7 @@ import { HttpClient } from '@angular/common/http';
 })
 export class SignUpComponent implements OnInit{
 
-  constructor(private formBuilder: FormBuilder, public http: HttpClient) { }
+  constructor(private formBuilder: FormBuilder, public http: HttpClient, private router: Router) { }
 
   signupForm: FormGroup = this.formBuilder.group({
     first_name: new FormControl('', [Validators.required]),
@@ -48,11 +49,17 @@ export class SignUpComponent implements OnInit{
           email: this.signupForm.get('email')!.value, 
           password: this.signupForm.get('password')!.value
         }
+        const options = {
+          headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
+        }
         console.log(user);
         
         this.http.post('http://localhost:8080/register', user).subscribe({
             next: response => {
               console.log('Backend successfully reached: ', response)
+              setTimeout(() => {
+                this.router.navigate(['/signin']);
+              }, 2000);
             },
             error: err => {
               console.error('Error: ', err)

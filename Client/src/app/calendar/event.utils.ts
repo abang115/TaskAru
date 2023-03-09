@@ -38,6 +38,18 @@ export function toEventFormat(date:any, time:any){
   return modifiedDate;
 }
 
+export function parseToRRule(date:any, reoccuringType:any){
+  if(reoccuringType == 'once'){
+    return undefined;
+  }
+  let newRRule ={
+    freq: reoccuringType,
+    dtstart: date,
+    until: '2025-01-01' // Temp stopping point
+  }
+  return newRRule;
+}
+
 export function getRandomColor() {
   const letters = '0123456789ABCDEF';
   let color = '#';
