@@ -176,7 +176,7 @@ func TestSignInPostHandler3(t *testing.T) {
 	assert.Equal(t, http.StatusNotFound, rr.Code, "HTTP request status code error")
 }
 
-func TestEventPutHandler(t *testing.T) {
+func TestEventPostHandler(t *testing.T) {
 	//deleteFromUsersTable()
 	rBody := []byte(`{"eventID": "1", "eventTitle": "Birthday", "eventDescription": "It's a my Birthday", "eventDate": "3/9", "startTime": "10:00 AM", "endTime": "11:00 AM"}`)
 
@@ -201,6 +201,6 @@ func TestEventPutHandler(t *testing.T) {
 	assert.Equal(t, http.StatusOK, rr.Code, "HTTP request status code error")
 }
 
-// func TestEditEventPostHandler(t *testing.T) {
+// func TestEditEventPutHandler(t *testing.T) {
 // 	rBody := []byte(`{""}`)
 // }
