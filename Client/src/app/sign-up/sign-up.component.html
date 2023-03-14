@@ -1,5 +1,5 @@
-<div class="form-container">
-    <h1 style="color: white">Sign Up</h1>
+<div class="form-container" [class.alternative] = "darkMode">
+    <h1>Sign Up</h1>
     <form [formGroup]="signupForm" (ngSubmit)="register()">
         <div class="row">
             <div class="col">

@@ -3,6 +3,7 @@ import { FormControl, FormGroup, Validators, FormBuilder } from '@angular/forms'
 import { Router } from '@angular/router'
 import { HttpClient } from '@angular/common/http';
 import { SignInService } from '../sign-in.service';
+import { ThemeService } from '../theme.service';
 
 @Component({
   selector: 'app-sign-in',
@@ -11,14 +12,17 @@ import { SignInService } from '../sign-in.service';
 })
 
 export class SignInComponent implements OnInit{
-
-  constructor(private formBuilder: FormBuilder, public http: HttpClient, private router: Router, public signInService: SignInService) { }
+  darkMode: boolean = false
+  constructor(private formBuilder: FormBuilder, public http: HttpClient, private router: Router, public signInService: SignInService, private themeService: ThemeService) { }
   signinForm: FormGroup = this.formBuilder.group({
     email: new FormControl('', [Validators.required, Validators.email]),
     password: new FormControl('', [Validators.required]),
   });
 
   ngOnInit(): void {
+    this.themeService.darkMode$.subscribe((themeStatus: boolean) => {
+      this.darkMode = themeStatus
+    }); 
   }
 
   signIn() {

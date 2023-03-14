@@ -1,0 +1,61 @@
+@import "../node_modules/@angular/material/theming";
+@include mat-core();
+
+$my-primary: mat-palette($mat-purple, 800);
+$my-accent: mat-palette($mat-green, A400);
+$my-warn: mat-palette($mat-red, 400);
+
+$my-theme: mat-light-theme((
+    color: (
+        primary: $my-primary,
+        accent: $my-accent,
+        warn: $my-warn
+    ),
+));
+
+@include angular-material-theme($my-theme);
+
+.alternative{
+    $my-primary: mat-palette($mat-purple, 800);
+    $my-accent: mat-palette($mat-green, A400);
+    $my-warn: mat-palette($mat-red, 400);
+
+    $dark-theme: mat-dark-theme((
+        color: (
+            primary: $my-primary,
+            accent: $my-accent,
+            warn: $my-warn
+        ),
+    ));
+
+    @include angular-material-theme($dark-theme);
+}
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+body{
+    --bkg-color:#eee;
+    --text-color: #222;
+}
+
+body.dark-mode {
+    --bkg-color:#212121;
+    --text-color: #eee;
+}
+
+body {
+    background: var(--bkg-color)
+}
+
+h1,
+p, 
+a {
+    color: var(--text-color)
+}
+
+.mat-button {
+    text-decoration: none !important;
+}
+
+

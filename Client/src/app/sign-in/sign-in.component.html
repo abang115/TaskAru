@@ -1,5 +1,5 @@
-<div class="form-container">
-    <h1 style="color: white">Sign In</h1>
+<div class="form-container" [class.alternative] = "darkMode">
+    <h1>Sign In</h1>
     <form [formGroup]="signinForm" (ngSubmit)="signIn()">
         <div class="row">
             <mat-form-field>

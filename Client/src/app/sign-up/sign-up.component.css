@@ -1,12 +1,12 @@
 .form-container {
     display: block;
-    max-width: 520px;
+    max-width: 526px;
     margin-top: 32px;
     margin-bottom: auto;
     margin-right: auto;
     margin-left: auto;
-
-    background: #eceff134;
+    box-shadow: inset;
+    border: 3px solid rgba(163, 163, 163, 0.733);
     padding: 36px;
     border-radius: 16px;
 }

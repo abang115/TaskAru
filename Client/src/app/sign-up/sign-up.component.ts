@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators, AbstractControl, ValidatorFn, FormBuilder } from '@angular/forms';
 import { Router } from '@angular/router'
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { ThemeService } from '../theme.service';
 
 @Component({
   selector: 'app-sign-up',
@@ -9,8 +10,8 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
   styleUrls: ['./sign-up.component.css']
 })
 export class SignUpComponent implements OnInit{
-
-  constructor(private formBuilder: FormBuilder, public http: HttpClient, private router: Router) { }
+  darkMode: boolean = false
+  constructor(private formBuilder: FormBuilder, public http: HttpClient, private router: Router, private themeService: ThemeService) { }
 
   signupForm: FormGroup = this.formBuilder.group({
     first_name: new FormControl('', [Validators.required]),
@@ -21,6 +22,9 @@ export class SignUpComponent implements OnInit{
   }, {validators: [this.match('password', 'confirmPassword')]});;
 
   ngOnInit(): void {
+    this.themeService.darkMode$.subscribe((themeStatus: boolean) => {
+      this.darkMode = themeStatus
+    }); 
   }
 
   match(controlName: string, checkControlName: string): ValidatorFn {
