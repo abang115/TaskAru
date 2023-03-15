@@ -1,3 +1,4 @@
+@use '@angular/material' as mat;
 @import "../node_modules/@angular/material/theming";
 @include mat-core();
 
@@ -13,9 +14,9 @@ $my-theme: mat-light-theme((
     ),
 ));
 
-@include angular-material-theme($my-theme);
+@include mat.all-component-themes($my-theme);
 
-.alternative{
+.dark-mode{
     $my-primary: mat-palette($mat-purple, 800);
     $my-accent: mat-palette($mat-green, A400);
     $my-warn: mat-palette($mat-red, 400);
@@ -28,7 +29,7 @@ $my-theme: mat-light-theme((
         ),
     ));
 
-    @include angular-material-theme($dark-theme);
+    @include mat.all-component-colors($dark-theme);
 }
 
 html, body { height: 100%; }
@@ -50,7 +51,8 @@ body {
 
 h1,
 p, 
-a {
+a,
+.center {
     color: var(--text-color)
 }
 
