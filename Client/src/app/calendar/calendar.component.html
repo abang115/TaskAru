@@ -3,10 +3,7 @@
     <full-calendar #cal [options]="calendarOptions"></full-calendar>
   </div>
 </div>
-<head>
-  <link rel="stylesheet" type="text/css" href="./calendar.component.css">
-</head>
-<div #calendarContainer id="calendar"></div>
+
 <ng-template #template>
   <div class="modal-header">
     <h2 class="modal-title pull-left">{{selectedEvent?.title}} on {{selectedEvent?.start | date}} </h2>
