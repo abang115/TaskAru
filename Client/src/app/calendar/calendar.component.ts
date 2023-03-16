@@ -1,5 +1,5 @@
-import { Component, OnInit, AfterViewInit, ViewChild, } from "@angular/core";
-import { CalendarOptions, DateSelectArg, EventClickArg, EventApi, Calendar } from '@fullcalendar/core';
+import { Component, OnInit, AfterViewInit, ViewChild, ViewEncapsulation } from "@angular/core";
+import { EventApi,} from '@fullcalendar/core';
 import { INITIAL_EVENTS, createEventId, toEventFormat, parseToRRule, getRandomColor } from "./event.utils";
 import interactionPlugin from '@fullcalendar/interaction';
 import dayGridPlugin from '@fullcalendar/daygrid';
@@ -7,7 +7,7 @@ import timeGridPlugin from '@fullcalendar/timegrid';
 import listPlugin from '@fullcalendar/list';
 import rrulePlugin from '@fullcalendar/rrule';
 import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
-import { FormControl, FormGroup, Validators, FormGroupName, ReactiveFormsModule } from "@angular/forms";
+import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { FullCalendarComponent } from "@fullcalendar/angular";
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 
@@ -51,7 +51,7 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
       headerToolbar: {
         left: 'prev,next today myCustomButton',
         center: 'title',
-        right: 'dayGridMonth,timeGridWeek,timeGridDay,listMonth'
+        right: 'dayGridMonth,timeGridWeek,timeGridDay'
       },
       initialView: 'dayGridMonth',
       initialEvents: INITIAL_EVENTS, 
