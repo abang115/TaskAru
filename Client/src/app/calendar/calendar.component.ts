@@ -22,13 +22,14 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
   currentEvents: EventApi[] = [];
   selectedEvent: any;
   calendarOptions: any;
-  
+
   config ={
     animated: true
   };
 
   @ViewChild('eventModal') eventModal!: string;
-  @ViewChild('template') template!: string;
+  @ViewChild('showEvent') showEvent!: string;
+  @ViewChild('editEventModal') editEventModal!: string;
   @ViewChild('cal') fullCalendarComponent!:FullCalendarComponent; // Access the Calendar as an object
 
   constructor(private modalService: BsModalService, private http: HttpClient) {     }
@@ -62,7 +63,7 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
       dayMaxEvents: true,
       eventClick: this.handleDateClick.bind(this),
     };
-    }
+  }
 
   ngAfterViewInit(): void{
   }
@@ -70,22 +71,17 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
   handleDateClick(arg:any){
     console.log(arg);
     this.selectedEvent = arg.event;
-    this.modalRef = this.modalService.show(this.template, this.config);
+    this.modalRef = this.modalService.show(this.showEvent, this.config);
   }
 
   handleAddEventButtonClick(){
     this.modalRef = this.modalService.show(this.eventModal);
   }
 
-  removeEvent(){
-   this.selectedEvent.remove(); 
-   this.modalRef?.hide(); 
-  }
-
   addEvent(){
     let formVars = this.eventForm.value;
     console.log('add events clicked');
-    // console.log(formVars);
+    // Create new event struct using form vals
     let newEvent = {
       id: createEventId(),
       title: formVars.eventTitle || '',
@@ -96,12 +92,65 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
       backgroundColor: getRandomColor()
     }
     console.log(newEvent);
+    // Call fullcalendar api to add event
     this.fullCalendarComponent.getApi().addEvent(newEvent);
+    // Add event to backend
     this.eventAddToBackend(newEvent);
+    // Reset form with default values
     this.eventForm.reset();
     this.eventForm.get('reoccuring')?.setValue('once');
+    // Hide Modal upon exit
     this.modalRef?.hide();  
   }
+
+  editEventButton(){
+    this.modalRef?.hide();
+    var eventObj = this.selectedEvent.toPlainObject();
+    console.log(eventObj);
+    // Fetch previous event data
+    this.eventForm.get('id')?.setValue(eventObj.id);
+    this.eventForm.get('eventTitle')?.setValue(eventObj.title);
+    this.eventForm.get('eventDate')?.setValue(eventObj.start);
+    this.eventForm.get('eventDescription')?.setValue(eventObj.description);
+    this.eventForm.get('color')?.setValue(eventObj.backgroundColor);
+    // Give time for previous modal to fully close
+    setTimeout(() => {
+      this.modalRef = this.modalService.show(this.editEventModal, this.config);
+    }, 150);
+  }
+
+  editedEventSubmission(){
+    let formVars = this.eventForm.value;
+    // Fetch old event
+    let oldEvent = this.fullCalendarComponent.getApi().getEventById(formVars.id||'');
+    console.log(oldEvent);
+    // create a new edited event
+    let editedEvent = {
+      id: formVars.id || '',
+      title: formVars.eventTitle || '',
+      description: formVars.eventDescription || '',
+      start: toEventFormat(formVars.eventDate, formVars.startTime) || '',
+      end: toEventFormat(formVars.eventDate, formVars.endTime) || '',
+      rrule: parseToRRule(formVars.eventDate, formVars.reoccuring),
+      backgroundColor: formVars.color || '',
+    }
+    console.log(editedEvent);
+    // Remove old event
+    oldEvent?.remove();
+    // Add back the updated event
+    this.fullCalendarComponent.getApi().addEvent(editedEvent);
+    this.eventEditToBackend(editedEvent);
+    // Reset form
+    this.eventForm.reset();
+    this.eventForm.get('reoccuring')?.setValue('once');
+    this.modalRef?.hide();
+  }
+
+  removeEvent(){
+    this.eventRemoveToBackend(this.selectedEvent.toPlainObject());
+    this.selectedEvent.remove(); 
+    this.modalRef?.hide(); 
+   }
 
   eventAddToBackend(newEvent:any){
     this.http.post('http://localhost:8080/api/event',newEvent).subscribe({
@@ -114,13 +163,31 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
     });
   }
 
+  eventRemoveToBackend(existingEvent:any){
+    //Todo
+  }
+
+  eventEditToBackend(editedEvent:any){
+    this.http.put('http://localhost:8080/api/event',editedEvent).subscribe({
+      next: response => {
+        console.log('Backend successfully reached: ', response)
+      },
+      error: err => {
+        console.error('Error: ', err)
+      }
+    });
+  }
+
+  // Event form variables, with required fields
   eventForm = new FormGroup({
+    id: new FormControl(''),
     eventTitle: new FormControl('', [Validators.required]),
     eventDate: new FormControl('', [Validators.required]),
     eventDescription: new FormControl(''),
     startTime: new FormControl(''),
     endTime: new FormControl(''),
     reoccuring: new FormControl('once'),
+    color: new FormControl(''),
   })
 }
 

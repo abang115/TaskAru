@@ -4,7 +4,7 @@
   </div>
 </div>
 
-<ng-template #template>
+<ng-template #showEvent>
   <div class="modal-header">
     <h2 class="modal-title pull-left">{{selectedEvent?.title}} on {{selectedEvent?.start | date}} </h2>
     <button type="button" class="btn-close close pull-right" aria-label="Close" (click)="modalRef?.hide()">
@@ -15,7 +15,8 @@
     <h4>{{selectedEvent?.extendedProps?.description}}</h4>
   </div>
   <div class="modal-footer">
-    <button type="submit" class="btn btn-primary" (click)="removeEvent()">Remove Event</button>
+    <button type="submit" class="btn btn-primary" (click)="editEventButton()" >Edit Event</button>
+    <button type="submit" class="btn btn-danger" (click)="removeEvent()" background-color="red">Remove Event</button>
   </div>
 </ng-template>
 
@@ -80,3 +81,66 @@
         <button id="event-button-submit" type="submit" class="btn btn-primary" (click)="addEvent()">Add Event</button>
       </div>
     </ng-template>
+
+    <ng-template #editEventModal>
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">Edit Event</h4>
+        <button type="button" class="btn-close close pull-right" aria-label="Close" (click)="modalRef?.hide()">
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <form [formGroup]="eventForm">
+            <div class="form-group">
+              <label>Title:</label>
+              <input id="event-title" type="text" formControlName="eventTitle" class="form-control" [ngClass]="{'is-invalid': eventForm.get('eventTitle')!.invalid && eventForm.get('eventTitle')!.touched}">
+              <div class="error-message" style="color:red" *ngIf="eventForm.get('eventTitle')!.invalid && eventForm.get('eventTitle')!.touched">
+                Please enter a name.
+              </div>
+            </div>
+            <div class="form-group">
+                <label>Date:</label>
+                <input id="event-date" type="date" formControlName="eventDate" class="form-control" [ngClass]="{'is-invalid': eventForm.get('eventDate')!.invalid && eventForm.get('eventDate')!.touched}">
+                <div class="error-message" style="color:red" *ngIf="eventForm.get('eventDate')!.invalid && eventForm.get('eventDate')!.touched">
+                  Please enter or select a date.
+                </div>
+            </div>  
+            <div class="row">
+              <div class="col">
+                <div class="form-group">
+                  <label>From:</label>
+                  <input id="event-start-time" type="time" formControlName="startTime" class="form-control">
+                </div>
+              </div>
+              <div class="col">
+                <div class="form-group">
+                  <label>To:</label>
+                  <input id="event-end-time" type="time" formControlName="endTime" class="form-control">
+                </div>
+              </div>
+            <div class="col">
+              <div class="form-group">
+                <label>Frequency:</label>
+                <select id="event-reoccuring" formControlName="reoccuring" class="custom-select">
+                  <option value="once"selected>Once</option>
+                  <option value="daily">Daily</option>
+                  <option value="weekly">Weekly</option>
+                  <option value="monthly">Monthly</option>
+                  <option value="yearly">Yearly</option>
+                </select>
+              </div>
+            </div>
+          </div>
+            <div class="form-group">
+                <label>Event Description</label>
+                <textarea id="event-description" rows="2" formControlName="eventDescription" class="form-control"></textarea>
+            </div>
+          </form>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button id="event-button-submit" type="submit" class="btn btn-primary" (click)="editedEventSubmission()">Save Event</button>
+      </div>
+    </ng-template>
+
