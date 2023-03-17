@@ -24,6 +24,7 @@ import {MatIcon, MatIconModule} from '@angular/material/icon';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { RouterModule } from '@angular/router';
 import { ResetPasswordComponent } from './reset-password/reset-password.component';
+import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
 
 @NgModule({
   declarations: [
@@ -34,6 +35,7 @@ import { ResetPasswordComponent } from './reset-password/reset-password.componen
     HomeComponent,
     CalendarComponent,
     ResetPasswordComponent,
+    ForgotPasswordComponent,
   ],
   imports: [
     HttpClientModule,
