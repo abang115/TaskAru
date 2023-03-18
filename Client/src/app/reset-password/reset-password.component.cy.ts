@@ -9,7 +9,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
-describe('SignUpComponent', () => {
+describe('ResetPasswordComponent', () => {
     it('should mount', () => {
       cy.mount(ResetPasswordComponent, {
         imports: [
