@@ -24,4 +24,12 @@ describe('signin', () => {
         cy.get('[data-cy="Go SignUp"]').click();
         cy.url().should('include', 'signup');
     })
+
+    it('Should go to forgot password page when forgot password link is clicked', () => {
+        cy.visit('/')
+        cy.get('[data-cy="Sign In"]').click();
+        cy.url().should('includes', 'signin');
+        cy.get('[data-cy="Forgot Password"]').click();
+        cy.url().should('include', 'forgotpassword');
+    })
 })
