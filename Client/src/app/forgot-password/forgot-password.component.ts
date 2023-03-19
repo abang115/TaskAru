@@ -13,7 +13,7 @@ export class ForgotPasswordComponent {
   darkMode: boolean = false
   constructor(private formBuilder: FormBuilder, public http: HttpClient, private router: Router, private themeService: ThemeService) { }
 
-  forgetForm: FormGroup = this.formBuilder.group({
+  forgotForm: FormGroup = this.formBuilder.group({
     email: new FormControl('', [Validators.required, Validators.email]),
   });
 
@@ -22,4 +22,25 @@ export class ForgotPasswordComponent {
       this.darkMode = themeStatus
     }); 
   }
+
+  forgot(){
+    if(!this.forgotForm.invalid) {
+        const user = {
+          email: this.forgotForm.get('email')!.value, 
+        }
+        const options = {
+          headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
+        }
+        console.log(user);
+        
+        this.http.post('http://localhost:8080/api/forgotpassword', user).subscribe({
+            next: response => {
+              console.log('Backend successfully reached: ', response)
+            },
+            error: err => {
+              console.error('Error: ', err)
+            }
+          });
+      }
+    }
 }

@@ -9,7 +9,7 @@ import { ThemeService } from '../theme.service';
   templateUrl: './sign-up.component.html',
   styleUrls: ['./sign-up.component.css']
 })
-export class SignUpComponent implements OnInit{
+export class SignUpComponent implements OnInit {
   darkMode: boolean = false
   constructor(private formBuilder: FormBuilder, public http: HttpClient, private router: Router, private themeService: ThemeService) { }
 
@@ -45,7 +45,7 @@ export class SignUpComponent implements OnInit{
     }
   }
 
-  register(){
+  register() {
     if(!this.signupForm.invalid) {
         const user = {
           first_name: this.signupForm.get('first_name')!.value, 

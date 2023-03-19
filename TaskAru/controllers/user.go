@@ -101,3 +101,24 @@ func ForgotPasswordPutHandler(w http.ResponseWriter, r *http.Request) {
 	// w.WriteHeader(http.StatusOK)
 	// json.NewEncoder(w).Encode(updateUser)
 }
+
+func ForgotPasswordPostHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "*")
+
+	var forgot models.ForgotPassword
+	var user models.User
+
+	_ = json.NewDecoder(r.Body).Decode(&forgot)
+
+	searchErr := models.DB.Where("email = ?", forgot.Email).First(&user).Error
+
+	if searchErr != nil {
+		w.WriteHeader(http.StatusNotFound)
+		errorMessage := map[string]string{"error": "could not find email"}
+		json.NewEncoder(w).Encode(errorMessage)
+		return
+	}
+	w.WriteHeader(http.StatusOK)
+	message := map[string]string{"message": "email found"}
+	json.NewEncoder(w).Encode(message)
+}

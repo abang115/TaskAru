@@ -12,3 +12,7 @@ type UserSignIn struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
 }
+
+type ForgotPassword struct {
+	Email string `json:"email"`
+}
