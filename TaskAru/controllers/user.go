@@ -4,8 +4,12 @@ import (
 	"TaskAru/models"
 	"encoding/json"
 	"errors"
+	"log"
 	"net/http"
+	"os"
 
+	"github.com/go-mail/mail"
+	"github.com/joho/godotenv"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -121,4 +125,30 @@ func ForgotPasswordPostHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	message := map[string]string{"message": "email found"}
 	json.NewEncoder(w).Encode(message)
+	SendEmail(forgot.Email)
+}
+
+func SendEmail(to string) {
+	err := godotenv.Load(".env")
+
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
+	from := os.Getenv("EMAIL_FROM")
+	host := os.Getenv("SMTP_HOST")
+	user := os.Getenv("SMTP_USER")
+	password := os.Getenv("SMTP_PASS")
+
+	m := mail.NewMessage()
+	m.SetHeader("From", from)
+	m.SetHeader("To", to)
+	m.SetHeader("Subject", "Reset Password")
+	m.SetBody("text/html", "<a href=\"localhost:4200/resetpassword\">Click here</a> to reset your password!")
+
+	d := mail.NewDialer(host, 587, user, password)
+
+	if err := d.DialAndSend(m); err != nil {
+		log.Fatal("Could not send email: ", err)
+	}
 }
