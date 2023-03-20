@@ -31,7 +31,7 @@ func Init(dbname string) {
 	}
 	log.Println("Connected to DB")
 
-	err = database.AutoMigrate(&User{})
+	err = database.AutoMigrate(&User{}, &Event{})
 	if err != nil {
 		return
 	}
