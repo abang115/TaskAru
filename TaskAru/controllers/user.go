@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"log"
+	"math/rand"
 	"net/http"
 	"os"
 
@@ -74,7 +75,7 @@ func SignInPostHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(message)
 }
 
-func ForgotPasswordPutHandler(w http.ResponseWriter, r *http.Request) {
+func EvenPostHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "*")
 	w.WriteHeader(http.StatusOK)
 
@@ -114,6 +115,8 @@ func ForgotPasswordPostHandler(w http.ResponseWriter, r *http.Request) {
 
 	_ = json.NewDecoder(r.Body).Decode(&forgot)
 
+	forgot.Token = RandomString(12)
+
 	searchErr := models.DB.Where("email = ?", forgot.Email).First(&user).Error
 
 	if searchErr != nil {
@@ -122,13 +125,14 @@ func ForgotPasswordPostHandler(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(errorMessage)
 		return
 	}
+
+	models.DB.Create(&forgot)
 	w.WriteHeader(http.StatusOK)
-	message := map[string]string{"message": "email found"}
-	json.NewEncoder(w).Encode(message)
-	SendEmail(forgot.Email)
+	json.NewEncoder(w).Encode(forgot)
+	SendEmail(forgot.Email, forgot.Token)
 }
 
-func SendEmail(to string) {
+func SendEmail(to string, token string) {
 	err := godotenv.Load(".env")
 
 	if err != nil {
@@ -144,11 +148,53 @@ func SendEmail(to string) {
 	m.SetHeader("From", from)
 	m.SetHeader("To", to)
 	m.SetHeader("Subject", "Reset Password")
-	m.SetBody("text/html", "<a href=\"localhost:4200/resetpassword\">Click here</a> to reset your password!")
+	m.SetBody("text/html", "<a href=\"localhost:4200/resetpassword/"+token+"\">Click here</a> to reset your password!")
 
 	d := mail.NewDialer(host, 587, user, password)
 
 	if err := d.DialAndSend(m); err != nil {
 		log.Fatal("Could not send email: ", err)
 	}
+}
+
+func RandomString(n int) string {
+	var letters = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
+
+	b := make([]rune, n)
+	for i := range b {
+		b[i] = letters[rand.Intn(len(letters))]
+	}
+	return string(b)
+}
+
+func ResetPasswordPatchHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "*")
+
+	var reset models.ResetPassword
+	var forgot models.ForgotPassword
+	var updatedUser models.User
+
+	_ = json.NewDecoder(r.Body).Decode(&reset)
+
+	searchErr := models.DB.Where("token = ?", reset.Token).Last(&forgot).Error
+
+	if searchErr != nil {
+		w.WriteHeader(http.StatusNotFound)
+		errorMessage := map[string]string{"error": "could not find token"}
+		json.NewEncoder(w).Encode(errorMessage)
+		return
+	}
+
+	password, err := bcrypt.GenerateFromPassword([]byte(reset.Password), bcrypt.DefaultCost)
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		errorMessage := map[string]string{"error": "could not hash password"}
+		json.NewEncoder(w).Encode(errorMessage)
+		return
+	}
+
+	models.DB.Model(&updatedUser).Where("email = ?", forgot.Email).Update("password", password)
+	w.WriteHeader(http.StatusOK)
+	message := map[string]string{"message": "successful reset password"}
+	json.NewEncoder(w).Encode(message)
 }

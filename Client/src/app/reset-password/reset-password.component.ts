@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators, AbstractControl, ValidatorFn, FormBuilder } from '@angular/forms';
-import { Router } from '@angular/router'
+import { Router, ActivatedRoute } from '@angular/router'
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { ThemeService } from '../theme.service';
 
@@ -11,7 +11,7 @@ import { ThemeService } from '../theme.service';
 })
 export class ResetPasswordComponent {
   darkMode: boolean = false
-  constructor(private formBuilder: FormBuilder, public http: HttpClient, private router: Router, private themeService: ThemeService) { }
+  constructor(private formBuilder: FormBuilder, public http: HttpClient, private router: Router, private themeService: ThemeService, private route: ActivatedRoute) { }
 
   resetForm: FormGroup = this.formBuilder.group({
     password: new FormControl('', [Validators.required]),
@@ -41,4 +41,26 @@ export class ResetPasswordComponent {
       }
     }
   }
+
+  reset(){
+    if(!this.resetForm.invalid) {
+        const user = {
+          password: this.resetForm.get('password')!.value, 
+          token: this.route.snapshot.params['token']
+        }
+        const options = {
+          headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
+        }
+        console.log(user);
+        
+        this.http.patch('http://localhost:8080/api/resetpassword', user).subscribe({
+            next: response => {
+              console.log('Backend successfully reached: ', response)
+            },
+            error: err => {
+              console.error('Error: ', err)
+            }
+          });
+      }
+    }
 }

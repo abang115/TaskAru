@@ -15,4 +15,10 @@ type UserSignIn struct {
 
 type ForgotPassword struct {
 	Email string `json:"email"`
+	Token string `json:"token" gorm:"unique"`
+}
+
+type ResetPassword struct {
+	Password string `json:"password"`
+	Token    string `json:"token" gorm:"unique"`
 }
