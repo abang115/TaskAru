@@ -29,6 +29,6 @@ func main() {
 	r.HandleFunc("/api/resetpassword", controllers.ResetPasswordPatchHandler).Methods("PATCH")
 	//r.HandleFunc("/api/forgotPass", controller.).Methods("PUT")
 	r.HandleFunc("/api/event", controllers.EventPostHandler).Methods("POST")
-	r.HandleFunc("/api/event", controllers.EditEventPutHandler).Methods("PUT")
+	r.HandleFunc("/api/event", controllers.EditEventPatchHandler).Methods("PATCH")
 	log.Fatal(http.ListenAndServe(":8080", handler.Handler(r)))
 }

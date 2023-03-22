@@ -17,7 +17,7 @@ func EventPostHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(newEvent)
 }
 
-func EditEventPutHandler(w http.ResponseWriter, r *http.Request) {
+func EditEventPatchHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "*")
 	w.WriteHeader(http.StatusOK)
 
@@ -37,7 +37,7 @@ func EditEventPutHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := models.DB.Where("eventID = ?", updateEvent.EventID).Updates(models.Event{EventTitle: updateEvent.EventTitle, Description: updateEvent.Description, EventDate: updateEvent.EventDate, StartTime: updateEvent.StartTime, EndTime: updateEvent.EndTime}).Error; err != nil {
+	if err := models.DB.Where("eventID = ?", updateEvent.EventID).Updates(models.Event{EventTitle: updateEvent.EventTitle, Description: updateEvent.Description, EventDate: updateEvent.EventDate, StartTime: updateEvent.StartTime, EndTime: updateEvent.EndTime, Freq: updateEvent.Freq, DTStart: updateEvent.DTStart, Until: updateEvent.Until}).Error; err != nil {
 		// check error message
 		w.WriteHeader(http.StatusInternalServerError)
 		errorMessage := map[string]string{"error": "could not update evnet"}
@@ -48,3 +48,11 @@ func EditEventPutHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(updateEvent)
 }
+
+// func RemoveEventDeleteHandler(w http.ResponseWriter, r *http.Request) {
+
+// }
+
+// func ReceiveEventGetHandler(w http.ResponseWriter, r *http.Request) {
+
+// }

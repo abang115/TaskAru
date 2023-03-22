@@ -5,7 +5,7 @@ type User struct {
 	LastName  string `json:"last_name"`
 	Email     string `json:"email"`
 	Password  string `json:"password"`
-	details   Calendar
+	//details   Calendar
 }
 
 type UserSignIn struct {

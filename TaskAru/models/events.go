@@ -4,11 +4,11 @@ package models
 // 	"image/color"
 // )
 
-type RRule struct {
-	Freq    string `json:"freq"`
-	DTStart string `json:"dtstart"`
-	Until   string `json:"until"`
-}
+// type RRule struct {
+// 	Freq    string `json:"freq"`
+// 	DTStart string `json:"dtstart"`
+// 	Until   string `json:"until"`
+// }
 
 type Event struct {
 	Email       string `json:"email"`
