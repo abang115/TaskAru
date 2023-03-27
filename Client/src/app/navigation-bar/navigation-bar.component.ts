@@ -1,6 +1,6 @@
 import { Component, OnInit} from '@angular/core';
 import { SignInService } from '../sign-in.service';
-import { Observable } from 'rxjs';
+import { Router } from '@angular/router'
 import { ThemeService } from '../theme.service';
 
 @Component({
@@ -11,7 +11,7 @@ import { ThemeService } from '../theme.service';
 export class NavigationBarComponent {
   signedIn: boolean = false;
   darkMode: boolean = false;
-  constructor(private signInService:SignInService, private themeService:ThemeService) {}
+  constructor(private signInService:SignInService, private themeService:ThemeService, private router:Router) {}
 
   ngOnInit(): void {
     this.signInService.isSignedIn$.subscribe((signInStatus: boolean) => {
@@ -21,6 +21,13 @@ export class NavigationBarComponent {
       }, 2000)
     }); 
 
+  }
+
+  signOut() {
+    setTimeout(() => {
+      this.signInService.signOut()
+      this.router.navigate(['/signin']);
+    }, 2000)
   }
 
   toggleMode() {
