@@ -12,4 +12,6 @@ type Event struct {
 	DTStart         string `json:"dtstart"`
 	Until           string `json:"until"`
 	BackgroundColor string `json:"backgroundColor"`
+
+	//ShareAbility	string `json:"sharedWith"`
 }
