@@ -24,8 +24,8 @@ export class NavigationBarComponent {
   }
 
   signOut() {
+    this.signInService.signOut()
     setTimeout(() => {
-      this.signInService.signOut()
       this.router.navigate(['/signin']);
     }, 2000)
   }
