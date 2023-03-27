@@ -176,6 +176,17 @@ func TestSignInPostHandler3(t *testing.T) {
 	assert.Equal(t, http.StatusNotFound, rr.Code, "HTTP request status code error")
 }
 
+// UNFINISHED
+func TestForgotPasswordPostHandler(t *testing.T) {
+
+}
+
+// UNFINISHED
+func ResetPasswordPatchHandler(t *testing.T) {
+
+}
+
+// UNFINISHED
 func TestEventPostHandler(t *testing.T) {
 	//deleteFromUsersTable()
 	rBody := []byte(`{"eventID": "1", "eventTitle": "Birthday", "eventDescription": "It's a my Birthday", "eventDate": "3/9", "startTime": "10:00 AM", "endTime": "11:00 AM"}`)
@@ -201,6 +212,17 @@ func TestEventPostHandler(t *testing.T) {
 	assert.Equal(t, http.StatusOK, rr.Code, "HTTP request status code error")
 }
 
+// UNFINISHED
 // func TestEditEventPutHandler(t *testing.T) {
 // 	rBody := []byte(`{""}`)
 // }
+
+// UNFINISHED
+func RemoveEventDeleteHandler(t *testing.T) {
+
+}
+
+// UNFINISHED
+func ReceiveEventGetHandler(t *testing.T) {
+
+}
