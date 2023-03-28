@@ -50,6 +50,26 @@ export function parseToRRule(date:any, reoccuringType:any){
   return newRRule;
 }
 
+export function parseBackendForm(existingEvent:any){
+  let parsedRRule = {
+    freq: existingEvent.freq,
+    dtstart: existingEvent.dtstart,
+    until: existingEvent.until,
+  }
+
+  let parsedEvent = {
+    groupid: '0',
+    id: existingEvent.id || '',
+    title: existingEvent.eventTitle || '',
+    description: existingEvent.eventDescription || '',
+    start: existingEvent.start || '',
+    end: existingEvent.end || '',
+    rrule: parsedRRule,
+    backgroundColor: existingEvent.backgroundColor || '',
+  }
+  return parsedEvent
+}
+
 export function getRandomColor() {
   const letters = '0123456789ABCDEF';
   let color = '#';

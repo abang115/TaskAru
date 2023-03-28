@@ -1,6 +1,6 @@
 import { Component, OnInit, AfterViewInit, ViewChild, ViewEncapsulation } from "@angular/core";
-import { EventApi,} from '@fullcalendar/core';
-import { INITIAL_EVENTS, createEventId, toEventFormat, parseToRRule, getRandomColor } from "./event.utils";
+import { EventApi, } from '@fullcalendar/core';
+import { INITIAL_EVENTS, createEventId, toEventFormat, parseToRRule, getRandomColor, parseBackendForm } from "./event.utils";
 import interactionPlugin from '@fullcalendar/interaction';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
@@ -95,7 +95,7 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
     // Call fullcalendar api to add event
     this.fullCalendarComponent.getApi().addEvent(newEvent);
     // Add event to backend
-    this.eventAddToBackend(newEvent);
+    this.eventAddToBackend(newEvent, formVars.eventDate || '', formVars.startTime || '', formVars.endTime || '');
     // Reset form with default values
     this.eventForm.reset();
     this.eventForm.get('reoccuring')?.setValue('once');
@@ -126,6 +126,7 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
     console.log(oldEvent);
     // create a new edited event
     let editedEvent = {
+      // groupid: '0',
       id: formVars.id || '',
       title: formVars.eventTitle || '',
       description: formVars.eventDescription || '',
@@ -152,10 +153,40 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
     this.modalRef?.hide(); 
    }
 
-  eventAddToBackend(newEvent:any){
-    this.http.post('http://localhost:8080/api/event',newEvent).subscribe({
+  eventAddToBackend(newEvent:any, EDate:string, startT:string, endT:string){
+    let f
+    let u
+    let d
+    if(newEvent.rrule == undefined){
+      f = ''
+      u = ''
+      d = ''
+    }
+    else{
+      f = newEvent.rrule.freq
+      u = newEvent.rrule.until
+      d = newEvent.rrule.dtstart
+    }
+
+    const backendForm = {
+      email: 'aaa@gamil.com', //TODO ADD EMAIL WHEN LOGGED IN 
+      // groupid: newEvent.groupid,
+      eventID: newEvent.id,
+      eventTitle: newEvent.title,
+      eventDescription: newEvent.description,
+      eventDate: EDate, 
+      startTime: startT,
+      endTime: endT,
+      freq: f,
+      until: u,
+      dtstart: d,
+      backgroundColor: newEvent.backgroundColor,
+    }
+    console.log(backendForm)  
+    this.http.post('http://localhost:8080/api/event',backendForm).subscribe({
       next: response => {
         console.log('Backend successfully reached: ', response)
+        console.log('Event successfully added ')
       },
       error: err => {
         console.error('Error: ', err)
@@ -178,6 +209,14 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
     });
   }
 
+  fetchEvents(){
+    // TODO GET FUNCTION RETURN EVENTS
+    
+    // PARSE EVENTS TO FORMAT, CALL parseBackendForm  FUNCTION
+    
+    // PUT THEM ON THE CALENDAR AND REFRESH
+  }
+
   // Event form variables, with required fields
   eventForm = new FormGroup({
     id: new FormControl(''),
@@ -190,4 +229,3 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
     color: new FormControl(''),
   })
 }
-
