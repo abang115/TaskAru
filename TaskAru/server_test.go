@@ -182,7 +182,7 @@ func TestForgotPasswordPostHandler(t *testing.T) {
 }
 
 // UNFINISHED
-func ResetPasswordPatchHandler(t *testing.T) {
+func TestResetPasswordPatchHandler(t *testing.T) {
 
 }
 
@@ -213,16 +213,16 @@ func TestEventPostHandler(t *testing.T) {
 }
 
 // UNFINISHED
-// func TestEditEventPutHandler(t *testing.T) {
-// 	rBody := []byte(`{""}`)
-// }
+func TestEditEventPatchHandler(t *testing.T) {
+	//rBody := []byte(`{""}`)
+}
 
 // UNFINISHED
-func RemoveEventDeleteHandler(t *testing.T) {
+func TestRemoveEventDeleteHandler(t *testing.T) {
 
 }
 
 // UNFINISHED
-func ReceiveEventGetHandler(t *testing.T) {
+func TestReceiveEventGetHandler(t *testing.T) {
 
 }

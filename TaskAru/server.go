@@ -27,8 +27,9 @@ func main() {
 	r.HandleFunc("/api/signin", controllers.SignInPostHandler).Methods("POST")
 	r.HandleFunc("/api/forgotpassword", controllers.ForgotPasswordPostHandler).Methods("POST")
 	r.HandleFunc("/api/resetpassword", controllers.ResetPasswordPatchHandler).Methods("PATCH")
-	//r.HandleFunc("/api/forgotPass", controller.).Methods("PUT")
 	r.HandleFunc("/api/event", controllers.EventPostHandler).Methods("POST")
 	r.HandleFunc("/api/event", controllers.EditEventPatchHandler).Methods("PATCH")
+	r.HandleFunc("/api/event", controllers.RemoveEventDeleteHandler).Methods("DELETE")
+	r.HandleFunc("/api/event", controllers.ReceiveEventGetHandler).Methods("GET")
 	log.Fatal(http.ListenAndServe(":8080", handler.Handler(r)))
 }
