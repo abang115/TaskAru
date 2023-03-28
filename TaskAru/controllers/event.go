@@ -23,7 +23,6 @@ func EditEventPatchHandler(w http.ResponseWriter, r *http.Request) {
 	// gets the ID of the event that needs to be edited
 	id := r.URL.Query().Get("id")
 
-	// does it need to be newEvent?
 	var updateEvent models.Event
 	var events []models.Event
 
@@ -56,7 +55,6 @@ func RemoveEventDeleteHandler(w http.ResponseWriter, r *http.Request) {
 	// gets the ID of the event that needs to be deleted
 	id := r.URL.Query().Get("id")
 
-	// does it need to be newEvent?
 	var deleteEvent models.Event
 	var events []models.Event
 
