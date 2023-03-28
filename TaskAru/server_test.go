@@ -20,13 +20,8 @@ import (
 
 var testRouter = mux.NewRouter()
 
-func deleteFromTable(string table) {
-	if(table == "users") {
-		models.DB.Exec("delete from users")
-	}
-	elseif(table == "events") {
-		models.DB.Exec("delete from events")
-	}
+func deleteFromTable(table string) {
+	models.DB.Exec("delete from " + table)
 }
 
 func TestMain(m *testing.M) {
@@ -46,7 +41,7 @@ func TestMain(m *testing.M) {
 
 // test to register successfully with email and password
 func TestRegisterPostHandler(t *testing.T) {
-	deleteFromTable(users)
+	deleteFromTable("users")
 	rBody := []byte(`{"first_name": "jane", "last_name": "doe", "email": "janedoe@ufl.edu", "password": "janedoe"}`)
 
 	rr := httptest.NewRecorder()
@@ -74,7 +69,7 @@ func TestRegisterPostHandler(t *testing.T) {
 
 // test to register with duplicate email
 func Test2RegisterPostHandler(t *testing.T) {
-	deleteFromTable(users)
+	deleteFromTable("users")
 
 	rBody := []byte(`{"first_name": "jane", "last_name": "doe", "email": "janedoe@ufl.edu", "password": "janedoe"}`)
 	rr := httptest.NewRecorder()
@@ -203,9 +198,10 @@ func TestResetPasswordPatchHandler(t *testing.T) {
 
 // UNFINISHED
 func TestEventPostHandler(t *testing.T) {
-	deleteFromTable(events)
+	deleteFromTable("events")
 
-	rBody := []byte(`{"email": "janedoe@ufl.edu", "eventID": "1", "eventTitle": "Birthday", "eventDescription": "It's a my Birthday", "eventDate": "2023-03-09", "startTime": "10:00", "endTime": "11:00", "freq": "daily", "dtStart": "2023-03-09", "until": "2024-03-09", "backgroundColor": "#08B417"}`)
+	rBody := []byte(`{"email": "janedoe@ufl.edu", "eventID": "1", "eventTitle": "Birthday", "eventDescription": "It's a my Birthday", "eventDate": "2023-03-09", 
+	"startTime": "10:00", "endTime": "11:00", "freq": "daily", "dtStart": "2023-03-09", "until": "2024-03-09", "backgroundColor": "#08B417"}`)
 
 	rr := httptest.NewRecorder()
 	req := httptest.NewRequest(http.MethodPut, "/api/event", bytes.NewBuffer(rBody))
@@ -234,7 +230,8 @@ func TestEventPostHandler(t *testing.T) {
 }
 
 func TestEditEventPatchHandler(t *testing.T) {
-	rBody := []byte(`{"email": "janedoe@ufl.edu", "eventID": "1", "eventTitle": "Holiday", "eventDescription": "It's a Holiday", "eventDate": "2023-04-09", "startTime": "11:00", "endTime": "12:00", "freq": "weekly", "dtStart": "2023-04-09", "until": "2024-04-09", "backgroundColor": "#08B419"}`)
+	rBody := []byte(`{"email": "janedoe@ufl.edu", "eventID": "1", "eventTitle": "Holiday", "eventDescription": "It's a Holiday", "eventDate": "2023-04-09", 
+	"startTime": "11:00", "endTime": "12:00", "freq": "weekly", "dtStart": "2023-04-09", "until": "2024-04-09", "backgroundColor": "#08B419"}`)
 
 	rr := httptest.NewRecorder()
 	req := httptest.NewRequest(http.MethodPatch, "/api/event", bytes.NewBuffer(rBody))
@@ -263,6 +260,9 @@ func TestEditEventPatchHandler(t *testing.T) {
 }
 
 func TestRemoveEventDeleteHandler(t *testing.T) {
+	rBody := []byte(`{"email": "janedoe@ufl.edu", "eventID": "1", "eventTitle": "Holiday", "eventDescription": "It's a Holiday", "eventDate": "2023-04-09", 
+	"startTime": "11:00", "endTime": "12:00", "freq": "weekly", "dtStart": "2023-04-09", "until": "2024-04-09", "backgroundColor": "#08B419"}`)
+
 	rr := httptest.NewRecorder()
 	req := httptest.NewRequest(http.MethodDelete, "/api/event", bytes.NewBuffer(rBody))
 	testRouter.ServeHTTP(rr, req)
