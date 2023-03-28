@@ -186,27 +186,30 @@ func TestResetPasswordPatchHandler(t *testing.T) {
 
 }
 
-// UNFINISHED
 func TestEventPostHandler(t *testing.T) {
-	//deleteFromUsersTable()
-	rBody := []byte(`{"eventID": "1", "eventTitle": "Birthday", "eventDescription": "It's a my Birthday", "eventDate": "3/9", "startTime": "10:00 AM", "endTime": "11:00 AM"}`)
+	rBody := []byte(`{"email": "janedoe@ufl.edu", "eventID": "1", "eventTitle": "Birthday", "eventDescription": "It's a my Birthday", "eventDate": "2023-03-09", "startTime": "10:00", "endTime": "11:00", "freq": "daily", "dtStart": "2023-03-09", "until": "2024-03-09", "backgroundColor": "#08B417"}`)
 
 	rr := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodPut, "/api/event", bytes.NewBuffer(rBody)) // once routing set up can change to /api/calendar???
+	req := httptest.NewRequest(http.MethodPut, "/api/event", bytes.NewBuffer(rBody))
 	testRouter.ServeHTTP(rr, req)
 
-	//var event models.Event
-	//result := models.DB.Where("eventID = ?", "1").First(&event)
+	var event models.Event
+	result := models.DB.Where("eventID = ?", "1").First(&event)
+	if result.Error != nil {
+		t.Errorf("test failed! unable to get event %v", result.Error)
+	}
 
-	// var user models.User
-	// result := models.DB.Where("email = ?", "janedoe@ufl.edu").First(&user)
-	// if result.Error != nil {
-	// 	t.Errorf("test failed! unable to get user %v", result.Error)
-	// }
-
-	//assert.Equal(t, "jane", user.FirstName, "incorrect first name error")
-	//assert.Equal(t, "doe", user.LastName, "incorrect last name error")
-	//assert.Equal(t, "janedoe@ufl.edu", user.Email, "incorrect email error")
+	assert.Equal(t, "janedoe@ufl.edu", event.Email, "incorrect email error")
+	assert.Equal(t, "1", event.EventID, "incorrect event ID error")
+	assert.Equal(t, "Birthday", event.EventTitle, "incorrect event title error")
+	assert.Equal(t, "It's a my Birthday", event.Description, "incorrect event description error")
+	assert.Equal(t, "2023-03-09", event.EventDate, "incorrect event date error")
+	assert.Equal(t, "10:00", event.StartTime, "incorrect event start time error")
+	assert.Equal(t, "11:00", event.EndTime, "incorrect event end time error")
+	assert.Equal(t, "daily", event.Freq, "incorrect event frequency error")
+	assert.Equal(t, "2023-03-09", event.DTStart, "incorrect event dt start error")
+	assert.Equal(t, "2024-03-09", event.Until, "incorrect event until error")
+	assert.Equal(t, "#0BB417", event.BackgroundColor, "incorrect event background color error")
 
 	assert.Equal(t, http.MethodPost, req.Method, "HTTP request method error")
 	assert.Equal(t, http.StatusOK, rr.Code, "HTTP request status code error")
