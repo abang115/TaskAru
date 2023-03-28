@@ -8,9 +8,10 @@ import (
 
 func EventPostHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "*")
-	w.WriteHeader(http.StatusOK)
+	// w.WriteHeader(http.StatusOK)
 
 	var newEvent models.Event
+	_ = json.NewDecoder(r.Body).Decode(&newEvent)
 
 	models.DB.Create(&newEvent)
 	w.WriteHeader(http.StatusOK)
@@ -19,7 +20,7 @@ func EventPostHandler(w http.ResponseWriter, r *http.Request) {
 
 func EditEventPatchHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "*")
-	w.WriteHeader(http.StatusOK)
+	// w.WriteHeader(http.StatusOK)
 
 	// gets the ID of the event that needs to be edited
 	id := r.URL.Query().Get("id")
@@ -51,7 +52,7 @@ func EditEventPatchHandler(w http.ResponseWriter, r *http.Request) {
 
 func RemoveEventDeleteHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "*")
-	w.WriteHeader(http.StatusOK)
+	// w.WriteHeader(http.StatusOK)
 
 	// gets the ID of the event that needs to be deleted
 	id := r.URL.Query().Get("id")
