@@ -3,6 +3,7 @@ package main
 import (
 	"TaskAru/controllers"
 	"TaskAru/models"
+	"io"
 	"os"
 	"testing"
 
@@ -13,7 +14,8 @@ import (
 	"net/http"
 	"net/http/httptest"
 
-	//"encoding/json"
+	"encoding/json"
+
 	"github.com/stretchr/testify/assert"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -186,17 +188,35 @@ func TestSignInPostHandler3(t *testing.T) {
 	assert.Equal(t, http.StatusNotFound, rr.Code, "HTTP request status code error")
 }
 
-// UNFINISHED
 func TestForgotPasswordPostHandler(t *testing.T) {
+	rBody := []byte(`{"email": "janedoe@ufl.edu"}`)
 
+	rr := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodPost, "/api/forgotpassword", bytes.NewBuffer(rBody))
+	testRouter.ServeHTTP(rr, req)
+
+	var forgot models.ForgotPassword
+
+	result := models.DB.Where("email = ?", "janedoe@ufl.edu").First(&forgot)
+	if result.Error != nil {
+		t.Errorf("test failed! email not found in database %v", result.Error)
+	}
+
+	var count int64
+	models.DB.Where("token = ?", forgot.Token).Count(&count)
+
+	if count > 0 {
+		t.Errorf("duplicate token produced")
+	}
+
+	assert.Equal(t, http.MethodPost, req.Method, "HTTP request method error")
+	assert.Equal(t, http.StatusOK, rr.Code, "HTTP request status code error")
 }
 
-// UNFINISHED
 func TestResetPasswordPatchHandler(t *testing.T) {
 
 }
 
-// UNFINISHED
 // test to add event
 func TestEventPostHandler(t *testing.T) {
 	deleteFromTable("events")
@@ -263,18 +283,38 @@ func TestEditEventPatchHandler(t *testing.T) {
 
 // test to get existing event
 func TestReceiveEventGetHandler(t *testing.T) {
-	rBody := []byte(`{"email": "janedoe@ufl.edu"}`)
+	rBody := []byte(`{"email":"janedoe@ufl.edu","eventID":"1","eventTitle":"Holiday","eventDescription":"It's a Holiday","eventDate":"2023-04-09",
+	"startTime":"11:00","endTime":"12:00","freq":"weekly","dtstart":"2023-04-09","until":"2024-04-09","backgroundColor":"#08B419"}`)
 
 	rr := httptest.NewRecorder()
 	req := httptest.NewRequest(http.MethodGet, "/api/event", bytes.NewBuffer(rBody))
 	testRouter.ServeHTTP(rr, req)
 
-	expected := `{"email": "janedoe@ufl.edu", "eventID": "1", "eventTitle": "Holiday", "eventDescription": "It's a Holiday", "eventDate": "2023-04-09", 
-	"startTime": "11:00", "endTime": "12:00", "freq": "weekly", "dtStart": "2023-04-09", "until": "2024-04-09", "backgroundColor": "#08B419"}`
-	if rr.Body.String() != expected {
-		t.Errorf("handler returned unexpected body: got %v want %v", rr.Body.String(), expected)
+	body, err := io.ReadAll(rr.Body)
+	if err != nil {
+		t.Errorf("unable to read body")
 	}
 
+	actual := models.Event{}
+	if err := json.Unmarshal(body, &actual); err != nil {
+		t.Errorf("unable to unmarshal body")
+	}
+
+	expected := models.Event{
+		Email:           "janedoe@ufl.edu",
+		EventID:         "1",
+		EventTitle:      "Holiday",
+		Description:     "It's a Holiday",
+		EventDate:       "2023-04-09",
+		StartTime:       "11:00",
+		EndTime:         "12:00",
+		Freq:            "weekly",
+		DTStart:         "2023-04-09",
+		Until:           "2024-04-09",
+		BackgroundColor: "#08B419",
+	}
+
+	assert.Equal(t, expected, actual, "expected does not equal actual")
 	assert.Equal(t, http.MethodGet, req.Method, "HTTP request method error")
 	assert.Equal(t, http.StatusOK, rr.Code, "HTTP request status code error")
 }
@@ -296,5 +336,5 @@ func TestRemoveEventDeleteHandler(t *testing.T) {
 	}
 
 	assert.Equal(t, http.MethodDelete, req.Method, "HTTP request method error")
-	assert.Equal(t, http.StatusNotFound, rr.Code, "HTTP request status code error")
+	assert.Equal(t, http.StatusOK, rr.Code, "HTTP request status code error")
 }
