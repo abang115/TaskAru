@@ -85,17 +85,18 @@ func ReceiveEventGetHandler(w http.ResponseWriter, r *http.Request) {
 	// var getEvents used to send back information
 	// events currently in database
 	var getEvent models.Event
+	var getEventArr []models.Event
 	var events []models.Event
 	models.DB.Find(&events)
 	_ = json.NewDecoder(r.Body).Decode(&getEvent)
 
 	for _, entry := range events {
 		if entry.Email == getEvent.Email {
-			events = append(events, entry)
+			getEventArr = append(getEventArr, entry)
 		}
 	}
 
-	if len(events) == 0 {
+	if len(getEventArr) == 0 {
 		w.WriteHeader(http.StatusNotFound)
 		errorMessage := map[string]string{"error": "could not find event"}
 		json.NewEncoder(w).Encode(errorMessage)
@@ -103,5 +104,5 @@ func ReceiveEventGetHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(getEvent)
+	json.NewEncoder(w).Encode(getEventArr)
 }
