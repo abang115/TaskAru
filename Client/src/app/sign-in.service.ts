@@ -15,4 +15,8 @@ export class SignInService {
   signOut() {
     this.isSignedIn.next(false)
   }
+
+  getStatus():boolean{
+    return this.isSignedIn.getValue()
+  }
 }
