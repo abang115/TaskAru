@@ -300,11 +300,9 @@ func TestEditEventPatchHandler(t *testing.T) {
 
 // test to get existing event
 func TestReceiveEventGetHandler(t *testing.T) {
-	rBody := []byte(`{"email":"janedoe@ufl.edu","eventID":"1","eventTitle":"Holiday","eventDescription":"It's a Holiday","eventDate":"2023-04-09",
-	"startTime":"11:00","endTime":"12:00","freq":"weekly","dtstart":"2023-04-09","until":"2024-04-09","backgroundColor":"#08B419"}`)
 
 	rr := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodGet, "/api/event", bytes.NewBuffer(rBody))
+	req := httptest.NewRequest(http.MethodGet, "/api/event?email=janedoe@ufl.edu", nil)
 	testRouter.ServeHTTP(rr, req)
 
 	var actual []models.Event

@@ -1,5 +1,5 @@
 describe('forgot password', () => {
-    it('Should successfully enter email and redirect to reset password', () => {
+    it('Should successfully enter email and send email request to backend', () => {
         cy.visit('/')
         cy.get('[data-cy="Sign In"]').click();
         cy.url().should('includes', 'signin');
