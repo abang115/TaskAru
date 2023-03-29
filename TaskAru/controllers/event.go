@@ -21,14 +21,14 @@ func EditEventPatchHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "*")
 
 	// gets the ID of the event that needs to be edited
-	id := r.URL.Query().Get("id")
+	id := r.URL.Query().Get("event_id")
 
 	var updateEvent models.Event
 	var events []models.Event
 
 	_ = json.NewDecoder(r.Body).Decode(&updateEvent)
 
-	searchErr := models.DB.Where("eventID = ?", updateEvent.EventID).First(&events, id).Error
+	searchErr := models.DB.Where("event_id = ?", updateEvent.EventID).First(&events, id).Error
 
 	if searchErr != nil {
 		w.WriteHeader(http.StatusNotFound)
@@ -37,7 +37,8 @@ func EditEventPatchHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := models.DB.Where("eventID = ?", updateEvent.EventID).Updates(models.Event{EventTitle: updateEvent.EventTitle, Description: updateEvent.Description, EventDate: updateEvent.EventDate, StartTime: updateEvent.StartTime, EndTime: updateEvent.EndTime, Freq: updateEvent.Freq, DTStart: updateEvent.DTStart, Until: updateEvent.Until}).Error; err != nil {
+	if err := models.DB.Model(&updateEvent).Where("event_id = ?", updateEvent.EventID).Updates(models.Event{EventTitle: updateEvent.EventTitle, Description: updateEvent.Description, EventDate: updateEvent.EventDate,
+		StartTime: updateEvent.StartTime, EndTime: updateEvent.EndTime, Freq: updateEvent.Freq, DTStart: updateEvent.DTStart, Until: updateEvent.Until}).Error; err != nil {
 		// check error message
 		w.WriteHeader(http.StatusInternalServerError)
 		errorMessage := map[string]string{"error": "could not update event"}
@@ -53,14 +54,14 @@ func RemoveEventDeleteHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "*")
 
 	// gets the ID of the event that needs to be deleted
-	id := r.URL.Query().Get("id")
+	id := r.URL.Query().Get("event_id")
 
 	var deleteEvent models.Event
 	var events []models.Event
 
 	_ = json.NewDecoder(r.Body).Decode(&deleteEvent)
 
-	searchErr := models.DB.Where("eventID = ?", deleteEvent.EventID).First(&events, id).Error
+	searchErr := models.DB.Where("event_id = ?", deleteEvent.EventID).First(&events, id).Error
 
 	if searchErr != nil {
 		w.WriteHeader(http.StatusNotFound)
@@ -69,7 +70,7 @@ func RemoveEventDeleteHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := models.DB.Where("eventID = ?", deleteEvent.EventID).Delete(&deleteEvent).Error; err != nil {
+	if err := models.DB.Where("event_id = ?", deleteEvent.EventID).Delete(&deleteEvent).Error; err != nil {
 
 		// check error message
 		w.WriteHeader(http.StatusInternalServerError)
