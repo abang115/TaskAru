@@ -4,7 +4,7 @@ GitHub Repository
 
 Video Presentation
 ---
-[Demo Video]()
+[Demo Video](https://youtu.be/8IEQr3qjhko)
 
 Detail Work Completed in Sprint 3
 ---
