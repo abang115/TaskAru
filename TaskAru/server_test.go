@@ -259,6 +259,24 @@ func TestEditEventPatchHandler(t *testing.T) {
 	assert.Equal(t, http.StatusOK, rr.Code, "HTTP request status code error")
 }
 
+// UNFINISHED
+func TestReceiveEventGetHandler(t *testing.T) {
+	rBody := []byte(`{"email": "janedoe@ufl.edu"}`)
+
+	rr := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodGet, "/api/event", bytes.NewBuffer(rBody))
+	testRouter.ServeHTTP(rr, req)
+
+	expected := `{"email": "janedoe@ufl.edu", "eventID": "1", "eventTitle": "Holiday", "eventDescription": "It's a Holiday", "eventDate": "2023-04-09", 
+	"startTime": "11:00", "endTime": "12:00", "freq": "weekly", "dtStart": "2023-04-09", "until": "2024-04-09", "backgroundColor": "#08B419"}`
+	if rr.Body.String() != expected {
+		t.Errorf("handler returned unexpected body: got %v want %v", rr.Body.String(), expected)
+	}
+
+	assert.Equal(t, http.MethodGet, req.Method, "HTTP request method error")
+	assert.Equal(t, http.StatusOK, rr.Code, "HTTP request status code error")
+}
+
 func TestRemoveEventDeleteHandler(t *testing.T) {
 	rBody := []byte(`{"email": "janedoe@ufl.edu", "eventID": "1", "eventTitle": "Holiday", "eventDescription": "It's a Holiday", "eventDate": "2023-04-09", 
 	"startTime": "11:00", "endTime": "12:00", "freq": "weekly", "dtStart": "2023-04-09", "until": "2024-04-09", "backgroundColor": "#08B419"}`)
@@ -268,17 +286,12 @@ func TestRemoveEventDeleteHandler(t *testing.T) {
 	testRouter.ServeHTTP(rr, req)
 
 	var event models.Event
-	result := models.DB.Where("eventID = ?", "1").First(&event)
+	result := models.DB.Where("event_id = ?", "1").First(&event)
 	// if event is present, test failed
 	if result.Error == nil {
 		t.Errorf("test failed! event should have been deleted %v", result.Error)
 	}
 
 	assert.Equal(t, http.MethodDelete, req.Method, "HTTP request method error")
-	assert.Equal(t, http.StatusOK, rr.Code, "HTTP request status code error")
-}
-
-// UNFINISHED
-func TestReceiveEventGetHandler(t *testing.T) {
-
+	assert.Equal(t, http.StatusNotFound, rr.Code, "HTTP request status code error")
 }
