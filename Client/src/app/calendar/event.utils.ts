@@ -50,24 +50,56 @@ export function parseToRRule(date:any, reoccuringType:any){
   return newRRule;
 }
 
-export function parseBackendForm(existingEvent:any){
-  let parsedRRule = {
-    freq: existingEvent.freq,
-    dtstart: existingEvent.dtstart,
-    until: existingEvent.until,
+export function parseFromBackend(existingEvent:any){
+  let temp;
+  if (existingEvent.freq == ''){
+    temp = undefined;
   }
-
+  else{
+    temp = parseToRRule(existingEvent.eventDate, existingEvent.freq) || '';
+  }
   let parsedEvent = {
-    groupid: '0',
-    id: existingEvent.id || '',
+    // groupid: '0',
+    id: existingEvent.eventID || '',
     title: existingEvent.eventTitle || '',
     description: existingEvent.eventDescription || '',
-    start: existingEvent.start || '',
-    end: existingEvent.end || '',
-    rrule: parsedRRule,
+    start: toEventFormat(existingEvent.eventDate, existingEvent.startTime) || '',
+    end: toEventFormat(existingEvent.eventDate, existingEvent.endTime) || '',
+    rrule: temp,
     backgroundColor: existingEvent.backgroundColor || '',
   }
   return parsedEvent
+}
+
+export function parseToBackend(newEvent:any, EDate:string, startT:string, endT:string, eEmail:string){
+  let f, u, d;
+  // Check if rrule is defined for this event 
+  if(newEvent.rrule == undefined){
+    f = '';
+    u = '';
+    d = '';
+  }
+  else{
+    f = newEvent.rrule.freq;
+    u = newEvent.rrule.until;
+    d = newEvent.rrule.dtstart;
+  }
+  // Create form that will be sent to backend
+  const backendForm = {
+    email: eEmail, //TODO ADD EMAIL WHEN LOGGED IN, NEED GLOBAL
+    // groupid: newEvent.groupid,
+    eventID: newEvent.id,
+    eventTitle: newEvent.title,
+    eventDescription: newEvent.description,
+    eventDate: EDate, 
+    startTime: startT,
+    endTime: endT,
+    freq: f,
+    until: u,
+    dtstart: d,
+    backgroundColor: newEvent.backgroundColor,
+  }
+  return backendForm;
 }
 
 export function getRandomColor() {

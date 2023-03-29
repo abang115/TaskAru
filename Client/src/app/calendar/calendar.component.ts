@@ -1,6 +1,6 @@
 import { Component, OnInit, AfterViewInit, ViewChild, ViewEncapsulation } from "@angular/core";
 import { EventApi, } from '@fullcalendar/core';
-import { INITIAL_EVENTS, createEventId, toEventFormat, parseToRRule, getRandomColor, parseBackendForm } from "./event.utils";
+import { INITIAL_EVENTS, createEventId, toEventFormat, parseToRRule, getRandomColor, parseFromBackend, parseToBackend } from "./event.utils";
 import interactionPlugin from '@fullcalendar/interaction';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
@@ -10,6 +10,8 @@ import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
 import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { FullCalendarComponent } from "@fullcalendar/angular";
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { SignInService } from '../sign-in.service';
+import { s } from "@fullcalendar/core/internal-common";
 
 @Component({
   selector: 'calendar',
@@ -19,9 +21,40 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 export class CalendarComponent implements OnInit, AfterViewInit  {
   modalRef?: BsModalRef;
   calendarVisible = true;
-  currentEvents: EventApi[] = [];
+
+  currentEvents: any[] = [];
   selectedEvent: any;
-  calendarOptions: any;
+  calendarOptions= {
+    plugins: [
+      interactionPlugin,
+      dayGridPlugin,
+      timeGridPlugin,
+      listPlugin,
+      rrulePlugin
+    ],
+    customButtons:{
+      myCustomButton:{
+        text: 'Add Event',
+        click: this.handleAddEventButtonClick.bind(this)
+      }
+    },
+    headerToolbar: {
+      left: 'prev,next today myCustomButton',
+      center: 'title',
+      right: 'dayGridMonth,timeGridWeek,timeGridDay'
+    },
+    initialView: 'dayGridMonth',
+    initialEvents: this.currentEvents, 
+    weekends: true,
+    editable: true,
+    selectable: true,
+    selectMirror: true,
+    dayMaxEvents: true,
+    eventClick: this.handleDateClick.bind(this),
+  };
+
+  email: string = '';
+  signedIn: boolean = false;
 
   config ={
     animated: true
@@ -32,37 +65,20 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
   @ViewChild('editEventModal') editEventModal!: string;
   @ViewChild('cal') fullCalendarComponent!:FullCalendarComponent; // Access the Calendar as an object
 
-  constructor(private modalService: BsModalService, private http: HttpClient) {     }
+  constructor(private modalService: BsModalService, private http: HttpClient, public signInService: SignInService) {     }
 
   ngOnInit(): void {
-    this.calendarOptions = {
-      plugins: [
-        interactionPlugin,
-        dayGridPlugin,
-        timeGridPlugin,
-        listPlugin,
-        rrulePlugin
-      ],
-      customButtons:{
-        myCustomButton:{
-          text: 'Add Event',
-          click: this.handleAddEventButtonClick.bind(this)
-        }
-      },
-      headerToolbar: {
-        left: 'prev,next today myCustomButton',
-        center: 'title',
-        right: 'dayGridMonth,timeGridWeek,timeGridDay'
-      },
-      initialView: 'dayGridMonth',
-      initialEvents: INITIAL_EVENTS, 
-      weekends: true,
-      editable: true,
-      selectable: true,
-      selectMirror: true,
-      dayMaxEvents: true,
-      eventClick: this.handleDateClick.bind(this),
-    };
+    this.signedIn = this.signInService.getStatus();
+    if(this.signedIn){
+      this.email = 'aaa@gmail.com';
+      this.fetchEvents();
+      console.log(this.email);
+    }
+    else{
+      this.currentEvents = INITIAL_EVENTS;
+      console.log('Showing Default Events');
+    }
+    this.calendarOptions.initialEvents = this.currentEvents;
   }
 
   ngAfterViewInit(): void{
@@ -92,10 +108,13 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
       backgroundColor: getRandomColor()
     }
     console.log(newEvent);
-    // Call fullcalendar api to add event
+    // Add event to calendar and send data to backend if user is signed in
     this.fullCalendarComponent.getApi().addEvent(newEvent);
-    // Add event to backend
-    this.eventAddToBackend(newEvent, formVars.eventDate || '', formVars.startTime || '', formVars.endTime || '');
+    if(this.signedIn){
+      let backendForm = parseToBackend(newEvent, formVars.eventDate || '', formVars.startTime || '', formVars.endTime || '', this.email);
+      this.eventAddToBackend(backendForm);
+    }
+
     // Reset form with default values
     this.eventForm.reset();
     this.eventForm.get('reoccuring')?.setValue('once');
@@ -103,16 +122,31 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
     this.modalRef?.hide();  
   }
 
+  eventAddToBackend(backendForm:any){
+    console.log(backendForm)  
+    
+    this.http.post('http://localhost:8080/api/event', backendForm).subscribe({
+      next: response => {
+        console.log('Event successfully added: ', response)
+      },
+      error: err => {
+        console.error('Error: ', err)
+      }
+    });
+  }
+
   editEventButton(){
     this.modalRef?.hide();
     var eventObj = this.selectedEvent.toPlainObject();
     console.log(eventObj);
+  
     // Fetch previous event data
     this.eventForm.get('id')?.setValue(eventObj.id);
     this.eventForm.get('eventTitle')?.setValue(eventObj.title);
     this.eventForm.get('eventDate')?.setValue(eventObj.start);
     this.eventForm.get('eventDescription')?.setValue(eventObj.description);
     this.eventForm.get('color')?.setValue(eventObj.backgroundColor);
+    
     // Give time for previous modal to fully close
     setTimeout(() => {
       this.modalRef = this.modalService.show(this.editEventModal, this.config);
@@ -121,11 +155,10 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
 
   editedEventSubmission(){
     let formVars = this.eventForm.value;
-    // Fetch old event
     let oldEvent = this.fullCalendarComponent.getApi().getEventById(formVars.id||'');
-    console.log(oldEvent);
     // create a new edited event
     let editedEvent = {
+      // Will add feature later 
       // groupid: '0',
       id: formVars.id || '',
       title: formVars.eventTitle || '',
@@ -135,12 +168,14 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
       rrule: parseToRRule(formVars.eventDate, formVars.reoccuring),
       backgroundColor: formVars.color || '',
     }
-    console.log(editedEvent);
+
     // Remove old event
     oldEvent?.remove();
+
     // Add back the updated event
     this.fullCalendarComponent.getApi().addEvent(editedEvent);
     this.eventEditToBackend(editedEvent);
+
     // Reset form
     this.eventForm.reset();
     this.eventForm.get('reoccuring')?.setValue('once');
@@ -153,40 +188,10 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
     this.modalRef?.hide(); 
    }
 
-  eventAddToBackend(newEvent:any, EDate:string, startT:string, endT:string){
-    let f
-    let u
-    let d
-    if(newEvent.rrule == undefined){
-      f = ''
-      u = ''
-      d = ''
-    }
-    else{
-      f = newEvent.rrule.freq
-      u = newEvent.rrule.until
-      d = newEvent.rrule.dtstart
-    }
-
-    const backendForm = {
-      email: 'aaa@gamil.com', //TODO ADD EMAIL WHEN LOGGED IN 
-      // groupid: newEvent.groupid,
-      eventID: newEvent.id,
-      eventTitle: newEvent.title,
-      eventDescription: newEvent.description,
-      eventDate: EDate, 
-      startTime: startT,
-      endTime: endT,
-      freq: f,
-      until: u,
-      dtstart: d,
-      backgroundColor: newEvent.backgroundColor,
-    }
-    console.log(backendForm)  
-    this.http.post('http://localhost:8080/api/event',backendForm).subscribe({
+  eventRemoveToBackend(existingEvent:any){
+    this.http.delete('http://localhost:8080/api/event',existingEvent).subscribe({
       next: response => {
-        console.log('Backend successfully reached: ', response)
-        console.log('Event successfully added ')
+        console.log('Backend successfully reached, Event is removed :', response)
       },
       error: err => {
         console.error('Error: ', err)
@@ -194,12 +199,10 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
     });
   }
 
-  eventRemoveToBackend(existingEvent:any){
-    //Todo
-  }
-
   eventEditToBackend(editedEvent:any){
-    this.http.put('http://localhost:8080/api/event',editedEvent).subscribe({
+
+    // TODO FIX form of edited event
+    this.http.patch('http://localhost:8080/api/event',editedEvent).subscribe({
       next: response => {
         console.log('Backend successfully reached: ', response)
       },
@@ -211,10 +214,28 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
 
   fetchEvents(){
     // TODO GET FUNCTION RETURN EVENTS
-    
-    // PARSE EVENTS TO FORMAT, CALL parseBackendForm  FUNCTION
-    
-    // PUT THEM ON THE CALENDAR AND REFRESH
+    this.http.get(`http://localhost:8080/api/event?email=${this.email}`).subscribe({
+      next: response => {
+        let eventArr:any;
+        console.log('Events Fetched:', response);
+        eventArr = response;
+        console.log(eventArr);
+        let parsedEvent: any[] = [];
+        if(eventArr == null || eventArr == undefined){
+          parsedEvent = [];
+        }
+        else{
+          for(let i = 0; i < eventArr.length; i++){
+          this.fullCalendarComponent.getApi().addEvent(parseFromBackend(eventArr[i]));
+          }
+        }
+        console.log(parsedEvent);
+        this.currentEvents = parsedEvent || '';     
+      },
+      error: err => {
+        console.error('Error: ', err)
+      }
+    });
   }
 
   // Event form variables, with required fields
