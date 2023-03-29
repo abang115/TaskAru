@@ -197,6 +197,7 @@ func TestResetPasswordPatchHandler(t *testing.T) {
 }
 
 // UNFINISHED
+// test to add event
 func TestEventPostHandler(t *testing.T) {
 	deleteFromTable("events")
 
@@ -229,6 +230,7 @@ func TestEventPostHandler(t *testing.T) {
 	assert.Equal(t, http.StatusOK, rr.Code, "HTTP request status code error")
 }
 
+// test to add existing event
 func TestEditEventPatchHandler(t *testing.T) {
 	rBody := []byte(`{"email": "janedoe@ufl.edu", "eventID": "1", "eventTitle": "Holiday", "eventDescription": "It's a Holiday", "eventDate": "2023-04-09", 
 	"startTime": "11:00", "endTime": "12:00", "freq": "weekly", "dtStart": "2023-04-09", "until": "2024-04-09", "backgroundColor": "#08B419"}`)
@@ -259,7 +261,7 @@ func TestEditEventPatchHandler(t *testing.T) {
 	assert.Equal(t, http.StatusOK, rr.Code, "HTTP request status code error")
 }
 
-// UNFINISHED
+// test to get existing event
 func TestReceiveEventGetHandler(t *testing.T) {
 	rBody := []byte(`{"email": "janedoe@ufl.edu"}`)
 
@@ -277,6 +279,7 @@ func TestReceiveEventGetHandler(t *testing.T) {
 	assert.Equal(t, http.StatusOK, rr.Code, "HTTP request status code error")
 }
 
+// test to remove existing event
 func TestRemoveEventDeleteHandler(t *testing.T) {
 	rBody := []byte(`{"email": "janedoe@ufl.edu", "eventID": "1", "eventTitle": "Holiday", "eventDescription": "It's a Holiday", "eventDate": "2023-04-09", 
 	"startTime": "11:00", "endTime": "12:00", "freq": "weekly", "dtStart": "2023-04-09", "until": "2024-04-09", "backgroundColor": "#08B419"}`)
