@@ -84,7 +84,7 @@ Backend Unit Tests
     - Catches if the event was not updated properly
   - Unit tests for ReceiveEventGetHandler()
     - Successfully sends events to the front end
-    - Catches if the correct event data was sent
+    - Catches if the incorrect event data was sent
   - Unit tests for RemoveEventDeleteHandler()
     - Successfully deletes an event in the desired calendar using a email, title, description, date, start time, end time, frequency, date start for reoccuring events, date end for reoccuring events, and background color
     - Catches if the delete function was called
