@@ -39,6 +39,9 @@ export class ForgotPasswordComponent {
             },
             error: err => {
               console.error('Error: ', err)
+              this.forgotForm.get('email')!.setErrors({
+                'invalidEmail': true
+              })
             }
           });
       }

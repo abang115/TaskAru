@@ -3,20 +3,20 @@
         <div class="logo">
         <span>TaskAru</span> &nbsp;&nbsp;
         </div>
-        <button mat-button routerLinkActive="active" routerLink="/home">Home</button> &nbsp;&nbsp;
+        <button mat-button data-cy="home" routerLinkActive="active" routerLink="/home">Home</button> &nbsp;&nbsp;
     
-        <button mat-button routerLinkActive="active" routerLink="/calendar">Calendar</button>&nbsp;&nbsp;
+        <button mat-button data-cy="calendar" routerLinkActive="active" routerLink="/calendar">Calendar</button>&nbsp;&nbsp;
         <div class = "spacer"></div>
     
         <button mat-button data-cy="Sign In" routerLinkActive="active" routerLink="/signin" *ngIf="!signedIn">Sign In</button> &nbsp;&nbsp;
         <button mat-raised-button data-cy="Sign Up" routerLinkActive="active" routerLink="/signup" *ngIf="!signedIn">Sign Up</button> &nbsp;&nbsp;
-        <button mat-raised-button data-cy="Log Out" *ngIf="signedIn" (click)="signOut()">Sign Out</button> &nbsp;&nbsp;
+        <button mat-raised-button data-cy="Sign Out" *ngIf="signedIn" (click)="signOut()">Sign Out</button> &nbsp;&nbsp;
         <mat-button-toggle-group (click)="toggleMode()" multiple>
-            <mat-button-toggle value="light">
-                <mat-icon *ngIf="!darkMode">
+            <mat-button-toggle value="mode" data-cy="Toggle Mode">
+                <mat-icon *ngIf="!darkMode" data-cy="Light">
                     wb_sunny
                 </mat-icon>
-                <mat-icon *ngIf="darkMode">
+                <mat-icon *ngIf="darkMode" data-cy="Dark">
                     panorama_fish_eye
                 </mat-icon>
             </mat-button-toggle>
