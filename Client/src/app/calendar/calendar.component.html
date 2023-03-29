@@ -15,8 +15,8 @@
     <h4>{{selectedEvent?.extendedProps?.description}}</h4>
   </div>
   <div class="modal-footer">
-    <button type="submit" class="btn btn-primary" (click)="editEventButton()" >Edit Event</button>
-    <button type="submit" class="btn btn-danger" (click)="removeEvent()" background-color="red">Remove Event</button>
+    <button id="edit-submit" type="submit" class="btn btn-primary" (click)="editEventButton()" >Edit Event</button>
+    <button id="remove-submit" type="submit" class="btn btn-danger" (click)="removeEvent()" background-color="red">Remove Event</button>
   </div>
 </ng-template>
 
@@ -140,7 +140,7 @@
         </form>
       </div>
       <div class="modal-footer">
-        <button id="event-button-submit" type="submit" class="btn btn-primary" (click)="editedEventSubmission()">Save Event</button>
+        <button id="save-button" type="submit" class="btn btn-primary" (click)="editedEventSubmission()">Save Event</button>
       </div>
     </ng-template>
 

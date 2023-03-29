@@ -104,4 +104,83 @@ describe('CalendarComponent', () => {
     })
   });
 
+  it('Edit event with same values', () =>{
+    cy.mount(CalendarComponent, {
+      imports: [
+        ReactiveFormsModule,
+        HttpClientModule,
+      ],
+      providers:[
+        BsModalRef,
+        BsModalService,
+      ],
+      declarations: [
+        FullCalendarComponent,
+        CalendarComponent,
+      ],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
+    }).then( ()=>{
+      cy.get('.fc-daygrid-more-link').click(); 
+      cy.get('.fc-daygrid-event-harness').eq(3).click();
+      cy.wait(100);
+      cy.get('.modal-body').should('be.visible');
+      cy.get('#edit-submit').click();
+      cy.wait(100);
+      cy.get('#event-title').should('have.value', "All-day event");
+    })
+  });
+
+
+  it('Edit Event to new Date', () =>{
+    cy.mount(CalendarComponent, {
+      imports: [
+        ReactiveFormsModule,
+        HttpClientModule,
+      ],
+      providers:[
+        BsModalRef,
+        BsModalService,
+      ],
+      declarations: [
+        FullCalendarComponent,
+        CalendarComponent,
+      ],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
+    }).then( ()=>{
+      cy.get('.fc-daygrid-more-link').click(); 
+      cy.get('.fc-daygrid-event-harness').eq(3).click();
+      cy.wait(100);
+      cy.get('.modal-body').should('be.visible');
+      cy.get('#edit-submit').click();
+      cy.wait(100);
+      cy.get('#event-date').type('2023-03-30');
+      cy.get('#save-button').click();
+    })
+  });
+
+  it('Remove Event', () =>{
+    cy.mount(CalendarComponent, {
+      imports: [
+        ReactiveFormsModule,
+        HttpClientModule,
+      ],
+      providers:[
+        BsModalRef,
+        BsModalService,
+      ],
+      declarations: [
+        FullCalendarComponent,
+        CalendarComponent,
+      ],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
+    }).then( ()=>{
+      cy.get('.fc-daygrid-more-link').click(); 
+      cy.get('.fc-daygrid-event-harness').eq(3).click();
+      cy.wait(100);
+      cy.get('.modal-body').should('be.visible');
+      cy.get('#remove-submit').click();
+      cy.wait(100);
+      cy.get('.fc-daygrid-day-events').should('not.contain', 'All-day event');
+    })
+  });
 })  

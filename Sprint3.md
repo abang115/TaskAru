@@ -14,6 +14,9 @@ Front-End
   - Updated website styling as a whole
   - Added ability to sign out when user is signed in
   - Created components to allow for users to reset their password when needed
+  - Added abilty to save events to an account
+  - Added ability to edit and remove events
+  - Allows events to be retrived upon refresh or signing in 
 
 Back-End
 
@@ -53,6 +56,9 @@ Frontend Unit Tests
    - Successfully tests opening the add event modal 
    - Successfully tests filling out the event from, submitting, and creating a new event
    - Successfully tests opening an existing event modal
+   - Tests opening the edit event modal
+   - Tests changing an exisiting event
+   - Tests removing an exisitng event
 
 Backend Unit Tests
 ---
