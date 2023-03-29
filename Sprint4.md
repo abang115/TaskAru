@@ -6,23 +6,19 @@ Video Presentation
 ---
 [Demo Video]()
 
-Detail Work Completed in Sprint 3
+Detail Work Completed in Sprint 4
 ---
 Front-End
 
-  - Implemented a light and dark mode toggle for the website
-  - Updated website styling as a whole
-  - Added ability to sign out when user is signed in
-  - Created components to allow for users to reset their password when needed
-  - Added abilty to save events to an account
-  - Added ability to edit and remove events
-  - Allows events to be retrived upon refresh or signing in 
+  - 
+  - 
+  - 
 
 Back-End
 
-  - Added the events table to the database using the automigrate in dbsetup.go to save data about each events
-  - ForgetPasswordPost, ResetPasswordPatch, EventPost, EditEventPatch, ReceiveEventGet, and RemoveEventDelete handler functions were implmented to handle requests to connect the front-end to the back-end
-  - Configured and implemented unit tests for event functions and forget/reset password functions
+  - 
+  - 
+  - 
 
 Frontend Unit Tests
 ---
