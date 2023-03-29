@@ -56,6 +56,9 @@ export class ResetPasswordComponent {
         this.http.patch('http://localhost:8080/api/resetpassword', user).subscribe({
             next: response => {
               console.log('Backend successfully reached: ', response)
+              setTimeout(() => {
+                this.router.navigate(['/signin']);
+              }, 2000);
             },
             error: err => {
               console.error('Error: ', err)

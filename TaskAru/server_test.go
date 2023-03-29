@@ -3,7 +3,6 @@ package main
 import (
 	"TaskAru/controllers"
 	"TaskAru/models"
-	"io"
 	"os"
 	"testing"
 
@@ -214,7 +213,25 @@ func TestForgotPasswordPostHandler(t *testing.T) {
 }
 
 func TestResetPasswordPatchHandler(t *testing.T) {
+	rBody := []byte(`{"password": "janedoe2", "token": "XVlBzgbaiCMR"}`)
 
+	rr := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodPatch, "/api/resetpassword", bytes.NewBuffer(rBody))
+	testRouter.ServeHTTP(rr, req)
+
+	var user models.User
+	result := models.DB.Where("email = ?", "janedoe@ufl.edu").First(&user)
+	if result.Error != nil {
+		t.Errorf("test failed! unable to get user %v", result.Error)
+	}
+
+	err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte("janedoe2"))
+	if err != nil {
+		t.Errorf("test failed! password should be changed %v", err)
+	}
+
+	assert.Equal(t, http.MethodPatch, req.Method, "HTTP request method error")
+	assert.Equal(t, http.StatusOK, rr.Code, "HTTP request status code error")
 }
 
 // test to add event
@@ -290,17 +307,13 @@ func TestReceiveEventGetHandler(t *testing.T) {
 	req := httptest.NewRequest(http.MethodGet, "/api/event", bytes.NewBuffer(rBody))
 	testRouter.ServeHTTP(rr, req)
 
-	body, err := io.ReadAll(rr.Body)
-	if err != nil {
-		t.Errorf("unable to read body")
-	}
-
-	actual := models.Event{}
-	if err := json.Unmarshal(body, &actual); err != nil {
+	var actual []models.Event
+	if err := json.Unmarshal(rr.Body.Bytes(), &actual); err != nil {
 		t.Errorf("unable to unmarshal body")
 	}
 
-	expected := models.Event{
+	var expected []models.Event
+	expected = append(expected, models.Event{
 		Email:           "janedoe@ufl.edu",
 		EventID:         "1",
 		EventTitle:      "Holiday",
@@ -312,7 +325,7 @@ func TestReceiveEventGetHandler(t *testing.T) {
 		DTStart:         "2023-04-09",
 		Until:           "2024-04-09",
 		BackgroundColor: "#08B419",
-	}
+	})
 
 	assert.Equal(t, expected, actual, "expected does not equal actual")
 	assert.Equal(t, http.MethodGet, req.Method, "HTTP request method error")

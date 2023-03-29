@@ -3,12 +3,15 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
 import { FullCalendarComponent } from "@fullcalendar/angular";
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { HttpClientModule } from '@angular/common/http';
 
 
 describe('CalendarComponent', () => {
   it('should mount', () => {
     cy.mount(CalendarComponent, {
-      imports: [],
+      imports: [
+        HttpClientModule,
+      ],
       providers:[
         BsModalRef,
         BsModalService,
@@ -24,7 +27,10 @@ describe('CalendarComponent', () => {
 
   it('Modal open up', () =>{
     cy.mount(CalendarComponent, {
-      imports: [ReactiveFormsModule],
+      imports: [
+        ReactiveFormsModule,
+        HttpClientModule,
+      ],
       providers:[
         BsModalRef,
         BsModalService,
@@ -42,7 +48,10 @@ describe('CalendarComponent', () => {
 
   it('Create new event',() =>{
     cy.mount(CalendarComponent, {
-      imports: [ReactiveFormsModule],
+      imports: [
+        ReactiveFormsModule,
+        HttpClientModule,
+      ],
       providers:[
         BsModalRef,
         BsModalService,
@@ -74,7 +83,10 @@ describe('CalendarComponent', () => {
 
   it('Open existing event', () =>{
     cy.mount(CalendarComponent, {
-      imports: [ReactiveFormsModule],
+      imports: [
+        ReactiveFormsModule,
+        HttpClientModule,
+      ],
       providers:[
         BsModalRef,
         BsModalService,
