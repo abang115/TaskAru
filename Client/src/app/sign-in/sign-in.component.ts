@@ -37,6 +37,7 @@ export class SignInComponent implements OnInit{
         next: response => {
           console.log('Backend successfully reached: ', response)
           this.signInService.signIn()
+          this.signInService.setEmail(this.signinForm.get('email')!.value)
           setTimeout(() => {
             this.router.navigate(['/home']);
           }, 2000);

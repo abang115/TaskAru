@@ -7,9 +7,24 @@ import { BehaviorSubject } from 'rxjs';
 export class SignInService {
   private isSignedIn = new BehaviorSubject<boolean>(false)
   public isSignedIn$ = this.isSignedIn.asObservable()
+  public email!: string;
 
   signIn() {
     this.isSignedIn.next(true)
+  }
+
+  setEmail(email:string){
+    this.email = email
+    console.log(this.email)
+  }
+
+  getEmail(){
+    console.log(this.email)
+    return this.email
+  }
+
+  removeEmail(){
+    this.email = ''
   }
 
   signOut() {

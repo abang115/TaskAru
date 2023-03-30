@@ -70,7 +70,7 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
   ngOnInit(): void {
     this.signedIn = this.signInService.getStatus();
     if(this.signedIn){
-      this.email = 'aaa@gmail.com';
+      this.email = this.signInService.getEmail();
       this.fetchEvents();
       console.log(this.email);
     }
