@@ -1,11 +1,8 @@
 <div class="main-div" [class.alternative] = "darkMode">
     <mat-toolbar color = "primary">
         <div class="logo">
-        <span>TaskAru</span> &nbsp;&nbsp;
+            <button mat-button data-cy="home" routerLinkActive="active" routerLink="/home">TaskAru</button> &nbsp;&nbsp;
         </div>
-        <button mat-button data-cy="home" routerLinkActive="active" routerLink="/home">Home</button> &nbsp;&nbsp;
-    
-        <button mat-button data-cy="calendar" routerLinkActive="active" routerLink="/calendar">Calendar</button>&nbsp;&nbsp;
         <div class = "spacer"></div>
     
         <button mat-button data-cy="Sign In" routerLinkActive="active" routerLink="/signin" *ngIf="!signedIn">Sign In</button> &nbsp;&nbsp;

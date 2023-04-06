@@ -5,15 +5,13 @@ import { CalendarComponent } from './calendar/calendar.component';
 import { ResetPasswordComponent } from './reset-password/reset-password.component';
 import { SignInComponent } from './sign-in/sign-in.component';
 import { SignUpComponent } from './sign-up/sign-up.component';
-import { HomeComponent } from './home/home.component';
 import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
 
 const routes: Routes = [
   { path: 'signin', component: SignInComponent},
   { path: 'signup', component: SignUpComponent},
-  { path: 'home', component: HomeComponent},
+  { path: 'home', component: CalendarComponent},
   { path: '',   redirectTo: '/home', pathMatch: 'full' },
-  { path: 'calendar', component: CalendarComponent},
   { path: 'resetpassword/:token', component: ResetPasswordComponent},
   { path: 'forgotpassword', component: ForgotPasswordComponent},
 ];
