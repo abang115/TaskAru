@@ -4,11 +4,12 @@
         <div class="row">
             <mat-form-field>
                 <mat-label>Enter your email</mat-label>
+                <mat-icon matSuffix color="primary">email</mat-icon>
                 <input matInput formControlName="email" placeholder="Ex. johnsmith123@example.com"/>
-                <mat-error *ngIf="signinForm.get('email')!.hasError('required') || signinForm.get('email')!.hasError('email')">
+                <mat-error class="custom-error" *ngIf="signinForm.get('email')!.hasError('required') || signinForm.get('email')!.hasError('email')">
                     Please enter a valid email
                 </mat-error>
-                <mat-error *ngIf="signinForm.get('email')!.hasError('invalidEmail')">
+                <mat-error class="custom-error" *ngIf="signinForm.get('email')!.hasError('invalidEmail')">
                     Account with this email not found
                 </mat-error>
             </mat-form-field>
@@ -16,12 +17,18 @@
         <div class="row">
             <mat-form-field>
                 <mat-label>Enter your password</mat-label>
-                <input matInput formControlName="password" placeholder="Minimum 8 characters" type="password" required minlength="8"/>
-                <mat-error *ngIf="signinForm.get('password')!.hasError('required')">
+                <input matInput formControlName="password" placeholder="Minimum 8 characters" type="password" required minlength="8" [type]="hide ? 'password' : 'text'"/>
+                <button mat-icon-button matSuffix (click)="hide = !hide" color="primary">
+                    <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+                </button>
+                <mat-error class="custom-error" *ngIf="signinForm.get('password')!.hasError('required')">
                     Please enter a valid password
                 </mat-error>
-                <mat-error *ngIf="signinForm.get('password')!.hasError('minlength')">
-                    Password must be at least 8 characters
+                <mat-error class="custom-error" *ngIf="signinForm.get('password')!.hasError('minlength')">
+                    Minimum 8 characters
+                </mat-error>
+                <mat-error class="custom-error" *ngIf="signinForm.get('password')!.hasError('incorrectPassword')">
+                    Wrong password. Try again or click Forgot Password
                 </mat-error>
             </mat-form-field>
         </div>

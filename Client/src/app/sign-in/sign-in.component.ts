@@ -13,6 +13,7 @@ import { ThemeService } from '../theme.service';
 
 export class SignInComponent implements OnInit{
   darkMode: boolean = false
+  hide: boolean = true
   constructor(private formBuilder: FormBuilder, public http: HttpClient, private router: Router, public signInService: SignInService, private themeService: ThemeService) { }
   signinForm: FormGroup = this.formBuilder.group({
     email: new FormControl('', [Validators.required, Validators.email]),
@@ -44,9 +45,17 @@ export class SignInComponent implements OnInit{
         },
         error: err => {
           console.error('Error: ', err)
-          this.signinForm.get('email')!.setErrors({
-            'invalidEmail': true
-          })
+
+          if(err.error.error === "could not find email") {
+            this.signinForm.get('email')!.setErrors({
+              'invalidEmail': true
+            })
+          }
+          else if(err.error.error === "wrong password") {
+            this.signinForm.get('password')!.setErrors({
+              'incorrectPassword': true
+            })
+          }
         }
       });
     }

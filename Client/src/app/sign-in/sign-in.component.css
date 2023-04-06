@@ -1,7 +1,7 @@
 
 .form-container {
     display: block;
-    max-width: 400px;
+    max-width: 420px;
     margin-top: 32px;
     margin-bottom: auto;
     margin-right: auto;
@@ -32,4 +32,8 @@
     display: flex;
     justify-content: center;
     margin-top: -8px;
+}
+
+.custom-error {
+    font-size:11px;
 }

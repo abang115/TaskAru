@@ -18,6 +18,7 @@
         <div class="row">
             <mat-form-field>
                 <mat-label>Enter your email</mat-label>
+                <mat-icon matSuffix color="primary">email</mat-icon>
                 <input matInput placeholder="Ex. johnsmith123@example.com" formControlName="email">
                 <mat-error *ngIf="signupForm.get('email')!.hasError('required')">
                     Please enter a valid email
