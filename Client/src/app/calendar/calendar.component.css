@@ -10,5 +10,6 @@
   border-radius: 16px;
 }
 
-
-
+:host ::ng-deep .fc-toolbar-title {
+  margin-right: 50px;
+}
