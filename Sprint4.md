@@ -81,6 +81,9 @@ Backend Unit Tests
   - Unit tests for ReceiveEventGetHandler()
     - Successfully sends events to the front end
     - Catches if the incorrect event data was sent
+  - Unit tests for ReceiveSharedEventGetHandler()
+    - Successfully sends events to the front end
+    - Catches if the incorrect event data was sent
   - Unit tests for RemoveEventDeleteHandler()
     - Successfully deletes an event in the desired calendar using a email, title, description, date, start time, end time, frequency, date start for reoccuring events, date end for reoccuring events, and background color
     - Catches if the delete function was called
@@ -111,6 +114,9 @@ URL: <code>/api/event</code>
 
 URL: <code>/api/event</code>
   - Integrated ReceiveEventGetHandler() function which is a <code>GET</code> request. The function allows front end to receive events from the database based on the user logged in.
+
+URL: <code>/api/sharedevent</code>
+  - Integrated ReceiveSharedEventGetHandler() function which is a <code>GET</code> request. The function allows front end to receive events from the database based on the user logged in.
 
 URL: <code>/api/event</code>
   - Integrated RemoveEventDeleteHandler() function which is a <code>DELETE</code> request. The function allows the user to indicate that want to delete an event in their desired calendar.
