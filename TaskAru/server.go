@@ -31,5 +31,6 @@ func main() {
 	r.HandleFunc("/api/event", controllers.EditEventPatchHandler).Methods("PATCH")
 	r.HandleFunc("/api/event", controllers.RemoveEventDeleteHandler).Methods("DELETE")
 	r.HandleFunc("/api/event", controllers.ReceiveEventGetHandler).Methods("GET")
+	r.HandleFunc("/api/event", controllers.ReceiveSharedEventGetHandler).Methods("GET")
 	log.Fatal(http.ListenAndServe(":8080", handler.Handler(r)))
 }

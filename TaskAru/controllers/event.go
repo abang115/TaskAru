@@ -37,7 +37,7 @@ func EditEventPatchHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := models.DB.Model(&updateEvent).Where("event_id = ?", updateEvent.EventID).Updates(models.Event{EventTitle: updateEvent.EventTitle, Description: updateEvent.Description, EventDate: updateEvent.EventDate,
-		StartTime: updateEvent.StartTime, EndTime: updateEvent.EndTime, Freq: updateEvent.Freq, DTStart: updateEvent.DTStart, Until: updateEvent.Until, BackgroundColor: updateEvent.BackgroundColor}).Error; err != nil {
+		StartTime: updateEvent.StartTime, EndTime: updateEvent.EndTime, Freq: updateEvent.Freq, DTStart: updateEvent.DTStart, Until: updateEvent.Until, BackgroundColor: updateEvent.BackgroundColor, ShareAbility: updateEvent.ShareAbility}).Error; err != nil {
 		// check error message
 		w.WriteHeader(http.StatusInternalServerError)
 		errorMessage := map[string]string{"error": "could not update event"}
@@ -88,6 +88,27 @@ func ReceiveEventGetHandler(w http.ResponseWriter, r *http.Request) {
 	// events currently in database
 	var events []models.Event
 	models.DB.Where("email = ?", email).Find(&events)
+
+	if len(events) == 0 {
+		w.WriteHeader(http.StatusNotFound)
+		errorMessage := map[string]string{"error": "could not find event"}
+		json.NewEncoder(w).Encode(errorMessage)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(events)
+}
+
+func ReceiveSharedEventGetHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "*")
+
+	email := r.URL.Query().Get("email")
+	// var getEvents used to send back information
+
+	// events currently in database
+	var events []models.Event
+	models.DB.Where("sharedWith LIKE ?", email).Find(&events)
 
 	if len(events) == 0 {
 		w.WriteHeader(http.StatusNotFound)
