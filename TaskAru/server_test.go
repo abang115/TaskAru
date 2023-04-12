@@ -330,6 +330,38 @@ func TestReceiveEventGetHandler(t *testing.T) {
 	assert.Equal(t, http.StatusOK, rr.Code, "HTTP request status code error")
 }
 
+// test to get existing event
+func TestReceiveSharedEventGetHandler(t *testing.T) {
+
+	rr := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodGet, "/api/sharedevent?email=janedoe@ufl.edu", nil)
+	testRouter.ServeHTTP(rr, req)
+
+	var actual []models.Event
+	if err := json.Unmarshal(rr.Body.Bytes(), &actual); err != nil {
+		t.Errorf("unable to unmarshal body")
+	}
+
+	var expected []models.Event
+	expected = append(expected, models.Event{
+		Email:           "janedoe@ufl.edu",
+		EventID:         "1",
+		EventTitle:      "Holiday",
+		Description:     "It's a Holiday",
+		EventDate:       "2023-04-09",
+		StartTime:       "11:00",
+		EndTime:         "12:00",
+		Freq:            "weekly",
+		DTStart:         "2023-04-09",
+		Until:           "2024-04-09",
+		BackgroundColor: "#08B419",
+	})
+
+	assert.Equal(t, expected, actual, "expected does not equal actual")
+	assert.Equal(t, http.MethodGet, req.Method, "HTTP request method error")
+	assert.Equal(t, http.StatusOK, rr.Code, "HTTP request status code error")
+}
+
 // test to remove existing event
 func TestRemoveEventDeleteHandler(t *testing.T) {
 	rBody := []byte(`{"email": "janedoe@ufl.edu", "eventID": "1", "eventTitle": "Holiday", "eventDescription": "It's a Holiday", "eventDate": "2023-04-09", 
