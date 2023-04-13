@@ -12,6 +12,7 @@ import { FullCalendarComponent } from "@fullcalendar/angular";
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { SignInService } from '../sign-in.service';
 import { s } from "@fullcalendar/core/internal-common";
+import { ParsedEvent } from "@angular/compiler";
 
 @Component({
   selector: 'calendar',
@@ -24,6 +25,7 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
 
   currentEvents: any[] = [];
   selectedEvent: any;
+  eventID = 1;
   calendarOptions= {
     plugins: [
       interactionPlugin,
@@ -72,7 +74,7 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
     if(this.signedIn){
       this.email = this.signInService.getEmail();
       this.fetchEvents();
-      console.log(this.email);
+      console.log('Showing user:' + this.email);
     }
     else{
       this.currentEvents = INITIAL_EVENTS;
@@ -99,7 +101,7 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
     console.log('add events clicked');
     // Create new event struct using form vals
     let newEvent = {
-      id: createEventId(),
+      id: createEventId(this.eventID),
       title: formVars.eventTitle || '',
       description: formVars.eventDescription || '',
       start: toEventFormat(formVars.eventDate, formVars.startTime) || '',
@@ -107,6 +109,7 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
       rrule: parseToRRule(formVars.eventDate, formVars.reoccuring),
       backgroundColor: getRandomColor()
     }
+    this.eventID++;
     console.log(newEvent);
     // Add event to calendar and send data to backend if user is signed in
     this.fullCalendarComponent.getApi().addEvent(newEvent);
@@ -183,13 +186,19 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
   }
 
   removeEvent(){
-    this.eventRemoveToBackend(this.selectedEvent.toPlainObject());
+    if(this.signedIn){
+      let REvent = {
+        email: this.email,
+        eventID: this.selectedEvent.toPlainObject().id 
+      }
+      this.eventRemoveToBackend(REvent);
+    }
     this.selectedEvent.remove(); 
     this.modalRef?.hide(); 
    }
 
-  eventRemoveToBackend(existingEvent:any){
-    this.http.delete('http://localhost:8080/api/event',existingEvent).subscribe({
+  eventRemoveToBackend(REvent:any){
+    this.http.delete('http://localhost:8080/api/event', REvent).subscribe({
       next: response => {
         console.log('Backend successfully reached, Event is removed :', response)
       },
@@ -200,7 +209,7 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
   }
 
   eventEditToBackend(editedEvent:any){
-
+    
     // TODO FIX form of edited event
     this.http.patch('http://localhost:8080/api/event',editedEvent).subscribe({
       next: response => {
@@ -213,24 +222,31 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
   }
 
   fetchEvents(){
-    // TODO GET FUNCTION RETURN EVENTS
     this.http.get(`http://localhost:8080/api/event?email=${this.email}`).subscribe({
       next: response => {
         let eventArr:any;
-        console.log('Events Fetched:', response);
         eventArr = response;
+        console.log('Events Fetched:', response);
         console.log(eventArr);
         let parsedEvent: any[] = [];
-        if(eventArr == null || eventArr == undefined){
-          parsedEvent = [];
-        }
-        else{
+        if(eventArr != null || eventArr != undefined){
           for(let i = 0; i < eventArr.length; i++){
-          this.fullCalendarComponent.getApi().addEvent(parseFromBackend(eventArr[i]));
+            this.fullCalendarComponent.getApi().addEvent(parseFromBackend(eventArr[i]));
           }
         }
-        console.log(parsedEvent);
-        this.currentEvents = parsedEvent || '';     
+        this.eventID = eventArr.length;    
+      },
+      error: err => {
+        console.error('Error: ', err)
+      }
+    });
+  }
+
+  getShareEvents(Sharer:any){
+    // TODO get events from response and 
+    this.http.get(`http://localhost:8080/api/sharedevent?email=${this.email}`, Sharer).subscribe({
+      next: response => {
+        console.log('Backend successfully reached, fetched events for: ' + Sharer, response)
       },
       error: err => {
         console.error('Error: ', err)
