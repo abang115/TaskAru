@@ -2,6 +2,7 @@ package models
 
 type Event struct {
 	Email           string `json:"email"`
+	GroupID         string `json:"groupID"`
 	EventID         string `json:"eventID"`
 	EventTitle      string `json:"eventTitle"`
 	Description     string `json:"eventDescription"`
@@ -12,5 +13,11 @@ type Event struct {
 	DTStart         string `json:"dtstart"`
 	Until           string `json:"until"`
 	BackgroundColor string `json:"backgroundColor"`
-	ShareAbility    string `json:"sharedWith"`
+}
+
+type Calendar struct {
+	Email        string `json:"email"`
+	GroupID      string `json:"groupID"`
+	CalendarName string `json:"calendarName"`
+	ShareAbility string `json:"sharedWith"`
 }

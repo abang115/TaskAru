@@ -32,5 +32,7 @@ func main() {
 	r.HandleFunc("/api/event", controllers.RemoveEventDeleteHandler).Methods("DELETE")
 	r.HandleFunc("/api/event", controllers.ReceiveEventGetHandler).Methods("GET")
 	r.HandleFunc("/api/sharedevent", controllers.ReceiveSharedEventGetHandler).Methods("GET")
+	r.HandleFunc("/api/calendar", controllers.CalendarPostHandler).Methods("POST")
+	r.HandleFunc("/api/calendar", controllers.CalendarGetHandler).Methods("GET")
 	log.Fatal(http.ListenAndServe(":8080", handler.Handler(r)))
 }
