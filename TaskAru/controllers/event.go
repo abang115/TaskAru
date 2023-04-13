@@ -68,7 +68,7 @@ func EditEventPatchHandler(w http.ResponseWriter, r *http.Request) {
 
 	// look through events with email first
 	if err := models.DB.Model(&updateEvent).Where("event_id = ?", updateEvent.EventID).Updates(models.Event{GroupID: updateEvent.GroupID, EventTitle: updateEvent.EventTitle, Description: updateEvent.Description, EventDate: updateEvent.EventDate,
-		StartTime: updateEvent.StartTime, EndTime: updateEvent.EndTime, Freq: updateEvent.Freq, DTStart: updateEvent.DTStart, Until: updateEvent.Until, BackgroundColor: updateEvent.BackgroundColor, ShareAbility: updateEvent.ShareAbility}).Error; err != nil {
+		StartTime: updateEvent.StartTime, EndTime: updateEvent.EndTime, Freq: updateEvent.Freq, DTStart: updateEvent.DTStart, Until: updateEvent.Until, BackgroundColor: updateEvent.BackgroundColor}).Error; err != nil {
 		// check error message
 		w.WriteHeader(http.StatusInternalServerError)
 		errorMessage := map[string]string{"error": "could not update event"}
