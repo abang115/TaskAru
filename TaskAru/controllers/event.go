@@ -114,13 +114,11 @@ func RemoveEventDeleteHandler(w http.ResponseWriter, r *http.Request) {
 func ReceiveEventGetHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "*")
 
+	email := r.URL.Query().Get("email")
+
 	// events currently in database
-	var getEvent models.Event
 	var events []models.Event
-
-	_ = json.NewDecoder(r.Body).Decode(&getEvent)
-
-	models.DB.Where("email = ?", getEvent.Email).Find(&events)
+	models.DB.Where("email = ?", email).Find(&events)
 
 	if len(events) == 0 {
 		w.WriteHeader(http.StatusNotFound)
