@@ -16,8 +16,8 @@ Front-End
 
 Back-End
 
-  - 
-  - 
+  - ReceiveSharedEventGet, CalendarPost, and CalendarGet handler functions were implmented to handle requests to connect the front-end to the back-end
+  - Configured and implemented unit tests for calendar functions
   - 
 
 Frontend Unit Tests
@@ -88,6 +88,12 @@ Backend Unit Tests
     - Successfully deletes an event in the desired calendar using a email, title, description, date, start time, end time, frequency, date start for reoccuring events, date end for reoccuring events, and background color
     - Catches if the delete function was called
     - Catches if the event was not deleted properly
+  - Unit tests for CalendarPostHandler()
+    - Successfully creates a calendar in the desired account
+    - Catches if the calendar was not created properly
+  - Unit tests for CalendarGetHandler()
+    - Successfully sends calendars to the front end
+    - Catches if the incorrect calendar data was sent
 
 Updated Documentation for Backend API
 ---
@@ -120,3 +126,9 @@ URL: <code>/api/sharedevent</code>
 
 URL: <code>/api/event</code>
   - Integrated RemoveEventDeleteHandler() function which is a <code>DELETE</code> request. The function allows the user to indicate that want to delete an event in their desired calendar.
+
+URL: <code>/api/calendar</code>
+  - Integrated CalendarPostHandler() function which is a <code>POST</code> request. This function allows the user to create a calendar in their account so they're able to have multiple calendars.
+
+URL: <code>/api/calendar</code>
+  - Integrated CalendarGetHandler() function which is a <code>GET</code> request. The function allows front end to receive calendars from the database based on the user logged in.
