@@ -409,3 +409,69 @@ func TestRemoveEventDeleteHandler(t *testing.T) {
 	assert.Equal(t, http.MethodDelete, req.Method, "HTTP request method error")
 	assert.Equal(t, http.StatusOK, rr.Code, "HTTP request status code error")
 }
+
+// UNFINISHED
+// test to add calendar
+func TestCalendarPostHandler(t *testing.T) {
+	// deleteFromTable("events")
+
+	// rBody := []byte(`{"email": "janedoe@ufl.edu", "eventID": "1", "eventTitle": "Birthday", "eventDescription": "It's a my Birthday", "eventDate": "2023-03-09",
+	// "startTime": "10:00", "endTime": "11:00", "freq": "daily", "dtStart": "2023-03-09", "until": "2024-03-09", "backgroundColor": "#08B417"}`)
+
+	// rr := httptest.NewRecorder()
+	// req := httptest.NewRequest(http.MethodPost, "/api/event", bytes.NewBuffer(rBody))
+	// testRouter.ServeHTTP(rr, req)
+
+	// var event models.Event
+	// result := models.DB.Where("event_id = ?", "1").First(&event)
+	// if result.Error != nil {
+	// 	t.Errorf("test failed! unable to get event %v", result.Error)
+	// }
+
+	// assert.Equal(t, "janedoe@ufl.edu", event.Email, "incorrect email error")
+	// assert.Equal(t, "1", event.EventID, "incorrect event ID error")
+	// assert.Equal(t, "Birthday", event.EventTitle, "incorrect event title error")
+	// assert.Equal(t, "It's a my Birthday", event.Description, "incorrect event description error")
+	// assert.Equal(t, "2023-03-09", event.EventDate, "incorrect event date error")
+	// assert.Equal(t, "10:00", event.StartTime, "incorrect event start time error")
+	// assert.Equal(t, "11:00", event.EndTime, "incorrect event end time error")
+	// assert.Equal(t, "daily", event.Freq, "incorrect event frequency error")
+	// assert.Equal(t, "2023-03-09", event.DTStart, "incorrect event dt start error")
+	// assert.Equal(t, "2024-03-09", event.Until, "incorrect event until error")
+	// assert.Equal(t, "#08B417", event.BackgroundColor, "incorrect event background color error")
+	// assert.Equal(t, http.MethodPost, req.Method, "HTTP request method error")
+	// assert.Equal(t, http.StatusOK, rr.Code, "HTTP request status code error")
+}
+
+// UNFINISHED
+// test to get existing calendar
+func TestCalendarGetHandler(t *testing.T) {
+
+	// rr := httptest.NewRecorder()
+	// req := httptest.NewRequest(http.MethodGet, "/api/event?email=janedoe2@ufl.edu", nil)
+	// testRouter.ServeHTTP(rr, req)
+
+	// var actual []models.Event
+	// if err := json.Unmarshal(rr.Body.Bytes(), &actual); err != nil {
+	// 	t.Errorf("unable to unmarshal body")
+	// }
+
+	// var expected []models.Event
+	// expected = append(expected, models.Event{
+	// 	Email:           "janedoe@ufl.edu",
+	// 	EventID:         "1",
+	// 	EventTitle:      "Holiday",
+	// 	Description:     "It's a Holiday",
+	// 	EventDate:       "2023-04-09",
+	// 	StartTime:       "11:00",
+	// 	EndTime:         "12:00",
+	// 	Freq:            "weekly",
+	// 	DTStart:         "2023-04-09",
+	// 	Until:           "2024-04-09",
+	// 	BackgroundColor: "#08B419",
+	// })
+
+	// assert.Equal(t, expected, actual, "expected does not equal actual")
+	// assert.Equal(t, http.MethodGet, req.Method, "HTTP request method error")
+	// assert.Equal(t, http.StatusOK, rr.Code, "HTTP request status code error")
+}
