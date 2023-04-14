@@ -234,11 +234,133 @@ func TestResetPasswordPatchHandler(t *testing.T) {
 	assert.Equal(t, http.StatusOK, rr.Code, "HTTP request status code error")
 }
 
+// test to add calendar
+func TestCalendarPostHandler(t *testing.T) {
+	deleteFromTable("calendars")
+
+	rBody := []byte(`{"email": "janedoe@ufl.edu", "groupID": "0", "CalendarName": "School", "ShareAbility": "johndoe@ufl.edu jimdoe@ufl.edu"}`)
+
+	rr := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodPost, "/api/calendar", bytes.NewBuffer(rBody))
+	testRouter.ServeHTTP(rr, req)
+
+	var calendar models.Calendar
+	result := models.DB.Where("email = ?", "janedoe@ufl.edu", "groupID = ?", "0").First(&calendar)
+
+	if result.Error != nil {
+		t.Errorf("test failed! unable to get calendar %v", result.Error)
+	}
+
+	assert.Equal(t, "janedoe@ufl.edu", calendar.Email, "incorrect email error")
+	assert.Equal(t, "0", calendar.GroupID, "incorrect group ID error")
+	assert.Equal(t, "School", calendar.CalendarName, "incorrect calendar name error")
+	assert.Equal(t, "johndoe@ufl.edu jimdoe@ufl.edu", calendar.ShareAbility, "incorrect shared with error")
+	assert.Equal(t, http.MethodPost, req.Method, "HTTP request method error")
+	assert.Equal(t, http.StatusOK, rr.Code, "HTTP request status code error")
+}
+
+// test to get existing calendar
+func TestCalendarGetHandler(t *testing.T) {
+	// registers john doe
+	rBody := []byte(`{"first_name": "john", "last_name": "doe", "email": "johndoe@ufl.edu", "password": "johndoe"}`)
+	rr := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodPost, "/api/register", bytes.NewBuffer(rBody))
+	testRouter.ServeHTTP(rr, req)
+
+	var user models.User
+	result := models.DB.Where("email = ?", "johndoe@ufl.edu").First(&user)
+	if result.Error != nil {
+		t.Errorf("test failed! unable to get user %v", result.Error)
+	}
+
+	err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte("johndoe"))
+	if err != nil {
+		t.Errorf("test failed! unable to compared hashed password %v", err)
+	}
+
+	assert.Equal(t, "john", user.FirstName, "incorrect first name error")
+	assert.Equal(t, "doe", user.LastName, "incorrect last name error")
+	assert.Equal(t, "johndoe@ufl.edu", user.Email, "incorrect email error")
+
+	assert.Equal(t, http.MethodPost, req.Method, "HTTP request method error")
+	assert.Equal(t, http.StatusOK, rr.Code, "HTTP request status code error")
+
+	// registers jim doe
+	rBody = []byte(`{"first_name": "jim", "last_name": "doe", "email": "jimdoe@ufl.edu", "password": "jimdoe"}`)
+	rr = httptest.NewRecorder()
+	req = httptest.NewRequest(http.MethodPost, "/api/register", bytes.NewBuffer(rBody))
+	testRouter.ServeHTTP(rr, req)
+
+	result = models.DB.Where("email = ?", "jimdoe@ufl.edu").First(&user)
+	if result.Error != nil {
+		t.Errorf("test failed! unable to get user %v", result.Error)
+	}
+
+	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte("jimdoe"))
+	if err != nil {
+		t.Errorf("test failed! unable to compared hashed password %v", err)
+	}
+
+	assert.Equal(t, "jim", user.FirstName, "incorrect first name error")
+	assert.Equal(t, "doe", user.LastName, "incorrect last name error")
+	assert.Equal(t, "jimdoe@ufl.edu", user.Email, "incorrect email error")
+
+	assert.Equal(t, http.MethodPost, req.Method, "HTTP request method error")
+	assert.Equal(t, http.StatusOK, rr.Code, "HTTP request status code error")
+
+	// getting calendar
+	rr = httptest.NewRecorder()
+	req = httptest.NewRequest(http.MethodGet, "/api/calendar?email=janedoe@ufl.edu?groupID=0", nil)
+	testRouter.ServeHTTP(rr, req)
+
+	var actual []models.Calendar
+	if err := json.Unmarshal(rr.Body.Bytes(), &actual); err != nil {
+		t.Errorf("unable to unmarshal body")
+	}
+
+	var expected []models.Calendar
+	expected = append(expected, models.Calendar{
+		Email:        "janedoe@ufl.edu",
+		GroupID:      "0",
+		CalendarName: "School",
+		ShareAbility: "johndoe@ufl.edu jimdoe@ufl.edu",
+	})
+
+	assert.Equal(t, expected, actual, "expected does not equal actual")
+	assert.Equal(t, http.MethodGet, req.Method, "HTTP request method error")
+	assert.Equal(t, http.StatusOK, rr.Code, "HTTP request status code error")
+}
+
+// test to get shared with calendar
+func TestCalendarGetHandler2(t *testing.T) {
+	// getting calendar
+	rr := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodGet, "/api/calendar?email=johndoe@ufl.edu?groupID=0", nil)
+	testRouter.ServeHTTP(rr, req)
+
+	var actual []models.Calendar
+	if err := json.Unmarshal(rr.Body.Bytes(), &actual); err != nil {
+		t.Errorf("unable to unmarshal body")
+	}
+
+	var expected []models.Calendar
+	expected = append(expected, models.Calendar{
+		Email:        "janedoe@ufl.edu",
+		GroupID:      "0",
+		CalendarName: "School",
+		ShareAbility: "johndoe@ufl.edu jimdoe@ufl.edu",
+	})
+
+	assert.Equal(t, expected, actual, "expected does not equal actual")
+	assert.Equal(t, http.MethodGet, req.Method, "HTTP request method error")
+	assert.Equal(t, http.StatusOK, rr.Code, "HTTP request status code error")
+}
+
 // test to add event
 func TestEventPostHandler(t *testing.T) {
 	deleteFromTable("events")
 
-	rBody := []byte(`{"email": "janedoe@ufl.edu", "eventID": "1", "eventTitle": "Birthday", "eventDescription": "It's a my Birthday", "eventDate": "2023-03-09", 
+	rBody := []byte(`{"email": "janedoe@ufl.edu", "groupID": "0", "eventID": "1", "eventTitle": "Birthday", "eventDescription": "It's a my Birthday", "eventDate": "2023-03-09", 
 	"startTime": "10:00", "endTime": "11:00", "freq": "daily", "dtStart": "2023-03-09", "until": "2024-03-09", "backgroundColor": "#08B417"}`)
 
 	rr := httptest.NewRecorder()
@@ -252,6 +374,7 @@ func TestEventPostHandler(t *testing.T) {
 	}
 
 	assert.Equal(t, "janedoe@ufl.edu", event.Email, "incorrect email error")
+	assert.Equal(t, "0", event.GroupID, "incorrect group ID error")
 	assert.Equal(t, "1", event.EventID, "incorrect event ID error")
 	assert.Equal(t, "Birthday", event.EventTitle, "incorrect event title error")
 	assert.Equal(t, "It's a my Birthday", event.Description, "incorrect event description error")
@@ -266,8 +389,9 @@ func TestEventPostHandler(t *testing.T) {
 	assert.Equal(t, http.StatusOK, rr.Code, "HTTP request status code error")
 }
 
+// test to add event to a different email
 func TestEventPostHandler2(t *testing.T) {
-	rBody := []byte(`{"email": "janedoe2@ufl.edu", "eventID": "2", "eventTitle": "Birthday", "eventDescription": "It's a my Birthday", "eventDate": "2023-03-09", 
+	rBody := []byte(`{"email": "janedoe2@ufl.edu", "groupID": "0", "eventID": "2", "eventTitle": "Birthday", "eventDescription": "It's a my Birthday", "eventDate": "2023-03-09", 
 	"startTime": "10:00", "endTime": "11:00", "freq": "daily", "dtStart": "2023-03-09", "until": "2024-03-09", "backgroundColor": "#08B417"}`)
 
 	rr := httptest.NewRecorder()
@@ -281,6 +405,7 @@ func TestEventPostHandler2(t *testing.T) {
 	}
 
 	assert.Equal(t, "janedoe2@ufl.edu", event.Email, "incorrect email error")
+	assert.Equal(t, "0", event.GroupID, "incorrect group ID error")
 	assert.Equal(t, "2", event.EventID, "incorrect event ID error")
 	assert.Equal(t, "Birthday", event.EventTitle, "incorrect event title error")
 	assert.Equal(t, "It's a my Birthday", event.Description, "incorrect event description error")
@@ -295,9 +420,9 @@ func TestEventPostHandler2(t *testing.T) {
 	assert.Equal(t, http.StatusOK, rr.Code, "HTTP request status code error")
 }
 
-// test to add existing event
+// test to edit existing event
 func TestEditEventPatchHandler(t *testing.T) {
-	rBody := []byte(`{"email": "janedoe@ufl.edu", "eventID": "1", "eventTitle": "Holiday", "eventDescription": "It's a Holiday", "eventDate": "2023-04-09", 
+	rBody := []byte(`{"email": "janedoe@ufl.edu", "groupID": "0", "eventID": "1", "eventTitle": "Holiday", "eventDescription": "It's a Holiday", "eventDate": "2023-04-09", 
 	"startTime": "11:00", "endTime": "12:00", "freq": "weekly", "dtStart": "2023-04-09", "until": "2024-04-09", "backgroundColor": "#08B419"}`)
 
 	rr := httptest.NewRecorder()
@@ -311,6 +436,7 @@ func TestEditEventPatchHandler(t *testing.T) {
 	}
 
 	assert.Equal(t, "janedoe@ufl.edu", event.Email, "incorrect email error")
+	assert.Equal(t, "0", event.GroupID, "incorrect group ID error")
 	assert.Equal(t, "1", event.EventID, "incorrect event ID error")
 	assert.Equal(t, "Holiday", event.EventTitle, "incorrect event title error")
 	assert.Equal(t, "It's a Holiday", event.Description, "incorrect event description error")
@@ -321,7 +447,6 @@ func TestEditEventPatchHandler(t *testing.T) {
 	assert.Equal(t, "2023-04-09", event.DTStart, "incorrect event dt start error")
 	assert.Equal(t, "2024-04-09", event.Until, "incorrect event until error")
 	assert.Equal(t, "#08B419", event.BackgroundColor, "incorrect event background color error")
-
 	assert.Equal(t, http.MethodPatch, req.Method, "HTTP request method error")
 	assert.Equal(t, http.StatusOK, rr.Code, "HTTP request status code error")
 }
@@ -341,38 +466,7 @@ func TestReceiveEventGetHandler(t *testing.T) {
 	var expected []models.Event
 	expected = append(expected, models.Event{
 		Email:           "janedoe@ufl.edu",
-		EventID:         "1",
-		EventTitle:      "Holiday",
-		Description:     "It's a Holiday",
-		EventDate:       "2023-04-09",
-		StartTime:       "11:00",
-		EndTime:         "12:00",
-		Freq:            "weekly",
-		DTStart:         "2023-04-09",
-		Until:           "2024-04-09",
-		BackgroundColor: "#08B419",
-	})
-
-	assert.Equal(t, expected, actual, "expected does not equal actual")
-	assert.Equal(t, http.MethodGet, req.Method, "HTTP request method error")
-	assert.Equal(t, http.StatusOK, rr.Code, "HTTP request status code error")
-}
-
-// test to get existing event
-func TestReceiveSharedEventGetHandler(t *testing.T) {
-
-	rr := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodGet, "/api/sharedevent?email=janedoe@ufl.edu", nil)
-	testRouter.ServeHTTP(rr, req)
-
-	var actual []models.Event
-	if err := json.Unmarshal(rr.Body.Bytes(), &actual); err != nil {
-		t.Errorf("unable to unmarshal body")
-	}
-
-	var expected []models.Event
-	expected = append(expected, models.Event{
-		Email:           "janedoe@ufl.edu",
+		GroupID:         "0",
 		EventID:         "1",
 		EventTitle:      "Holiday",
 		Description:     "It's a Holiday",
@@ -392,7 +486,7 @@ func TestReceiveSharedEventGetHandler(t *testing.T) {
 
 // test to remove existing event
 func TestRemoveEventDeleteHandler(t *testing.T) {
-	rBody := []byte(`{"email": "janedoe@ufl.edu", "eventID": "1", "eventTitle": "Holiday", "eventDescription": "It's a Holiday", "eventDate": "2023-04-09", 
+	rBody := []byte(`{"email": "janedoe@ufl.edu", "groupID": "0", "eventID": "1", "eventTitle": "Holiday", "eventDescription": "It's a Holiday", "eventDate": "2023-04-09", 
 	"startTime": "11:00", "endTime": "12:00", "freq": "weekly", "dtStart": "2023-04-09", "until": "2024-04-09", "backgroundColor": "#08B419"}`)
 
 	rr := httptest.NewRecorder()
@@ -408,70 +502,4 @@ func TestRemoveEventDeleteHandler(t *testing.T) {
 
 	assert.Equal(t, http.MethodDelete, req.Method, "HTTP request method error")
 	assert.Equal(t, http.StatusOK, rr.Code, "HTTP request status code error")
-}
-
-// UNFINISHED
-// test to add calendar
-func TestCalendarPostHandler(t *testing.T) {
-	// deleteFromTable("events")
-
-	// rBody := []byte(`{"email": "janedoe@ufl.edu", "eventID": "1", "eventTitle": "Birthday", "eventDescription": "It's a my Birthday", "eventDate": "2023-03-09",
-	// "startTime": "10:00", "endTime": "11:00", "freq": "daily", "dtStart": "2023-03-09", "until": "2024-03-09", "backgroundColor": "#08B417"}`)
-
-	// rr := httptest.NewRecorder()
-	// req := httptest.NewRequest(http.MethodPost, "/api/event", bytes.NewBuffer(rBody))
-	// testRouter.ServeHTTP(rr, req)
-
-	// var event models.Event
-	// result := models.DB.Where("event_id = ?", "1").First(&event)
-	// if result.Error != nil {
-	// 	t.Errorf("test failed! unable to get event %v", result.Error)
-	// }
-
-	// assert.Equal(t, "janedoe@ufl.edu", event.Email, "incorrect email error")
-	// assert.Equal(t, "1", event.EventID, "incorrect event ID error")
-	// assert.Equal(t, "Birthday", event.EventTitle, "incorrect event title error")
-	// assert.Equal(t, "It's a my Birthday", event.Description, "incorrect event description error")
-	// assert.Equal(t, "2023-03-09", event.EventDate, "incorrect event date error")
-	// assert.Equal(t, "10:00", event.StartTime, "incorrect event start time error")
-	// assert.Equal(t, "11:00", event.EndTime, "incorrect event end time error")
-	// assert.Equal(t, "daily", event.Freq, "incorrect event frequency error")
-	// assert.Equal(t, "2023-03-09", event.DTStart, "incorrect event dt start error")
-	// assert.Equal(t, "2024-03-09", event.Until, "incorrect event until error")
-	// assert.Equal(t, "#08B417", event.BackgroundColor, "incorrect event background color error")
-	// assert.Equal(t, http.MethodPost, req.Method, "HTTP request method error")
-	// assert.Equal(t, http.StatusOK, rr.Code, "HTTP request status code error")
-}
-
-// UNFINISHED
-// test to get existing calendar
-func TestCalendarGetHandler(t *testing.T) {
-
-	// rr := httptest.NewRecorder()
-	// req := httptest.NewRequest(http.MethodGet, "/api/event?email=janedoe2@ufl.edu", nil)
-	// testRouter.ServeHTTP(rr, req)
-
-	// var actual []models.Event
-	// if err := json.Unmarshal(rr.Body.Bytes(), &actual); err != nil {
-	// 	t.Errorf("unable to unmarshal body")
-	// }
-
-	// var expected []models.Event
-	// expected = append(expected, models.Event{
-	// 	Email:           "janedoe@ufl.edu",
-	// 	EventID:         "1",
-	// 	EventTitle:      "Holiday",
-	// 	Description:     "It's a Holiday",
-	// 	EventDate:       "2023-04-09",
-	// 	StartTime:       "11:00",
-	// 	EndTime:         "12:00",
-	// 	Freq:            "weekly",
-	// 	DTStart:         "2023-04-09",
-	// 	Until:           "2024-04-09",
-	// 	BackgroundColor: "#08B419",
-	// })
-
-	// assert.Equal(t, expected, actual, "expected does not equal actual")
-	// assert.Equal(t, http.MethodGet, req.Method, "HTTP request method error")
-	// assert.Equal(t, http.StatusOK, rr.Code, "HTTP request status code error")
 }

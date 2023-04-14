@@ -20,12 +20,11 @@ func CalendarPostHandler(w http.ResponseWriter, r *http.Request) {
 func CalendarGetHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "*")
 
-	var getCalendar models.Calendar
+	email := r.URL.Query().Get("email")
+
+	// events currently in database
 	var calendars []models.Calendar
-
-	_ = json.NewDecoder(r.Body).Decode(&getCalendar)
-
-	models.DB.Where("email = ?", getCalendar.Email).Find(&calendars)
+	models.DB.Where("email = ? OR sharedWith LIKE ?", email, email).Find(&calendars)
 
 	if len(calendars) == 0 {
 		w.WriteHeader(http.StatusNotFound)
@@ -115,33 +114,11 @@ func ReceiveEventGetHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "*")
 
 	email := r.URL.Query().Get("email")
+	groupID := r.URL.Query().Get("groupID")
 
 	// events currently in database
 	var events []models.Event
-	models.DB.Where("email = ?", email).Find(&events)
-
-	if len(events) == 0 {
-		w.WriteHeader(http.StatusNotFound)
-		errorMessage := map[string]string{"error": "could not find event"}
-		json.NewEncoder(w).Encode(errorMessage)
-		return
-	}
-
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(events)
-}
-
-// Receives shared with events
-func ReceiveSharedEventGetHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "*")
-
-	// uses email and groupID of toggled calendar to find events that are under that shared calendar
-	var getSharedEvent models.Event
-	var events []models.Event
-
-	_ = json.NewDecoder(r.Body).Decode(&getSharedEvent)
-
-	models.DB.Where("email = ? AND groupID = ?", getSharedEvent.Email, getSharedEvent.GroupID).Find(&events)
+	models.DB.Where("email = ? AND groupID = ?", email, groupID).Find(&events)
 
 	if len(events) == 0 {
 		w.WriteHeader(http.StatusNotFound)
