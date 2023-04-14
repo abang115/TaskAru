@@ -1,14 +1,50 @@
-.center{
-  display: block;
+body {
+  margin: 0!important;
+  padding: 0!important;
+}
+
+.left {
+  text-align: center;
   justify-content: center;
-  max-width: 1100px;
+  align-items: center;
   margin-top: 14px;
   margin-left: auto;
   margin-right: auto;
+  width: 12.5%;
+  border-right: 1px solid #ccc;
+  border-left: 1px solid #ccc;
+}
+
+.center{
+  width: 75%;
+  height: 100%;
+  justify-content: center;
+  display: block;
+  max-width: 1100px;
+  margin-top: 14px;
+  margin-left: 0;
+  margin-right: 0;
   padding: 48px;
   border: 3px solid rgba(163, 163, 163, 0.733);
   border-radius: 16px;
 }
+
+.right {
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+  margin-top: 14px;
+  margin-left: auto;
+  margin-right: auto;
+  width: 12.5%;
+  border-right: 1px solid #ccc;
+  border-left: 1px solid #ccc;
+}
+
+#share-event, #get-share-event{
+  background-color: #2c3e50;
+}
+
 
 :host ::ng-deep .fc-toolbar-title {
   margin-right: 50px;

@@ -11,8 +11,6 @@ import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { FullCalendarComponent } from "@fullcalendar/angular";
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { SignInService } from '../sign-in.service';
-import { s } from "@fullcalendar/core/internal-common";
-import { ParsedEvent } from "@angular/compiler";
 
 @Component({
   selector: 'calendar',
@@ -26,6 +24,8 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
   currentEvents: any[] = [];
   selectedEvent: any;
   eventID = 1;
+  groupID = 0;
+
   calendarOptions= {
     plugins: [
       interactionPlugin,
@@ -37,7 +37,7 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
     customButtons:{
       myCustomButton:{
         text: 'Add Event',
-        click: this.handleAddEventButtonClick.bind(this)
+        click: this.addEventClick.bind(this)
       }
     },
     headerToolbar: {
@@ -62,10 +62,11 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
     animated: true
   };
 
-  @ViewChild('eventModal') eventModal!: string;
+  @ViewChild('addEventModal') addEventModal!: string;
   @ViewChild('showEvent') showEvent!: string;
   @ViewChild('editEventModal') editEventModal!: string;
   @ViewChild('cal') fullCalendarComponent!:FullCalendarComponent; // Access the Calendar as an object
+  @ViewChild('sharing') sharing!:string;
 
   constructor(private modalService: BsModalService, private http: HttpClient, public signInService: SignInService) {     }
 
@@ -74,7 +75,6 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
     if(this.signedIn){
       this.email = this.signInService.getEmail();
       this.fetchEvents();
-      console.log('Showing user:' + this.email);
     }
     else{
       this.currentEvents = INITIAL_EVENTS;
@@ -92,16 +92,16 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
     this.modalRef = this.modalService.show(this.showEvent, this.config);
   }
 
-  handleAddEventButtonClick(){
-    this.modalRef = this.modalService.show(this.eventModal);
+  addEventClick(){
+    this.modalRef = this.modalService.show(this.addEventModal);
   }
 
   addEvent(){
     let formVars = this.eventForm.value;
-    console.log('add events clicked');
     // Create new event struct using form vals
     let newEvent = {
       id: createEventId(this.eventID),
+      groupID: this.groupID.toString(),
       title: formVars.eventTitle || '',
       description: formVars.eventDescription || '',
       start: toEventFormat(formVars.eventDate, formVars.startTime) || '',
@@ -115,9 +115,8 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
     this.fullCalendarComponent.getApi().addEvent(newEvent);
     if(this.signedIn){
       let backendForm = parseToBackend(newEvent, formVars.eventDate || '', formVars.startTime || '', formVars.endTime || '', this.email);
-      this.eventAddToBackend(backendForm);
+      this.postEvent(backendForm);
     }
-
     // Reset form with default values
     this.eventForm.reset();
     this.eventForm.get('reoccuring')?.setValue('once');
@@ -125,9 +124,8 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
     this.modalRef?.hide();  
   }
 
-  eventAddToBackend(backendForm:any){
+  postEvent(backendForm:any){
     console.log(backendForm)  
-    
     this.http.post('http://localhost:8080/api/event', backendForm).subscribe({
       next: response => {
         console.log('Event successfully added: ', response)
@@ -185,6 +183,19 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
     this.modalRef?.hide();
   }
 
+  eventEditToBackend(editedEvent:any){
+    
+    // TODO FIX form of edited event
+    this.http.patch('http://localhost:8080/api/event',editedEvent).subscribe({
+      next: response => {
+        console.log('Backend successfully reached: ', response)
+      },
+      error: err => {
+        console.error('Error: ', err)
+      }
+    });
+  }
+
   removeEvent(){
     if(this.signedIn){
       let REvent = {
@@ -208,26 +219,14 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
     });
   }
 
-  eventEditToBackend(editedEvent:any){
-    
-    // TODO FIX form of edited event
-    this.http.patch('http://localhost:8080/api/event',editedEvent).subscribe({
-      next: response => {
-        console.log('Backend successfully reached: ', response)
-      },
-      error: err => {
-        console.error('Error: ', err)
-      }
-    });
-  }
 
   fetchEvents(){
-    this.http.get(`http://localhost:8080/api/event?email=${this.email}`).subscribe({
+    // TODO async stuff
+    this.http.get(`http://localhost:8080/api/event?email=${this.email}?groupID=${this.email}`).subscribe({
       next: response => {
         let eventArr:any;
         eventArr = response;
         console.log('Events Fetched:', response);
-        console.log(eventArr);
         let parsedEvent: any[] = [];
         if(eventArr != null || eventArr != undefined){
           for(let i = 0; i < eventArr.length; i++){
@@ -237,21 +236,56 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
         this.eventID = eventArr.length;    
       },
       error: err => {
-        console.error('Error: ', err)
+        console.log('No events found, calendar has no events yet')
       }
     });
   }
 
-  getShareEvents(Sharer:any){
-    // TODO get events from response and 
-    this.http.get(`http://localhost:8080/api/sharedevent?email=${this.email}`, Sharer).subscribe({
+  shareButtonClick(){
+    this.modalRef = this.modalService.show(this.sharing);
+  }
+  
+  shareCalSubmit(){
+    let share = {
+      email: this.email,
+      groupID: this.groupID,
+      sharedWith: this.shareForm.value.shareEmail
+    }
+    if(this.signedIn){
+      this.postSharedCal(share);
+    }
+    this.eventForm.reset();
+    this.modalRef?.hide();  
+  }
+  
+  postSharedCal(share:any){
+    console.log(share);
+    this.http.post(`http://localhost:8080/api/calendar`, share).subscribe({
       next: response => {
-        console.log('Backend successfully reached, fetched events for: ' + Sharer, response)
+        console.log('Posted to backend:', response)
       },
       error: err => {
         console.error('Error: ', err)
       }
     });
+  }
+
+  async getShareButtonClick(){
+    let shared = await this.getSharedCal();
+    if (shared != null){
+      this.fullCalendarComponent.getApi().removeAllEvents();
+      console.log(shared);
+    }
+  }
+
+  async getSharedCal(){
+    try{
+      const response = await this.http.get(`http://localhost:8080/api/calendar?email=${this.email}`).toPromise();
+      return response;
+    }catch(err){
+      console.error('Error: ', err);
+      return null;
+    }
   }
 
   // Event form variables, with required fields
@@ -264,5 +298,9 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
     endTime: new FormControl(''),
     reoccuring: new FormControl('once'),
     color: new FormControl(''),
+  })
+
+  shareForm = new FormGroup({
+    shareEmail: new FormControl(''),
   })
 }

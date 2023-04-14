@@ -1,7 +1,13 @@
-<div class="row-boxng ser">
-  <div class="center">
-    <full-calendar #cal [options]="calendarOptions"></full-calendar>
-  </div>
+<div class="row">
+    <div class="column left">
+      <button id="share-event" type="submit" class="btn btn-primary btn-lg btn-block" (click)="shareButtonClick()">Share Calendar</button>
+      <button id="get-share-event" type="submit" class="btn btn-primary btn-lg btn-block" (click)="getShareButtonClick()">Get Shared</button>
+    </div>
+    <div class="column center">
+      <full-calendar #cal [options]="calendarOptions"></full-calendar>
+    </div>
+    <div class="column right">
+    </div>
 </div>
 
 <ng-template #showEvent>
@@ -20,7 +26,7 @@
   </div>
 </ng-template>
 
-<ng-template #eventModal>
+<ng-template #addEventModal>
       <div class="modal-header">
         <h4 class="modal-title pull-left">Add Event</h4>
         <button type="button" class="btn-close close pull-right" aria-label="Close" (click)="modalRef?.hide()">
@@ -144,3 +150,19 @@
       </div>
     </ng-template>
 
+    <ng-template #sharing>
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">Sharing Current Calendar Events</h4>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="shareForm">
+          <div class="form-group">
+            <label>Enter recipent email:</label>
+            <input id="share-to" type="text" formControlName="shareEmail" class="form-control">
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button id="share-button" type="submit" class="btn btn-primary" (click)="shareCalSubmit()">Share</button>
+      </div>
+    </ng-template>
