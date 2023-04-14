@@ -32,7 +32,9 @@
                 </mat-error>
             </mat-form-field>
         </div>
-        <mat-checkbox class="remember">Remember Me</mat-checkbox>
+        <form [formGroup]="checkForm">
+            <mat-checkbox class="remember" formControlName="remember">Remember Me</mat-checkbox>
+        </form>
         <div class="center">
             <button mat-raised-button data-cy="Submit SignIn" color="primary" type="submit">
                 Sign In

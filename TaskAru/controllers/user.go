@@ -8,7 +8,9 @@ import (
 	"math/rand"
 	"net/http"
 	"os"
+	"time"
 
+	"github.com/dgrijalva/jwt-go"
 	"github.com/go-mail/mail"
 	"github.com/joho/godotenv"
 	"golang.org/x/crypto/bcrypt"
@@ -49,6 +51,7 @@ func SignInPostHandler(w http.ResponseWriter, r *http.Request) {
 
 	var signin models.UserSignIn
 	var user models.User
+	key := os.Getenv("JWT_KEY")
 
 	_ = json.NewDecoder(r.Body).Decode(&signin)
 
@@ -70,8 +73,19 @@ func SignInPostHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	claims := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.StandardClaims{
+		Issuer:    user.Email,
+		ExpiresAt: time.Now().Add(time.Hour * 24).Unix(),
+	})
+	token, err := claims.SignedString([]byte(key))
+
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
 	w.WriteHeader(http.StatusOK)
-	message := map[string]string{"message": "successful login"}
+	message := map[string]string{"token": token}
 	json.NewEncoder(w).Encode(message)
 }
 

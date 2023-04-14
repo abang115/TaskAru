@@ -2,6 +2,7 @@ import { Component, OnInit} from '@angular/core';
 import { SignInService } from '../sign-in.service';
 import { Router } from '@angular/router'
 import { ThemeService } from '../theme.service';
+import { JwtHelperService } from '@auth0/angular-jwt';
 
 @Component({
   selector: 'app-navigation-bar',
@@ -14,20 +15,29 @@ export class NavigationBarComponent {
   constructor(private signInService:SignInService, private themeService:ThemeService, private router:Router) {}
 
   ngOnInit(): void {
+    let jwtHelper: JwtHelperService = new JwtHelperService
+    const token = localStorage.getItem('token')
+    if(token && !jwtHelper.isTokenExpired(token)) {
+      this.signInService.signIn()
+      this.signedIn = true
+      this.router.navigate(['/home'])
+    }
+    else {
+      localStorage.removeItem('token');
+    }
     this.signInService.isSignedIn$.subscribe((signInStatus: boolean) => {
       setTimeout(() => {
         this.signedIn = signInStatus
         console.log(this.signedIn)
       }, 2000)
-    }); 
-
+    });
   }
 
   signOut() {
     this.signInService.signOut()
-    this.signInService.removeEmail();
+    this.signInService.removeEmail()
     setTimeout(() => {
-      this.router.navigate(['/signin']);
+      this.router.navigate(['/signin'])
     }, 2000)
   }
 

@@ -20,6 +20,10 @@ export class SignInComponent implements OnInit{
     password: new FormControl('', [Validators.required]),
   });
 
+  checkForm: FormGroup = this.formBuilder.group({
+    remember: false
+  })
+
   ngOnInit(): void {
     this.themeService.darkMode$.subscribe((themeStatus: boolean) => {
       this.darkMode = themeStatus
@@ -27,16 +31,20 @@ export class SignInComponent implements OnInit{
   }
 
   signIn() {
-    if(!this.signinForm.invalid) {
-      const userSignIn = {
-        email: this.signinForm.get('email')!.value, 
-        password: this.signinForm.get('password')!.value
+      if(!this.signinForm.invalid) {
+        const userSignIn = {
+          email: this.signinForm.get('email')!.value, 
+          password: this.signinForm.get('password')!.value
       }
       console.log(userSignIn)
       
-      this.http.post('http://localhost:8080/api/signin', userSignIn).subscribe({
+      this.http.post<{ token : string }>('http://localhost:8080/api/signin', userSignIn).subscribe({
         next: response => {
           console.log('Backend successfully reached: ', response)
+          const token = response.token
+          if(this.checkForm.get('remember')!.value === true) {
+            localStorage.setItem('token', token)
+          }
           this.signInService.signIn()
           this.signInService.setEmail(this.signinForm.get('email')!.value)
           setTimeout(() => {

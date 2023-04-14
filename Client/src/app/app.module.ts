@@ -13,6 +13,7 @@ import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http'
+import { JwtHelperService } from '@auth0/angular-jwt';
 
 import { NavigationBarComponent } from './navigation-bar/navigation-bar.component';
 import { SignInComponent } from './sign-in/sign-in.component';
@@ -55,7 +56,7 @@ import { ForgotPasswordComponent } from './forgot-password/forgot-password.compo
     MatCheckboxModule,
     RouterModule,
   ],
-  providers: [],
+  providers: [JwtHelperService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

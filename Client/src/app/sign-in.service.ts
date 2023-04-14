@@ -29,6 +29,7 @@ export class SignInService {
 
   signOut() {
     this.isSignedIn.next(false)
+    localStorage.removeItem('token')
   }
 
   getStatus():boolean{
