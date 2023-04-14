@@ -222,7 +222,7 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
 
   fetchEvents(){
     // TODO async stuff
-    this.http.get(`http://localhost:8080/api/event?email=${this.email}?groupID=${this.email}`).subscribe({
+    this.http.get(`http://localhost:8080/api/event?email=${this.email}&groupID=${this.groupID}`).subscribe({
       next: response => {
         let eventArr:any;
         eventArr = response;

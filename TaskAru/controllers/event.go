@@ -118,7 +118,7 @@ func ReceiveEventGetHandler(w http.ResponseWriter, r *http.Request) {
 
 	// events currently in database
 	var events []models.Event
-	models.DB.Where("email = ? AND groupID = ?", email, groupID).Find(&events)
+	models.DB.Where("email = ? AND group_id = ?", email, groupID).Find(&events)
 
 	if len(events) == 0 {
 		w.WriteHeader(http.StatusNotFound)

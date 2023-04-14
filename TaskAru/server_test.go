@@ -455,7 +455,7 @@ func TestEditEventPatchHandler(t *testing.T) {
 func TestReceiveEventGetHandler(t *testing.T) {
 
 	rr := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodGet, "/api/event?email=janedoe2@ufl.edu", nil)
+	req := httptest.NewRequest(http.MethodGet, "/api/event?email=janedoe@ufl.edu&groupID=0", nil)
 	testRouter.ServeHTTP(rr, req)
 
 	var actual []models.Event
