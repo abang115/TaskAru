@@ -79,6 +79,10 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
       for(let event of this.currentEvents){
         this.fullCalendarComponent.getApi().addEvent(event);
       }
+      if(this.currentEvents.length != 0){
+        this.eventID = ++this.currentEvents[this.currentEvents.length-1].id;
+      }
+      console.log(this.eventID);
     }
     else{
       this.currentEvents = INITIAL_EVENTS;
@@ -240,6 +244,27 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
    }
   }
 
+  createCalButtonClick(){
+    // TODO Add multiple calendars
+    let newCal = {
+      email: this.email,
+      groupID: this.groupID.toString(),
+    }
+    this.createCal(newCal);
+  }
+  
+  createCal(newCal:any){
+    console.log(newCal);
+    this.http.post(`http://localhost:8080/api/calendar`, newCal).subscribe({
+      next: response => {
+        console.log('Posted to backend:', response)
+      },
+      error: err => {
+        console.error('Error: ', err)
+      }
+    });
+  }
+
   shareButtonClick(){
     this.modalRef = this.modalService.show(this.sharing);
   }
@@ -248,20 +273,21 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
     let share = {
       email: this.email,
       groupID: this.groupID.toString(),
+      calendarName: '', // TODO add name if applicable
       sharedWith: this.shareForm.value.shareEmail
     }
     if(this.signedIn){
-      this.postSharedCal(share);
+      this.patchSharedCal(share);
     }
     this.eventForm.reset();
     this.modalRef?.hide();  
   }
   
-  postSharedCal(share:any){
-    console.log(share);
-    this.http.post(`http://localhost:8080/api/calendar`, share).subscribe({
+  patchSharedCal(share:any){
+    // TODO changed shared with to add delimiters of old events
+    this.http.patch(`http://localhost:8080/api/calendar`, share).subscribe({
       next: response => {
-        console.log('Posted to backend:', response)
+        console.log('Edited share:', response)
       },
       error: err => {
         console.error('Error: ', err)
@@ -273,12 +299,17 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
     let shared = await this.getSharedCal();
     if (shared != null){
       this.fullCalendarComponent.getApi().removeAllEvents();
-      let otherEmail, otherGroupID;
+      let sharedEmails, otherGroupID;
+      console.log(shared);
       
       for(let cal of shared){
-        
+        sharedEmails = cal.email;
+        otherGroupID = cal.groupID;
+        const events = await this.fetchEvents(sharedEmails, otherGroupID) || [];
+        for(let event of events){
+          this.fullCalendarComponent.getApi().addEvent(event);
+        }
       }
-      console.log(shared);
     }
   }
 
