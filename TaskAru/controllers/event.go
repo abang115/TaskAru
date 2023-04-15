@@ -57,7 +57,7 @@ func EditCalendarPatchHandler(w http.ResponseWriter, r *http.Request) {
 	if err := models.DB.Model(&updateCalendar).Where("email = ? AND group_id", updateCalendar.Email, updateCalendar.GroupID).Updates(models.Calendar{CalendarName: updateCalendar.CalendarName, ShareAbility: updateCalendar.ShareAbility}).Error; err != nil {
 		// check error message
 		w.WriteHeader(http.StatusInternalServerError)
-		errorMessage := map[string]string{"error": "could not update event"}
+		errorMessage := map[string]string{"error": "could not update calendar"}
 		json.NewEncoder(w).Encode(errorMessage)
 		return
 	}
