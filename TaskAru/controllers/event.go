@@ -37,6 +37,35 @@ func CalendarGetHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(calendars)
 }
 
+func EditCalendarPatchHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "*")
+
+	var updateCalendar models.Calendar
+	var calendars []models.Calendar
+
+	_ = json.NewDecoder(r.Body).Decode(&updateCalendar)
+
+	searchErr := models.DB.Where("email = ? AND group_id = ?", updateCalendar.Email, updateCalendar.GroupID).First(&calendars).Error
+
+	if searchErr != nil {
+		w.WriteHeader(http.StatusNotFound)
+		errorMessage := map[string]string{"error": "could not find calendar"}
+		json.NewEncoder(w).Encode(errorMessage)
+		return
+	}
+
+	if err := models.DB.Model(&updateCalendar).Where("email = ? AND group_id", updateCalendar.Email, updateCalendar.GroupID).Updates(models.Calendar{CalendarName: updateCalendar.CalendarName, ShareAbility: updateCalendar.ShareAbility}).Error; err != nil {
+		// check error message
+		w.WriteHeader(http.StatusInternalServerError)
+		errorMessage := map[string]string{"error": "could not update event"}
+		json.NewEncoder(w).Encode(errorMessage)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(updateCalendar)
+}
+
 func EventPostHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "*")
 
