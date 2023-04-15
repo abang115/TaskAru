@@ -7,6 +7,12 @@
     
         <button mat-button data-cy="Sign In" routerLinkActive="active" routerLink="/signin" *ngIf="!signedIn">Sign In</button> &nbsp;&nbsp;
         <button mat-raised-button data-cy="Sign Up" routerLinkActive="active" routerLink="/signup" *ngIf="!signedIn">Sign Up</button> &nbsp;&nbsp;
+        <button mat-icon-button [matMenuTriggerFor]="menu" *ngIf="signedIn">
+            <mat-icon>notifications</mat-icon>
+        </button>
+        <mat-menu #menu="matMenu">
+            <div mat-menu-item>Test Notification</div>
+        </mat-menu>
         <button mat-raised-button data-cy="Sign Out" *ngIf="signedIn" (click)="signOut()">Sign Out</button> &nbsp;&nbsp;
         <mat-button-toggle-group (click)="toggleMode()" multiple>
             <mat-button-toggle value="mode" data-cy="Toggle Mode">
