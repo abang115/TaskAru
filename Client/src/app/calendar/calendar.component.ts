@@ -70,11 +70,15 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
 
   constructor(private modalService: BsModalService, private http: HttpClient, public signInService: SignInService) {     }
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     this.signedIn = this.signInService.getStatus();
     if(this.signedIn){
       this.email = this.signInService.getEmail();
-      this.fetchEvents();
+      const events = await this.fetchEvents(this.email, this.groupID);
+      this.currentEvents = events ? events : [];
+      for(let event of this.currentEvents){
+        this.fullCalendarComponent.getApi().addEvent(event);
+      }
     }
     else{
       this.currentEvents = INITIAL_EVENTS;
@@ -220,25 +224,20 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
   }
 
 
-  fetchEvents(){
-    // TODO async stuff
-    this.http.get(`http://localhost:8080/api/event?email=${this.email}&groupID=${this.groupID}`).subscribe({
-      next: response => {
-        let eventArr:any;
-        eventArr = response;
-        console.log('Events Fetched:', response);
-        let parsedEvent: any[] = [];
-        if(eventArr != null || eventArr != undefined){
-          for(let i = 0; i < eventArr.length; i++){
-            this.fullCalendarComponent.getApi().addEvent(parseFromBackend(eventArr[i]));
-          }
-        }
-        this.eventID = eventArr.length;    
-      },
-      error: err => {
-        console.log('No events found, calendar has no events yet')
+  async fetchEvents(email:any, groupID:any){
+   try{
+    const response = await this.http.get(`http://localhost:8080/api/event?email=${email}&groupID=${groupID}`).toPromise();
+    let parsedEvent: any[] = [];
+    if(Array.isArray(response)){
+      for(let event of response){
+        parsedEvent.push(parseFromBackend(event));
       }
-    });
+    }
+    return parsedEvent;
+   } catch(err){
+    console.error('Error: ', err)
+    return null;
+   }
   }
 
   shareButtonClick(){
@@ -248,7 +247,7 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
   shareCalSubmit(){
     let share = {
       email: this.email,
-      groupID: this.groupID,
+      groupID: this.groupID.toString(),
       sharedWith: this.shareForm.value.shareEmail
     }
     if(this.signedIn){
@@ -274,6 +273,11 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
     let shared = await this.getSharedCal();
     if (shared != null){
       this.fullCalendarComponent.getApi().removeAllEvents();
+      let otherEmail, otherGroupID;
+      
+      for(let cal of shared){
+        
+      }
       console.log(shared);
     }
   }
@@ -281,7 +285,7 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
   async getSharedCal(){
     try{
       const response = await this.http.get(`http://localhost:8080/api/calendar?email=${this.email}`).toPromise();
-      return response;
+      return response as Array<any>;
     }catch(err){
       console.error('Error: ', err);
       return null;
