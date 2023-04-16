@@ -21,6 +21,9 @@ export class NavigationBarComponent {
       this.signInService.signIn()
       this.signedIn = true
       this.router.navigate(['/home'])
+      const email = jwtHelper.decodeToken(token).iss
+      this.signInService.setEmail(email)
+      console.log(email)
     }
     else {
       localStorage.removeItem('token');
