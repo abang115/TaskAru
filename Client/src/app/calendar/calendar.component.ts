@@ -25,7 +25,7 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
   currentEvents: any[] = [];
   selectedEvent: any;
   eventID = 1;
-  groupID = 0;
+  groupID = '0';
 
   calendarOptions= {
     plugins: [
@@ -100,6 +100,12 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
     this.modalRef = this.modalService.show(this.showEvent, this.config);
   }
 
+  onCalSelectChange(event: any) {
+    // TODO create new calendar and set personal to default
+    this.groupID = event.value;
+    console.log('Selected Calendar:', this.groupID);
+  }
+
   addEventClick(){
     this.modalRef = this.modalService.show(this.addEventModal);
   }
@@ -109,7 +115,7 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
     // Create new event struct using form vals
     let newEvent = {
       id: createEventId(this.eventID),
-      groupID: this.groupID.toString(),
+      groupID: this.groupID,
       title: formVars.eventTitle || '',
       description: formVars.eventDescription || '',
       start: toEventFormat(formVars.eventDate, formVars.startTime) || '',
@@ -144,7 +150,7 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
     });
   }
 
-  editEventButton(){
+  editEventButtonClick(){
     this.modalRef?.hide();
     var eventObj = this.selectedEvent.toPlainObject();
     console.log(eventObj);
@@ -204,19 +210,19 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
     });
   }
 
-  removeEvent(){
+  removeEventButtonClick(){
     if(this.signedIn){
       let REvent = {
         email: this.email,
         eventID: this.selectedEvent.toPlainObject().id 
       }
-      this.eventRemoveToBackend(REvent);
+      this.deleteEventRemove(REvent);
     }
     this.selectedEvent.remove(); 
     this.modalRef?.hide(); 
    }
 
-  eventRemoveToBackend(REvent:any){
+  deleteEventRemove(REvent:any){
     this.http.delete('http://localhost:8080/api/event', REvent).subscribe({
       next: response => {
         console.log('Backend successfully reached, Event is removed :', response)
@@ -226,7 +232,6 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
       }
     });
   }
-
 
   async fetchEvents(email:any, groupID:any){
    try{
@@ -249,7 +254,7 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
     if(this.signedIn){
       let newCal = {
         email: this.email,
-        groupID: this.groupID.toString(),
+        groupID: this.groupID,
       }
       this.createCal(newCal);
     }
@@ -276,7 +281,7 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
   shareCalSubmit(){
     let share = {
       email: this.email,
-      groupID: this.groupID.toString(),
+      groupID: this.groupID,
       calendarName: '', // TODO add name if applicable
       sharedWith: this.shareForm.value.shareEmail // change delimiter stuff
     }

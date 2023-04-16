@@ -1,5 +1,12 @@
 <div class="row">
     <div class="column left">
+      <p>
+        <mat-button-toggle-group name="calSelect" (change)="onCalSelectChange($event)">
+          <mat-button-toggle value="0">Personal</mat-button-toggle>
+          <mat-button-toggle value="1">Work</mat-button-toggle>
+          <mat-button-toggle value="2">School</mat-button-toggle>
+        </mat-button-toggle-group>
+      </p>
       <button id="create-calendar" type="submit" class="btn btn-primary btn-lg btn-block" (click)="createCalButtonClick()">Create Calendar</button>
       <button id="share-event" type="submit" class="btn btn-primary btn-lg btn-block" (click)="shareButtonClick()">Share Calendar</button>
       <button id="get-share-event" type="submit" class="btn btn-primary btn-lg btn-block" (click)="getShareButtonClick()">Get Shared</button>
@@ -22,8 +29,8 @@
     <h4>{{selectedEvent?.extendedProps?.description}}</h4>
   </div>
   <div class="modal-footer">
-    <button id="edit-submit" type="submit" class="btn btn-primary" (click)="editEventButton()" >Edit Event</button>
-    <button id="remove-submit" type="submit" class="btn btn-danger" (click)="removeEvent()" background-color="red">Remove Event</button>
+    <button id="edit-submit" type="submit" class="btn btn-primary" (click)="editEventButtonClick()" >Edit Event</button>
+    <button id="remove-submit" type="submit" class="btn btn-danger" (click)="removeEventButtonClick()" background-color="red">Remove Event</button>
   </div>
 </ng-template>
 
