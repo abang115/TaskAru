@@ -12,6 +12,7 @@ import { FullCalendarComponent } from "@fullcalendar/angular";
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { SignInService } from '../sign-in.service';
 
+
 @Component({
   selector: 'calendar',
   templateUrl: './calendar.component.html',
@@ -75,14 +76,13 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
     if(this.signedIn){
       this.email = this.signInService.getEmail();
       const events = await this.fetchEvents(this.email, this.groupID);
-      this.currentEvents = events ? events : [];
+      this.currentEvents = events || [];
       for(let event of this.currentEvents){
         this.fullCalendarComponent.getApi().addEvent(event);
       }
       if(this.currentEvents.length != 0){
         this.eventID = ++this.currentEvents[this.currentEvents.length-1].id;
       }
-      console.log(this.eventID);
     }
     else{
       this.currentEvents = INITIAL_EVENTS;
@@ -246,11 +246,13 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
 
   createCalButtonClick(){
     // TODO Add multiple calendars
-    let newCal = {
-      email: this.email,
-      groupID: this.groupID.toString(),
+    if(this.signedIn){
+      let newCal = {
+        email: this.email,
+        groupID: this.groupID.toString(),
+      }
+      this.createCal(newCal);
     }
-    this.createCal(newCal);
   }
   
   createCal(newCal:any){
@@ -266,7 +268,9 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
   }
 
   shareButtonClick(){
-    this.modalRef = this.modalService.show(this.sharing);
+    if(this.signedIn){
+      this.modalRef = this.modalService.show(this.sharing);
+    }
   }
   
   shareCalSubmit(){
@@ -274,7 +278,7 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
       email: this.email,
       groupID: this.groupID.toString(),
       calendarName: '', // TODO add name if applicable
-      sharedWith: this.shareForm.value.shareEmail
+      sharedWith: this.shareForm.value.shareEmail // change delimiter stuff
     }
     if(this.signedIn){
       this.patchSharedCal(share);
@@ -284,7 +288,7 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
   }
   
   patchSharedCal(share:any){
-    // TODO changed shared with to add delimiters of old events
+    // TODO changed shared with to add delimiters of old 
     this.http.patch(`http://localhost:8080/api/calendar`, share).subscribe({
       next: response => {
         console.log('Edited share:', response)
@@ -296,18 +300,23 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
   }
 
   async getShareButtonClick(){
-    let shared = await this.getSharedCal();
-    if (shared != null){
-      this.fullCalendarComponent.getApi().removeAllEvents();
-      let sharedEmails, otherGroupID;
-      console.log(shared);
-      
-      for(let cal of shared){
-        sharedEmails = cal.email;
-        otherGroupID = cal.groupID;
-        const events = await this.fetchEvents(sharedEmails, otherGroupID) || [];
-        for(let event of events){
-          this.fullCalendarComponent.getApi().addEvent(event);
+    if(this.signedIn){
+      let shared = await this.getSharedCal();
+      if (shared != null){
+        // Remove current events
+        this.fullCalendarComponent.getApi().removeAllEvents();
+        let sharedEmails, otherGroupID;
+        console.log(shared);
+        // All created calendars that belong and are shared to you, 
+        for(let cal of shared){
+          sharedEmails = cal.email;
+          otherGroupID = cal.groupID;
+          // Add events for each one
+          // TODO MAYBE: Check if current calendar groupID is the same as the selected event
+          const events = await this.fetchEvents(sharedEmails, otherGroupID) || [];
+          for(let event of events){
+            this.fullCalendarComponent.getApi().addEvent(event);
+          }
         }
       }
     }
