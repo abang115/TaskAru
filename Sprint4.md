@@ -16,9 +16,11 @@ Front-End
 
 Back-End
 
-  - ReceiveSharedEventGet, CalendarPost, and CalendarGet handler functions were implmented to handle requests to connect the front-end to the back-end
-  - Configured and implemented unit tests for calendar functions
-  - 
+  - Added a Calendar struct storing the email of the calendar creator, the group id, calendar name, and shareability (email of those the calendar is shared with)
+  - CalendarPatch, CalendarDelete, CalendarPost, and CalendarGet handler functions were implmented to handle requests to connect the front-end to the back-end
+  - Configured and implemented unit tests for calendar functions and updated tests for the event functions
+  - Updated event struct and event functions to implement shareability
+  - Updated routing according to added functions
 
 Frontend Unit Tests
 ---
@@ -88,9 +90,15 @@ Backend Unit Tests
   - Unit tests for CalendarPostHandler()
     - Successfully creates a calendar in the desired account
     - Catches if the calendar was not created properly
+  - Unit tests for EditCalendarPatchHandler()
+    - 
   - Unit tests for CalendarGetHandler()
     - Successfully sends calendars to the front end
     - Catches if the incorrect calendar data was sent
+      - If the calendar was owned by the user
+      - If the calendar was shared to the user  
+  - Unit tests for RemoveCalendarDeleteHandler()
+    - Successfully deletes an event using email and group ID
 
 Updated Documentation for Backend API
 ---
@@ -119,10 +127,16 @@ URL: <code>/api/event</code>
   - Integrated ReceiveEventGetHandler() function which is a <code>GET</code> request. The function allows front end to receive events from the database based on the user logged in.
 
 URL: <code>/api/event</code>
-  - Integrated RemoveEventDeleteHandler() function which is a <code>DELETE</code> request. The function allows the user to indicate that want to delete an event in their desired calendar.
+  - Integrated RemoveEventDeleteHandler() function which is a <code>DELETE</code> request. The function allows the user to indicate that the user wants to delete an event in their desired calendar.
 
 URL: <code>/api/calendar</code>
   - Integrated CalendarPostHandler() function which is a <code>POST</code> request. This function allows the user to create a calendar in their account so they're able to have multiple calendars.
 
 URL: <code>/api/calendar</code>
   - Integrated CalendarGetHandler() function which is a <code>GET</code> request. The function allows front end to receive calendars from the database based on the user logged in.
+
+URL: <code>/api/calendar</code>
+  - Integrated CalendarPatchHandler() function which is a <code>PATCH</code> request. This function allows the user to edit the name and shareability of the calendar.
+
+URL: <code>/api/calendar</code>
+  - Integrated CalendarDeleteHandler() function which is a <code>DELETE</code> request. The function allows front end to indicate that the user wants to delete a calendar.
