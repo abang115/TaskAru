@@ -73,18 +73,21 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
 
   async ngOnInit(): Promise<void> {
     this.signedIn = this.signInService.getStatus();
-    if(this.signedIn){
+    if(this.signedIn){ // Use signed in to show events
+      // Gets all necessary info and gets fetches events
       this.email = this.signInService.getEmail();
       const events = await this.fetchEvents(this.email, this.groupID);
       this.currentEvents = events || [];
+      // Add all, if any, events to the current calendar
       for(let event of this.currentEvents){
         this.fullCalendarComponent.getApi().addEvent(event);
       }
+      // Update the event ID only when events are present 
       if(this.currentEvents.length != 0){
         this.eventID = ++this.currentEvents[this.currentEvents.length-1].id;
       }
     }
-    else{
+    else{ // Set default events
       this.currentEvents = INITIAL_EVENTS;
       console.log('Showing Default Events');
     }
@@ -101,7 +104,6 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
   }
 
   onCalSelectChange(event: any) {
-    // TODO create new calendar and set personal to default
     this.groupID = event.value;
     console.log('Selected Calendar:', this.groupID);
   }
@@ -125,12 +127,14 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
     }
     this.eventID++;
     console.log(newEvent);
+
     // Add event to calendar and send data to backend if user is signed in
     this.fullCalendarComponent.getApi().addEvent(newEvent);
     if(this.signedIn){
       let backendForm = parseToBackend(newEvent, formVars.eventDate || '', formVars.startTime || '', formVars.endTime || '', this.email);
       this.postEvent(backendForm);
     }
+
     // Reset form with default values
     this.eventForm.reset();
     this.eventForm.get('reoccuring')?.setValue('once');
@@ -172,6 +176,7 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
     let formVars = this.eventForm.value;
     let oldEvent = this.fullCalendarComponent.getApi().getEventById(formVars.id||'');
     // create a new edited event
+
     let editedEvent = {
       // Will add feature later 
       // groupid: '0',
@@ -198,7 +203,6 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
   }
 
   eventEditToBackend(editedEvent:any){
-    
     // TODO FIX form of edited event
     this.http.patch('http://localhost:8080/api/event',editedEvent).subscribe({
       next: response => {
@@ -250,7 +254,7 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
   }
 
   createCalButtonClick(){
-    // TODO Add multiple calendars
+
     if(this.signedIn){
       let newCal = {
         email: this.email,
@@ -293,6 +297,7 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
   }
   
   patchSharedCal(share:any){
+    console.log(share);
     // TODO changed shared with to add delimiters of old 
     this.http.patch(`http://localhost:8080/api/calendar`, share).subscribe({
       next: response => {
@@ -316,11 +321,13 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
         for(let cal of shared){
           sharedEmails = cal.email;
           otherGroupID = cal.groupID;
-          // Add events for each one
-          // TODO MAYBE: Check if current calendar groupID is the same as the selected event
-          const events = await this.fetchEvents(sharedEmails, otherGroupID) || [];
-          for(let event of events){
-            this.fullCalendarComponent.getApi().addEvent(event);
+
+          if(this.groupID == otherGroupID){
+            // Add events for each calendar feteched
+            const events = await this.fetchEvents(sharedEmails, otherGroupID) || [];
+            for(let event of events){
+              this.fullCalendarComponent.getApi().addEvent(event);
+            }
           }
         }
       }
