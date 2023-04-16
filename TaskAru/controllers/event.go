@@ -115,7 +115,7 @@ func EditEventPatchHandler(w http.ResponseWriter, r *http.Request) {
 
 	_ = json.NewDecoder(r.Body).Decode(&updateEvent)
 
-	searchErr := models.DB.Where("email = ? AND group_id = ? AND event_id = ?", updateEvent.Email, updateEvent.EventID).First(&events).Error
+	searchErr := models.DB.Where("email = ? AND group_id = ? AND event_id = ?", updateEvent.Email, updateEvent.GroupID, updateEvent.EventID).First(&events).Error
 
 	if searchErr != nil {
 		w.WriteHeader(http.StatusNotFound)
@@ -125,7 +125,7 @@ func EditEventPatchHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// look through events with email first
-	if err := models.DB.Model(&updateEvent).Where("email = ? AND group_id = ? AND event_id = ?", updateEvent.Email, updateEvent.EventID).Updates(models.Event{GroupID: updateEvent.GroupID, EventTitle: updateEvent.EventTitle, Description: updateEvent.Description, EventDate: updateEvent.EventDate,
+	if err := models.DB.Model(&updateEvent).Where("email = ? AND group_id = ? AND event_id = ?", updateEvent.Email, updateEvent.GroupID, updateEvent.EventID).Updates(models.Event{GroupID: updateEvent.GroupID, EventTitle: updateEvent.EventTitle, Description: updateEvent.Description, EventDate: updateEvent.EventDate,
 		StartTime: updateEvent.StartTime, EndTime: updateEvent.EndTime, Freq: updateEvent.Freq, DTStart: updateEvent.DTStart, Until: updateEvent.Until, BackgroundColor: updateEvent.BackgroundColor}).Error; err != nil {
 		// check error message
 		w.WriteHeader(http.StatusInternalServerError)

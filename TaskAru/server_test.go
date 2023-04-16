@@ -242,14 +242,14 @@ func TestResetPasswordPatchHandler(t *testing.T) {
 func TestCalendarPostHandler(t *testing.T) {
 	deleteFromTable("calendars")
 
-	rBody := []byte(`{"email": "janedoe@ufl.edu", "groupID": "0", "CalendarName": "School", "ShareAbility": "johndoe@ufl.edu jimdoe@ufl.edu"}`)
+	rBody := []byte(`{"email": "janedoe@ufl.edu", "groupID": "0", "calendarName": "School", "shareAbility": "johndoe@ufl.edu jimdoe@ufl.edu"}`)
 
 	rr := httptest.NewRecorder()
 	req := httptest.NewRequest(http.MethodPost, "/api/calendar", bytes.NewBuffer(rBody))
 	testRouter.ServeHTTP(rr, req)
 
 	var calendar models.Calendar
-	result := models.DB.Where("email = ?", "janedoe@ufl.edu", "groupID = ?", "0").First(&calendar)
+	result := models.DB.Where("email = ? AND group_id = ?", "janedoe@ufl.edu", "0").First(&calendar)
 
 	if result.Error != nil {
 		t.Errorf("test failed! unable to get calendar %v", result.Error)
@@ -259,6 +259,29 @@ func TestCalendarPostHandler(t *testing.T) {
 	assert.Equal(t, "0", calendar.GroupID, "incorrect group ID error")
 	assert.Equal(t, "School", calendar.CalendarName, "incorrect calendar name error")
 	assert.Equal(t, "johndoe@ufl.edu jimdoe@ufl.edu", calendar.ShareAbility, "incorrect shared with error")
+	assert.Equal(t, http.MethodPost, req.Method, "HTTP request method error")
+	assert.Equal(t, http.StatusOK, rr.Code, "HTTP request status code error")
+}
+
+func TestCalendarPostHandler2(t *testing.T) {
+
+	rBody := []byte(`{"email": "johndoe@ufl.edu", "groupID": "0", "calendarName": "School", "shareAbility": "janedoe@ufl.edu jimdoe@ufl.edu"}`)
+
+	rr := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodPost, "/api/calendar", bytes.NewBuffer(rBody))
+	testRouter.ServeHTTP(rr, req)
+
+	var calendar models.Calendar
+	result := models.DB.Where("email = ? AND group_id = ?", "johndoe@ufl.edu", "0").First(&calendar)
+
+	if result.Error != nil {
+		t.Errorf("test failed! unable to get calendar %v", result.Error)
+	}
+
+	assert.Equal(t, "johndoe@ufl.edu", calendar.Email, "incorrect email error")
+	assert.Equal(t, "0", calendar.GroupID, "incorrect group ID error")
+	assert.Equal(t, "School", calendar.CalendarName, "incorrect calendar name error")
+	assert.Equal(t, "janedoe@ufl.edu jimdoe@ufl.edu", calendar.ShareAbility, "incorrect shared with error")
 	assert.Equal(t, http.MethodPost, req.Method, "HTTP request method error")
 	assert.Equal(t, http.StatusOK, rr.Code, "HTTP request status code error")
 }
@@ -292,7 +315,7 @@ func TestCalendarGetHandler(t *testing.T) {
 func TestCalendarGetHandler2(t *testing.T) {
 	// getting calendar
 	rr := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodGet, "/api/calendar?email=johndoe@ufl.edu?groupID=0", nil)
+	req := httptest.NewRequest(http.MethodGet, "/api/calendar?email=johndoe@ufl.edu", nil)
 	testRouter.ServeHTTP(rr, req)
 
 	var actual []models.Calendar
@@ -302,10 +325,10 @@ func TestCalendarGetHandler2(t *testing.T) {
 
 	var expected []models.Calendar
 	expected = append(expected, models.Calendar{
-		Email:        "janedoe@ufl.edu",
+		Email:        "johndoe@ufl.edu",
 		GroupID:      "0",
 		CalendarName: "School",
-		ShareAbility: "johndoe@ufl.edu jimdoe@ufl.edu",
+		ShareAbility: "janedoe@ufl.edu jimdoe@ufl.edu",
 	})
 
 	assert.Equal(t, expected, actual, "expected does not equal actual")
@@ -315,14 +338,14 @@ func TestCalendarGetHandler2(t *testing.T) {
 
 func TestRemoveCalendarDeleteHandler(t *testing.T) {
 	// creating a new calendar
-	rBody := []byte(`{"email": "janedoe@ufl.edu", "groupID": "1", "CalendarName": "Work", "ShareAbility": "johndoe@ufl.edu jimdoe@ufl.edu"}`)
+	rBody := []byte(`{"email": "janedoe@ufl.edu", "groupID": "1", "calendarName": "Work", "shareAbility": "johndoe@ufl.edu jimdoe@ufl.edu"}`)
 
 	rr := httptest.NewRecorder()
 	req := httptest.NewRequest(http.MethodPost, "/api/calendar", bytes.NewBuffer(rBody))
 	testRouter.ServeHTTP(rr, req)
 
 	var calendar models.Calendar
-	result := models.DB.Where("email = ?", "janedoe@ufl.edu", "groupID = ?", "1").First(&calendar)
+	result := models.DB.Where("email = ? AND group_id = ?", "janedoe@ufl.edu", "1").First(&calendar)
 
 	if result.Error != nil {
 		t.Errorf("test failed! unable to get calendar %v", result.Error)
@@ -336,13 +359,13 @@ func TestRemoveCalendarDeleteHandler(t *testing.T) {
 	assert.Equal(t, http.StatusOK, rr.Code, "HTTP request status code error")
 
 	// deleting the calendar
-	rBody = []byte(`{"email": "janedoe@ufl.edu", "groupID": "1", "CalendarName": "Work", "ShareAbility": "johndoe@ufl.edu jimdoe@ufl.edu"}`)
+	rBody = []byte(`{"email": "janedoe@ufl.edu", "groupID": "1", "calendarName": "Work", "shareAbility": "johndoe@ufl.edu jimdoe@ufl.edu"}`)
 
 	rr = httptest.NewRecorder()
 	req = httptest.NewRequest(http.MethodDelete, "/api/calendar", bytes.NewBuffer(rBody))
 	testRouter.ServeHTTP(rr, req)
 
-	result = models.DB.Where("email = ?", "janedoe@ufl.edu", "groupID = ?", "1").First(&calendar)
+	result = models.DB.Where("email = ? AND group_id= ?", "janedoe@ufl.edu", "1").First(&calendar)
 	// if event is present, test failed
 	if result.Error == nil {
 		t.Errorf("test failed! calendar should have been deleted %v", result.Error)
@@ -364,7 +387,7 @@ func TestEventPostHandler(t *testing.T) {
 	testRouter.ServeHTTP(rr, req)
 
 	var event models.Event
-	result := models.DB.Where("email = ?", "janedoe@ufl.edu", "groupID = ?", "0", "event_id = ?", "1").First(&event)
+	result := models.DB.Where("email = ? AND group_id = ? AND event_id = ?", "janedoe@ufl.edu", "0", "1").First(&event)
 	if result.Error != nil {
 		t.Errorf("test failed! unable to get event %v", result.Error)
 	}
@@ -395,7 +418,7 @@ func TestEventPostHandler2(t *testing.T) {
 	testRouter.ServeHTTP(rr, req)
 
 	var event models.Event
-	result := models.DB.Where("email = ?", "janedoe2@ufl.edu", "groupID = ?", "0", "event_id = ?", "2").First(&event)
+	result := models.DB.Where("email = ? AND group_id = ? AND event_id = ?", "janedoe2@ufl.edu", "0", "2").First(&event)
 	if result.Error != nil {
 		t.Errorf("test failed! unable to get event %v", result.Error)
 	}
@@ -426,7 +449,7 @@ func TestEditEventPatchHandler(t *testing.T) {
 	testRouter.ServeHTTP(rr, req)
 
 	var event models.Event
-	result := models.DB.Where("email = ?", "janedoe@ufl.edu", "groupID = ?", "0", "event_id = ?", "1").First(&event)
+	result := models.DB.Where("email = ? AND group_id = ? AND event_id = ?", "janedoe@ufl.edu", "0", "1").First(&event)
 	if result.Error != nil {
 		t.Errorf("test failed! unable to get event %v", result.Error)
 	}
@@ -491,7 +514,7 @@ func TestRemoveEventDeleteHandler(t *testing.T) {
 	testRouter.ServeHTTP(rr, req)
 
 	var event models.Event
-	result := models.DB.Where("email = ?", "janedoe@ufl.edu", "groupID = ?", "0", "event_id = ?", "1").First(&event)
+	result := models.DB.Where("email = ? AND group_id = ? AND event_id = ?", "janedoe@ufl.edu", "0", "1").First(&event)
 	// if event is present, test failed
 	if result.Error == nil {
 		t.Errorf("test failed! event should have been deleted %v", result.Error)

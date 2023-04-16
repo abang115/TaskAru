@@ -19,5 +19,5 @@ type Calendar struct {
 	Email        string `json:"email"`
 	GroupID      string `json:"groupID"`
 	CalendarName string `json:"calendarName"`
-	ShareAbility string `json:"sharedWith"`
+	ShareAbility string `json:"shareAbility"`
 }
