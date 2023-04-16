@@ -216,18 +216,19 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
 
   removeEventButtonClick(){
     if(this.signedIn){
-      let REvent = {
+      const REvent = {
         email: this.email,
-        eventID: this.selectedEvent.toPlainObject().id 
+        groupID: this.groupID,
+        eventID: this.selectedEvent.toPlainObject().id
       }
-      this.deleteEventRemove(REvent);
+      this.deleteEventRemove(REvent)
     }
     this.selectedEvent.remove(); 
     this.modalRef?.hide(); 
    }
 
   deleteEventRemove(REvent:any){
-    this.http.delete('http://localhost:8080/api/event', REvent).subscribe({
+    this.http.delete('http://localhost:8080/api/event', { headers: new HttpHeaders(), body: REvent }).subscribe({
       next: response => {
         console.log('Backend successfully reached, Event is removed :', response)
       },
