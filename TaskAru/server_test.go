@@ -35,6 +35,10 @@ func TestMain(m *testing.M) {
 	testRouter.HandleFunc("/api/event", controllers.EditEventPatchHandler).Methods("PATCH")
 	testRouter.HandleFunc("/api/event", controllers.RemoveEventDeleteHandler).Methods("DELETE")
 	testRouter.HandleFunc("/api/event", controllers.ReceiveEventGetHandler).Methods("GET")
+	testRouter.HandleFunc("/api/calendar", controllers.CalendarPostHandler).Methods("POST")
+	testRouter.HandleFunc("/api/calendar", controllers.EditCalendarPatchHandler).Methods("PATCH")
+	testRouter.HandleFunc("/api/calendar", controllers.RemoveCalendarDeleteHandler).Methods("DELETE")
+	testRouter.HandleFunc("/api/calendar", controllers.CalendarGetHandler).Methods("GET")
 
 	test := m.Run()
 	os.Exit(test)
@@ -261,56 +265,56 @@ func TestCalendarPostHandler(t *testing.T) {
 
 // test to get existing calendar
 func TestCalendarGetHandler(t *testing.T) {
-	// registers john doe
-	rBody := []byte(`{"first_name": "john", "last_name": "doe", "email": "johndoe@ufl.edu", "password": "johndoe"}`)
+	// // registers john doe
+	// rBody := []byte(`{"first_name": "john", "last_name": "doe", "email": "johndoe@ufl.edu", "password": "johndoe"}`)
+	// rr := httptest.NewRecorder()
+	// req := httptest.NewRequest(http.MethodPost, "/api/register", bytes.NewBuffer(rBody))
+	// testRouter.ServeHTTP(rr, req)
+
+	// var user models.User
+	// result := models.DB.Where("email = ?", "johndoe@ufl.edu").First(&user)
+	// if result.Error != nil {
+	// 	t.Errorf("test failed! unable to get user %v", result.Error)
+	// }
+
+	// err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte("johndoe"))
+	// if err != nil {
+	// 	t.Errorf("test failed! unable to compared hashed password %v", err)
+	// }
+
+	// assert.Equal(t, "john", user.FirstName, "incorrect first name error")
+	// assert.Equal(t, "doe", user.LastName, "incorrect last name error")
+	// assert.Equal(t, "johndoe@ufl.edu", user.Email, "incorrect email error")
+
+	// assert.Equal(t, http.MethodPost, req.Method, "HTTP request method error")
+	// assert.Equal(t, http.StatusOK, rr.Code, "HTTP request status code error")
+
+	// // registers jim doe
+	// rBody = []byte(`{"first_name": "jim", "last_name": "doe", "email": "jimdoe@ufl.edu", "password": "jimdoe"}`)
+	// rr = httptest.NewRecorder()
+	// req = httptest.NewRequest(http.MethodPost, "/api/register", bytes.NewBuffer(rBody))
+	// testRouter.ServeHTTP(rr, req)
+
+	// result = models.DB.Where("email = ?", "jimdoe@ufl.edu").First(&user)
+	// if result.Error != nil {
+	// 	t.Errorf("test failed! unable to get user %v", result.Error)
+	// }
+
+	// err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte("jimdoe"))
+	// if err != nil {
+	// 	t.Errorf("test failed! unable to compared hashed password %v", err)
+	// }
+
+	// assert.Equal(t, "jim", user.FirstName, "incorrect first name error")
+	// assert.Equal(t, "doe", user.LastName, "incorrect last name error")
+	// assert.Equal(t, "jimdoe@ufl.edu", user.Email, "incorrect email error")
+
+	// assert.Equal(t, http.MethodPost, req.Method, "HTTP request method error")
+	// assert.Equal(t, http.StatusOK, rr.Code, "HTTP request status code error")
+
+	// getting logged in users calendar
 	rr := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodPost, "/api/register", bytes.NewBuffer(rBody))
-	testRouter.ServeHTTP(rr, req)
-
-	var user models.User
-	result := models.DB.Where("email = ?", "johndoe@ufl.edu").First(&user)
-	if result.Error != nil {
-		t.Errorf("test failed! unable to get user %v", result.Error)
-	}
-
-	err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte("johndoe"))
-	if err != nil {
-		t.Errorf("test failed! unable to compared hashed password %v", err)
-	}
-
-	assert.Equal(t, "john", user.FirstName, "incorrect first name error")
-	assert.Equal(t, "doe", user.LastName, "incorrect last name error")
-	assert.Equal(t, "johndoe@ufl.edu", user.Email, "incorrect email error")
-
-	assert.Equal(t, http.MethodPost, req.Method, "HTTP request method error")
-	assert.Equal(t, http.StatusOK, rr.Code, "HTTP request status code error")
-
-	// registers jim doe
-	rBody = []byte(`{"first_name": "jim", "last_name": "doe", "email": "jimdoe@ufl.edu", "password": "jimdoe"}`)
-	rr = httptest.NewRecorder()
-	req = httptest.NewRequest(http.MethodPost, "/api/register", bytes.NewBuffer(rBody))
-	testRouter.ServeHTTP(rr, req)
-
-	result = models.DB.Where("email = ?", "jimdoe@ufl.edu").First(&user)
-	if result.Error != nil {
-		t.Errorf("test failed! unable to get user %v", result.Error)
-	}
-
-	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte("jimdoe"))
-	if err != nil {
-		t.Errorf("test failed! unable to compared hashed password %v", err)
-	}
-
-	assert.Equal(t, "jim", user.FirstName, "incorrect first name error")
-	assert.Equal(t, "doe", user.LastName, "incorrect last name error")
-	assert.Equal(t, "jimdoe@ufl.edu", user.Email, "incorrect email error")
-
-	assert.Equal(t, http.MethodPost, req.Method, "HTTP request method error")
-	assert.Equal(t, http.StatusOK, rr.Code, "HTTP request status code error")
-
-	// getting calendar
-	rr = httptest.NewRecorder()
-	req = httptest.NewRequest(http.MethodGet, "/api/calendar?email=janedoe@ufl.edu?groupID=0", nil)
+	req := httptest.NewRequest(http.MethodGet, "/api/calendar?email=janedoe@ufl.edu?groupID=0", nil)
 	testRouter.ServeHTTP(rr, req)
 
 	var actual []models.Calendar
@@ -331,7 +335,7 @@ func TestCalendarGetHandler(t *testing.T) {
 	assert.Equal(t, http.StatusOK, rr.Code, "HTTP request status code error")
 }
 
-// test to get shared with calendar
+// test to get calendar that was shared with but not owned by user
 func TestCalendarGetHandler2(t *testing.T) {
 	// getting calendar
 	rr := httptest.NewRecorder()

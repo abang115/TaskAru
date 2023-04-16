@@ -66,6 +66,36 @@ func EditCalendarPatchHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(updateCalendar)
 }
 
+func RemoveCalendarDeleteHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "*")
+
+	var deleteCalendar models.Calendar
+	var calendars []models.Calendar
+
+	_ = json.NewDecoder(r.Body).Decode(&deleteCalendar)
+
+	searchErr := models.DB.Where("email = ? AND group_id = ?", deleteCalendar.Email, deleteCalendar.GroupID).First(&calendars).Error
+
+	if searchErr != nil {
+		w.WriteHeader(http.StatusNotFound)
+		errorMessage := map[string]string{"error": "could not find calendar"}
+		json.NewEncoder(w).Encode(errorMessage)
+		return
+	}
+
+	if err := models.DB.Where("email = ? AND group_id = ?", deleteCalendar.Email, deleteCalendar.GroupID).Delete(&deleteCalendar).Error; err != nil {
+
+		// check error message
+		w.WriteHeader(http.StatusInternalServerError)
+		errorMessage := map[string]string{"error": "could not delete calendar"}
+		json.NewEncoder(w).Encode(errorMessage)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(deleteCalendar)
+}
+
 func EventPostHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "*")
 
@@ -85,7 +115,7 @@ func EditEventPatchHandler(w http.ResponseWriter, r *http.Request) {
 
 	_ = json.NewDecoder(r.Body).Decode(&updateEvent)
 
-	searchErr := models.DB.Where("email = ? AND event_id = ?", updateEvent.Email, updateEvent.EventID).First(&events).Error
+	searchErr := models.DB.Where("email = ? AND group_id = ? AND event_id = ?", updateEvent.Email, updateEvent.EventID).First(&events).Error
 
 	if searchErr != nil {
 		w.WriteHeader(http.StatusNotFound)
@@ -95,7 +125,7 @@ func EditEventPatchHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// look through events with email first
-	if err := models.DB.Model(&updateEvent).Where("event_id = ?", updateEvent.EventID).Updates(models.Event{GroupID: updateEvent.GroupID, EventTitle: updateEvent.EventTitle, Description: updateEvent.Description, EventDate: updateEvent.EventDate,
+	if err := models.DB.Model(&updateEvent).Where("email = ? AND group_id = ? AND event_id = ?", updateEvent.Email, updateEvent.EventID).Updates(models.Event{GroupID: updateEvent.GroupID, EventTitle: updateEvent.EventTitle, Description: updateEvent.Description, EventDate: updateEvent.EventDate,
 		StartTime: updateEvent.StartTime, EndTime: updateEvent.EndTime, Freq: updateEvent.Freq, DTStart: updateEvent.DTStart, Until: updateEvent.Until, BackgroundColor: updateEvent.BackgroundColor}).Error; err != nil {
 		// check error message
 		w.WriteHeader(http.StatusInternalServerError)
@@ -116,7 +146,7 @@ func RemoveEventDeleteHandler(w http.ResponseWriter, r *http.Request) {
 
 	_ = json.NewDecoder(r.Body).Decode(&deleteEvent)
 
-	searchErr := models.DB.Where("event_id = ?", deleteEvent.EventID).First(&events).Error
+	searchErr := models.DB.Where("email = ? AND group_id = ? AND event_id = ?", deleteEvent.Email, deleteEvent.GroupID, deleteEvent.EventID).First(&events).Error
 
 	if searchErr != nil {
 		w.WriteHeader(http.StatusNotFound)
@@ -125,7 +155,7 @@ func RemoveEventDeleteHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := models.DB.Where("event_id = ?", deleteEvent.EventID).Delete(&deleteEvent).Error; err != nil {
+	if err := models.DB.Where("email = ? AND group_id = ? AND event_id = ?", deleteEvent.Email, deleteEvent.GroupID, deleteEvent.EventID).Delete(&deleteEvent).Error; err != nil {
 
 		// check error message
 		w.WriteHeader(http.StatusInternalServerError)
