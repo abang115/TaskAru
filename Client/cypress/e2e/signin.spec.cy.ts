@@ -53,4 +53,22 @@ describe('signin', () => {
         cy.get('[data-cy="Sign Up"]').should('exist');
         cy.get('[data-cy="Sign Out"]').should('not.exist');
     })
+
+    it('Should successfully remember sign in', () => {
+        cy.visit('/')
+        cy.get('[data-cy="Sign In"]').click();
+        cy.url().should('includes', 'signin');
+        cy.get('[formControlName="email"]').type('testing@gmail.com', {force: true});
+        cy.get('[formControlName="password"]').type('testing123', {force: true});
+        cy.get('[data-cy="Remember Me"]').click();
+        cy.get('[data-cy="Submit SignIn"]').click();
+        cy.url().should('include', 'home');
+        cy.get('[data-cy="Sign In"]').should('not.exist');
+        cy.get('[data-cy="Sign Up"]').should('not.exist');
+        cy.get('[data-cy="Sign Out"]').should('exist');
+        cy.reload();
+        cy.get('[data-cy="Sign In"]').should('not.exist');
+        cy.get('[data-cy="Sign Up"]').should('not.exist');
+        cy.get('[data-cy="Sign Out"]').should('exist');
+    })
 })
