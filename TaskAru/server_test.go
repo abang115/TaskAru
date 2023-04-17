@@ -351,7 +351,7 @@ func TestEditCalendarPatchHandler(t *testing.T) {
 	testRouter.ServeHTTP(rr, req)
 
 	var calendar models.Calendar
-	result := models.DB.Where("email = ? AND groupID = ?", "janedoe@ufl.edu", "0").First(&calendar)
+	result := models.DB.Where("email = ? AND group_id = ?", "janedoe@ufl.edu", "0").First(&calendar)
 	if result.Error != nil {
 		t.Errorf("test failed! unable to get calendar %v", result.Error)
 	}
@@ -359,7 +359,7 @@ func TestEditCalendarPatchHandler(t *testing.T) {
 	assert.Equal(t, "janedoe@ufl.edu", calendar.Email, "incorrect email error")
 	assert.Equal(t, "0", calendar.GroupID, "incorrect group ID error")
 	assert.Equal(t, "Work", calendar.CalendarName, "incorrect calendar name")
-	assert.Equal(t, "johndo@ufl.edu jimdoe@ufl.edu", calendar.ShareAbility, "incorrect calendar sharability error")
+	assert.Equal(t, "johndoe@ufl.edu jimdoe@ufl.edu", calendar.ShareAbility, "incorrect calendar sharability error")
 	assert.Equal(t, http.MethodPatch, req.Method, "HTTP request method error")
 	assert.Equal(t, http.StatusOK, rr.Code, "HTTP request status code error")
 }
