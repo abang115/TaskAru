@@ -306,6 +306,13 @@ func TestCalendarGetHandler(t *testing.T) {
 		ShareAbility: "johndoe@ufl.edu jimdoe@ufl.edu",
 	})
 
+	expected = append(expected, models.Calendar{
+		Email:        "johndoe@ufl.edu",
+		GroupID:      "0",
+		CalendarName: "School",
+		ShareAbility: "janedoe@ufl.edu jimdoe@ufl.edu",
+	})
+
 	assert.Equal(t, expected, actual, "expected does not equal actual")
 	assert.Equal(t, http.MethodGet, req.Method, "HTTP request method error")
 	assert.Equal(t, http.StatusOK, rr.Code, "HTTP request status code error")
@@ -410,7 +417,7 @@ func TestEventPostHandler(t *testing.T) {
 
 // test to add event to a different email
 func TestEventPostHandler2(t *testing.T) {
-	rBody := []byte(`{"email": "janedoe2@ufl.edu", "groupID": "0", "eventID": "2", "eventTitle": "Birthday", "eventDescription": "It's a my Birthday", "eventDate": "2023-03-09", 
+	rBody := []byte(`{"email": "janedoe@ufl.edu", "groupID": "0", "eventID": "2", "eventTitle": "Birthday", "eventDescription": "It's a my Birthday", "eventDate": "2023-03-09", 
 	"startTime": "10:00", "endTime": "11:00", "freq": "daily", "dtStart": "2023-03-09", "until": "2024-03-09", "backgroundColor": "#08B417"}`)
 
 	rr := httptest.NewRecorder()
@@ -418,12 +425,12 @@ func TestEventPostHandler2(t *testing.T) {
 	testRouter.ServeHTTP(rr, req)
 
 	var event models.Event
-	result := models.DB.Where("email = ? AND group_id = ? AND event_id = ?", "janedoe2@ufl.edu", "0", "2").First(&event)
+	result := models.DB.Where("email = ? AND group_id = ? AND event_id = ?", "janedoe@ufl.edu", "0", "2").First(&event)
 	if result.Error != nil {
 		t.Errorf("test failed! unable to get event %v", result.Error)
 	}
 
-	assert.Equal(t, "janedoe2@ufl.edu", event.Email, "incorrect email error")
+	assert.Equal(t, "janedoe@ufl.edu", event.Email, "incorrect email error")
 	assert.Equal(t, "0", event.GroupID, "incorrect group ID error")
 	assert.Equal(t, "2", event.EventID, "incorrect event ID error")
 	assert.Equal(t, "Birthday", event.EventTitle, "incorrect event title error")
@@ -497,6 +504,21 @@ func TestReceiveEventGetHandler(t *testing.T) {
 		DTStart:         "2023-04-09",
 		Until:           "2024-04-09",
 		BackgroundColor: "#08B419",
+	})
+
+	expected = append(expected, models.Event{
+		Email:           "janedoe@ufl.edu",
+		GroupID:         "0",
+		EventID:         "2",
+		EventTitle:      "Birthday",
+		Description:     "It's a my Birthday",
+		EventDate:       "2023-03-09",
+		StartTime:       "10:00",
+		EndTime:         "11:00",
+		Freq:            "daily",
+		DTStart:         "2023-03-09",
+		Until:           "2024-03-09",
+		BackgroundColor: "#08B417",
 	})
 
 	assert.Equal(t, expected, actual, "expected does not equal actual")

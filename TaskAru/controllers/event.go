@@ -24,7 +24,7 @@ func CalendarGetHandler(w http.ResponseWriter, r *http.Request) {
 
 	// events currently in database
 	var calendars []models.Calendar
-	models.DB.Where("email = ? OR share_ability LIKE ?", email, email).Find(&calendars)
+	models.DB.Where("email = ? OR share_ability LIKE ?", email, "%"+email+"%").Find(&calendars)
 
 	if len(calendars) == 0 {
 		w.WriteHeader(http.StatusNotFound)
