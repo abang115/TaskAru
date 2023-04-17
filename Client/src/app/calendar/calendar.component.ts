@@ -239,7 +239,7 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
   }
 
   removeEventButtonClick(){
-    if(this.signedIn){
+    if(this.signedIn && (this.selectedEvent.toPlainObject().id != '3')){
       let REvent = {
         email: this.email,
         groupID: this.groupID,
@@ -318,7 +318,7 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
       email: this.email,
       groupID: this.groupID,
       calendarName: this.calendarName, 
-      sharedWith: this.shareForm.value.shareEmail // change delimiter stuff
+      shareAbility: this.shareForm.value.shareEmail // change delimiter stuff
     }
     if(this.signedIn){
       this.patchSharedCal(share);
@@ -358,6 +358,7 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
             const events = await this.fetchEvents(sharedEmails, otherGroupID) || [];
             for(let event of events){
               event.groupID = '3';
+              console.log(event);
               this.fullCalendarComponent.getApi().addEvent(event);
             }
           }
