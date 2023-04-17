@@ -91,7 +91,9 @@ Backend Unit Tests
     - Successfully creates a calendar in the desired account
     - Catches if the calendar was not created properly
   - Unit tests for EditCalendarPatchHandler()
-    - 
+    - Successfully edits a calendar using current users email to change the calendar name and shareability
+    - Catches if the calendar name was properly changed
+    - Catches if the calendar's shareability can be removed and added
   - Unit tests for CalendarGetHandler()
     - Successfully sends calendars to the front end
     - Catches if the incorrect calendar data was sent

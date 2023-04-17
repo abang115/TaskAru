@@ -26,6 +26,7 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
   selectedEvent: any;
   eventID = 1;
   groupID = '0';
+  calendarName = 'Personal';
 
   calendarOptions= {
     plugins: [
@@ -73,12 +74,29 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
 
   async ngOnInit(): Promise<void> {
     this.signedIn = this.signInService.getStatus();
-    if(this.signedIn){ // Use signed in to show events
+    if(this.signedIn ){ // Use signed in to show events
       // Gets all necessary info and gets fetches events
       this.email = this.signInService.getEmail();
+      // Check if user has any calendars that are theirs
+      let cal = await this.getSharedCal();
+      if(cal == null){
+        this.createDefaultCal();
+      }
+      else{
+        let count = 0;
+        for(let each of cal){
+          if(each.email == this.email){
+            count++;
+          } 
+        }
+        if(count != 3){
+          this.createDefaultCal();
+        }
+      }
       const events = await this.fetchEvents(this.email, this.groupID);
       this.currentEvents = events || [];
       // Add all, if any, events to the current calendar
+      console.log(this.currentEvents);
       for(let event of this.currentEvents){
         this.fullCalendarComponent.getApi().addEvent(event);
       }
@@ -105,7 +123,16 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
 
   onCalSelectChange(event: any) {
     this.groupID = event.value;
-    console.log('Selected Calendar:', this.groupID);
+    if(this.groupID == '0'){
+      this.calendarName = 'Personal';
+    }
+    else if(this.groupID == '1'){
+      this.calendarName = 'Work';
+    }
+    else if(this.groupID == '2'){
+      this.calendarName = 'School';
+    }
+    console.log('Selected Calendar:', this.groupID, this.calendarName);
   }
 
   addEventClick(){
@@ -143,7 +170,6 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
   }
 
   postEvent(backendForm:any){
-    console.log(backendForm)  
     this.http.post('http://localhost:8080/api/event', backendForm).subscribe({
       next: response => {
         console.log('Event successfully added: ', response)
@@ -157,15 +183,13 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
   editEventButtonClick(){
     this.modalRef?.hide();
     var eventObj = this.selectedEvent.toPlainObject();
-    console.log(eventObj);
-  
     // Fetch previous event data
     this.eventForm.get('id')?.setValue(eventObj.id);
     this.eventForm.get('eventTitle')?.setValue(eventObj.title);
     this.eventForm.get('eventDate')?.setValue(eventObj.start);
     this.eventForm.get('eventDescription')?.setValue(eventObj.description);
-    this.eventForm.get('color')?.setValue(eventObj.backgroundColor);
     
+
     // Give time for previous modal to fully close
     setTimeout(() => {
       this.modalRef = this.modalService.show(this.editEventModal, this.config);
@@ -215,20 +239,21 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
   }
 
   removeEventButtonClick(){
-    if(this.signedIn){
-      const REvent = {
+    if(this.signedIn && (this.selectedEvent.toPlainObject().id != '3')){
+      let REvent = {
         email: this.email,
         groupID: this.groupID,
         eventID: this.selectedEvent.toPlainObject().id
       }
-      this.deleteEventRemove(REvent)
+      this.deleteEvent(REvent)
     }
     this.selectedEvent.remove(); 
     this.modalRef?.hide(); 
-   }
+  }
 
-  deleteEventRemove(REvent:any){
-    this.http.delete('http://localhost:8080/api/event', { headers: new HttpHeaders(), body: REvent }).subscribe({
+  deleteEvent(REvent:any){
+    console.log(REvent);
+    this.http.delete(`http://localhost:8080/api/event`, {headers: new HttpHeaders(), body:REvent}).subscribe({
       next: response => {
         console.log('Backend successfully reached, Event is removed :', response)
       },
@@ -241,6 +266,7 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
   async fetchEvents(email:any, groupID:any){
    try{
     const response = await this.http.get(`http://localhost:8080/api/event?email=${email}&groupID=${groupID}`).toPromise();
+    console.log(response);
     let parsedEvent: any[] = [];
     if(Array.isArray(response)){
       for(let event of response){
@@ -254,17 +280,21 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
    }
   }
 
-  createCalButtonClick(){
-
-    if(this.signedIn){
-      let newCal = {
-        email: this.email,
-        groupID: this.groupID,
-      }
-      this.createCal(newCal);
+  createDefaultCal(){
+    let cal = {
+      email: this.email,
+      groupID: '0',
+      calendarName:'Personal'
     }
+    this.createCal(cal);
+    cal.groupID = '1';
+    cal.calendarName = 'Work';
+    this.createCal(cal);
+    cal.groupID = '2';
+    cal.calendarName = 'School'
+    this.createCal(cal);
   }
-  
+
   createCal(newCal:any){
     console.log(newCal);
     this.http.post(`http://localhost:8080/api/calendar`, newCal).subscribe({
@@ -287,8 +317,8 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
     let share = {
       email: this.email,
       groupID: this.groupID,
-      calendarName: '', // TODO add name if applicable
-      sharedWith: this.shareForm.value.shareEmail // change delimiter stuff
+      calendarName: this.calendarName, 
+      shareAbility: this.shareForm.value.shareEmail // change delimiter stuff
     }
     if(this.signedIn){
       this.patchSharedCal(share);
@@ -327,6 +357,8 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
             // Add events for each calendar feteched
             const events = await this.fetchEvents(sharedEmails, otherGroupID) || [];
             for(let event of events){
+              event.groupID = '3';
+              console.log(event);
               this.fullCalendarComponent.getApi().addEvent(event);
             }
           }
