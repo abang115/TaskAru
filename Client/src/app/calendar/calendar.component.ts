@@ -11,7 +11,7 @@ import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { FullCalendarComponent } from "@fullcalendar/angular";
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { SignInService } from '../sign-in.service';
-
+import { NotificationService, EventData } from "../notification.service";
 
 @Component({
   selector: 'calendar',
@@ -70,7 +70,7 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
   @ViewChild('cal') fullCalendarComponent!:FullCalendarComponent; // Access the Calendar as an object
   @ViewChild('sharing') sharing!:string;
 
-  constructor(private modalService: BsModalService, private http: HttpClient, public signInService: SignInService) {     }
+  constructor(private modalService: BsModalService, private http: HttpClient, public signInService: SignInService, private notificationService: NotificationService) {     }
 
   async ngOnInit(): Promise<void> {
     this.signedIn = this.signInService.getStatus();
@@ -97,7 +97,8 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
       this.currentEvents = events || [];
       // Add all, if any, events to the current calendar
       console.log(this.currentEvents);
-      this.updateCal();
+      await this.updateCal();
+      this.updateNotification();
       // Update the event ID only when events are present 
       if(this.currentEvents.length != 0){
         this.eventID = ++this.currentEvents[this.currentEvents.length-1].id;
@@ -140,11 +141,30 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
   async updateCal(){
     let calAPI = this.fullCalendarComponent.getApi();
     this.currentEvents = await this.fetchEvents(this.email, this.groupID) || [];
-      calAPI.removeAllEvents();
-      calAPI.setOption('events', this.currentEvents);
-      setTimeout(() => {
-        calAPI.refetchEvents();
-      }, 1000);
+    console.log(this.currentEvents);
+    calAPI.removeAllEvents();
+    calAPI.setOption('events', this.currentEvents);
+    setTimeout(() => {
+      calAPI.refetchEvents();
+    }, 1000);
+    
+  }
+
+  updateNotification(){
+    const today = new Date();
+    const twoDaysInMs = 2 * 24 * 60 * 60 * 1000;
+    for(let event of this.currentEvents){
+      const eventDate = new Date(event.end.substring(0,10));
+      let diff = eventDate.getTime() - today.getTime();
+      if(diff > 0 && diff <= twoDaysInMs){
+        const eventData: EventData = {
+          title: event.title,
+          date: event.end.substring(0,10)
+        };
+        this.notificationService.addEventData(eventData);
+      }
+    }
+    this.notificationService.removePastDue();
   }
 
   addEventClick(){
