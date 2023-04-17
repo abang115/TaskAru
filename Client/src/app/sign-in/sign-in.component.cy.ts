@@ -6,6 +6,7 @@ import { SignInService } from '../sign-in.service';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatIconModule } from '@angular/material/icon';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
@@ -21,11 +22,13 @@ describe('SignUpComponent', () => {
           MatFormFieldModule,
           MatInputModule,
           BrowserAnimationsModule,
+          MatIconModule,
         ],
         providers:[
           Router, 
           SignInService,
         ],
       })
+      cy.viewport(600, 525)
     });
 })

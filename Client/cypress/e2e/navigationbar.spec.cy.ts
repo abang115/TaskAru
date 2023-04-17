@@ -6,10 +6,10 @@ describe('navigation bar', () => {
         cy.get('[data-cy="Dark"]').should('be.visible');
     })
 
-    it('Should successfully navigate to calendar', () => {
+    it('Should successfully navigate to calendar/home', () => {
         cy.visit('/')
-        cy.get('[data-cy="calendar"]').click();
-        cy.url().should('include', 'calendar');
+        cy.get('[data-cy="home"]').click();
+        cy.url().should('include', 'home');
     })
 
     it('Should successfully navigate to sign in', () => {

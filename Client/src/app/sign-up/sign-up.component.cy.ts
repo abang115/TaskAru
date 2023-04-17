@@ -1,11 +1,12 @@
 import { SignUpComponent } from './sign-up.component';
 import { FormsModule, ReactiveFormsModule} from '@angular/forms';
-import { Router } from '@angular/router'
+import { RouterModule } from '@angular/router'
 import { HttpClientModule } from '@angular/common/http';
 import { SignInService } from '../sign-in.service';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatIconModule } from '@angular/material/icon';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
@@ -17,13 +18,14 @@ describe('SignUpComponent', () => {
           ReactiveFormsModule,
           HttpClientModule,
           MatButtonModule,
+          MatIconModule,
           MatCheckboxModule,
           MatFormFieldModule,
           MatInputModule,
           BrowserAnimationsModule,
         ],
         providers:[
-          Router, 
+          RouterModule, 
           SignInService,
         ],
       })
