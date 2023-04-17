@@ -97,9 +97,7 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
       this.currentEvents = events || [];
       // Add all, if any, events to the current calendar
       console.log(this.currentEvents);
-      for(let event of this.currentEvents){
-        this.fullCalendarComponent.getApi().addEvent(event);
-      }
+      this.updateCal();
       // Update the event ID only when events are present 
       if(this.currentEvents.length != 0){
         this.eventID = ++this.currentEvents[this.currentEvents.length-1].id;
@@ -121,18 +119,32 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
     this.modalRef = this.modalService.show(this.showEvent, this.config);
   }
 
-  onCalSelectChange(event: any) {
+  async onCalSelectChange(event: any) {
     this.groupID = event.value;
+    let calAPI = this.fullCalendarComponent.getApi();
     if(this.groupID == '0'){
       this.calendarName = 'Personal';
+      await this.updateCal();
     }
     else if(this.groupID == '1'){
       this.calendarName = 'Work';
+      await this.updateCal();
     }
     else if(this.groupID == '2'){
       this.calendarName = 'School';
+      await this.updateCal();
     }
     console.log('Selected Calendar:', this.groupID, this.calendarName);
+  }
+
+  async updateCal(){
+    let calAPI = this.fullCalendarComponent.getApi();
+    this.currentEvents = await this.fetchEvents(this.email, this.groupID) || [];
+      calAPI.removeAllEvents();
+      calAPI.setOption('events', this.currentEvents);
+      setTimeout(() => {
+        calAPI.refetchEvents();
+      }, 1000);
   }
 
   addEventClick(){
@@ -266,7 +278,6 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
   async fetchEvents(email:any, groupID:any){
    try{
     const response = await this.http.get(`http://localhost:8080/api/event?email=${email}&groupID=${groupID}`).toPromise();
-    console.log(response);
     let parsedEvent: any[] = [];
     if(Array.isArray(response)){
       for(let event of response){
@@ -352,13 +363,13 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
         for(let cal of shared){
           sharedEmails = cal.email;
           otherGroupID = cal.groupID;
-
           if(this.groupID == otherGroupID){
             // Add events for each calendar feteched
             const events = await this.fetchEvents(sharedEmails, otherGroupID) || [];
             for(let event of events){
-              event.groupID = '3';
-              console.log(event);
+              if(event.email != this.email){
+                event.groupID = '3';
+              }
               this.fullCalendarComponent.getApi().addEvent(event);
             }
           }
