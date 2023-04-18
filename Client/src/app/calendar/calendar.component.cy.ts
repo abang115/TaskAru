@@ -41,6 +41,8 @@ describe('CalendarComponent', () => {
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     }).then( ()=>{
+      cy.viewport(1400, 900);
+      cy.wait(500);
       cy.get('.fc-myCustomButton-button.fc-button.fc-button-primary').click(); 
       cy.get('.modal-body').should('be.visible');
     })
@@ -61,13 +63,15 @@ describe('CalendarComponent', () => {
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     }).then( ()=> {
+      cy.viewport(1400, 900);
+      cy.wait(500);
       // Add Event Buttom
       cy.get('.fc-myCustomButton-button.fc-button.fc-button-primary').click(); 
       // Make sure modal pops up
       cy.wait(100);
       // Fill out form fields
       cy.get('#event-title').type('Test Event');
-      cy.get('#event-date').type('2023-02-27');
+      cy.get('#event-date').type('2023-04-27');
       cy.get('#event-start-time').type('11:00');
       cy.get('#event-end-time').type('12:00');
       cy.get('#event-reoccuring').select('once');
@@ -97,7 +101,10 @@ describe('CalendarComponent', () => {
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     }).then( ()=>{
-      cy.get('.fc-daygrid-more-link').click(); 
+      cy.viewport(1400, 900);
+      cy.wait(500);
+      cy.get('.fc-daygrid-more-link').eq(0).click();
+      cy.wait(100); 
       cy.get('.fc-daygrid-event-harness').eq(3).click();
       cy.wait(100);
       cy.get('.modal-body').should('be.visible');
@@ -120,8 +127,10 @@ describe('CalendarComponent', () => {
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     }).then( ()=>{
+      cy.viewport(1400, 900);
+      cy.wait(500);
       cy.get('.fc-daygrid-more-link').click(); 
-      cy.get('.fc-daygrid-event-harness').eq(3).click();
+      cy.get('.fc-daygrid-event-harness').eq(4).click();
       cy.wait(100);
       cy.get('.modal-body').should('be.visible');
       cy.get('#edit-submit').click();
@@ -147,13 +156,16 @@ describe('CalendarComponent', () => {
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     }).then( ()=>{
+      cy.viewport(1400, 900);
+      cy.wait(500);
       cy.get('.fc-daygrid-more-link').click(); 
       cy.get('.fc-daygrid-event-harness').eq(3).click();
       cy.wait(100);
       cy.get('.modal-body').should('be.visible');
       cy.get('#edit-submit').click();
       cy.wait(100);
-      cy.get('#event-date').type('2023-03-30');
+      cy.get('#event-date').type('2023-04-27');
+      cy.wait(100);
       cy.get('#save-button').click();
     })
   });
@@ -174,8 +186,9 @@ describe('CalendarComponent', () => {
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     }).then( ()=>{
-      cy.get('.fc-daygrid-more-link').click(); 
-      cy.get('.fc-daygrid-event-harness').eq(3).click();
+      cy.viewport(1400, 900);
+      cy.wait(500);
+      cy.get('.fc-daygrid-event-harness').eq(0).click();
       cy.wait(100);
       cy.get('.modal-body').should('be.visible');
       cy.get('#remove-submit').click();
@@ -183,4 +196,51 @@ describe('CalendarComponent', () => {
       cy.get('.fc-daygrid-day-events').should('not.contain', 'All-day event');
     })
   });
+
+  it('Do not display share modal', () =>{
+    cy.mount(CalendarComponent, {
+      imports: [
+        ReactiveFormsModule,
+        HttpClientModule,
+      ],
+      providers:[
+        BsModalRef,
+        BsModalService,
+      ],
+      declarations: [
+        FullCalendarComponent,
+        CalendarComponent,
+      ],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
+    }).then( ()=>{
+      cy.viewport(1400, 900);
+      cy.wait(500);
+      cy.get('#share-event').click();
+      cy.get('.modal-body').should('not.exist');
+    })
+  });
+
+  it('Change calendar toggle be visible', () =>{
+    cy.mount(CalendarComponent, {
+      imports: [
+        ReactiveFormsModule,
+        HttpClientModule,
+      ],
+      providers:[
+        BsModalRef,
+        BsModalService,
+      ],
+      declarations: [
+        FullCalendarComponent,
+        CalendarComponent,
+      ],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
+    }).then( ()=>{
+      cy.viewport(1400, 900);
+      cy.wait(500);
+      cy.get('mat-button-toggle-group').should('be.visible');
+      cy.get('mat-button-toggle').should('have.length', 3);
+    })
+  });
+
 })  

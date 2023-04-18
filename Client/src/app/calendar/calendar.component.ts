@@ -235,6 +235,7 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
     this.eventForm.get('eventDate')?.setValue(EEvent.start.substring(0,10));
     this.eventForm.get('eventDescription')?.setValue(EEvent.description);
     this.eventForm.get('color')?.setValue(EEvent.backgroundColor);
+
     if(EEvent.rrule != undefined){
       this.eventForm.get('reoccuring')?.setValue(EEvent.rrule.freq);
     }
@@ -277,9 +278,9 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
       let backendForm = parseToBackend(editedEvent, formVars.eventDate || '', formVars.startTime || '', formVars.endTime || '', this.email);
       console.log(backendForm);
       this.patchEditToBackend(backendForm);
+      this.notificationService.clearEventData();
+      this.updateNotification();
     }
-    this.notificationService.clearEventData();
-    this.updateNotification();
     // Reset form
     this.eventForm.reset();
     this.eventForm.get('reoccuring')?.setValue('once');
