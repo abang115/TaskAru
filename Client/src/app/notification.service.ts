@@ -12,8 +12,18 @@ export class NotificationService {
   private eventData: EventData[] = [];
 
   addEventData(eventData: EventData){
-    this.eventData.push(eventData);
-    console.log(eventData);
+    const twoDaysInMs = 2 * 23 * 60 * 60 * 1000;
+    const today = new Date();
+    today.setHours(today.getHours() - 4); // adjust UTC conversion for eventdate
+    const eventDate = new Date(eventData.date);
+    let diff = eventDate.getTime() - today.getTime();
+    if(diff > 0 && diff <= twoDaysInMs){
+      this.eventData.push(eventData);
+    }
+    else if(diff > -82800000 && diff < twoDaysInMs){ // Adjust for UTC conversion
+      this.eventData.push(eventData);
+    }
+    console.log(this.eventData);
   }
 
   removeLastEventData(){
@@ -30,7 +40,6 @@ export class NotificationService {
   } 
 
   removePastDue(): boolean{
-    console.log(this.eventData);
     const today = new Date();
     for(let event of this.eventData){
       const [year, month, day] = event.date.split('-');
@@ -41,6 +50,10 @@ export class NotificationService {
       }
     }
     return false;
+  }
+
+  clearEventData(){
+    this.eventData.splice(0, this.eventData.length);
   }
 
   getEventData(){

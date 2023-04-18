@@ -43,6 +43,7 @@ export class NavigationBarComponent {
   signOut() {
     this.signInService.signOut()
     this.signInService.removeEmail()
+    this.notifService.clearEventData();
     setTimeout(() => {
       this.router.navigate(['/signin'])
     }, 2000)
