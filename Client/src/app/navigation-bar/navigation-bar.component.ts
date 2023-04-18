@@ -1,5 +1,6 @@
 import { Component, OnInit} from '@angular/core';
 import { SignInService } from '../sign-in.service';
+import { NotificationService, EventData } from '../notification.service';
 import { Router } from '@angular/router'
 import { ThemeService } from '../theme.service';
 import { JwtHelperService } from '@auth0/angular-jwt';
@@ -10,9 +11,11 @@ import { JwtHelperService } from '@auth0/angular-jwt';
   styleUrls: ['./navigation-bar.component.css']
 })
 export class NavigationBarComponent {
+  constructor(private signInService:SignInService, private themeService:ThemeService, private router:Router, private notifService:NotificationService) {}
   signedIn: boolean = false;
   darkMode: boolean = false;
-  constructor(private signInService:SignInService, private themeService:ThemeService, private router:Router) {}
+  showBadge: boolean = true;
+  notifications: EventData[] = [];
 
   ngOnInit(): void {
     let jwtHelper: JwtHelperService = new JwtHelperService
@@ -26,8 +29,9 @@ export class NavigationBarComponent {
       console.log(email)
     }
     else {
-      localStorage.removeItem('token');
+      localStorage.removeItem('token')
     }
+    this.notifications = this.notifService.getEventData()
     this.signInService.isSignedIn$.subscribe((signInStatus: boolean) => {
       setTimeout(() => {
         this.signedIn = signInStatus
@@ -51,5 +55,9 @@ export class NavigationBarComponent {
       console.log(this.darkMode)
   }); 
     document.body.classList.toggle("dark-mode")
+  }
+
+  hideBadge() {
+    this.showBadge = false
   }
 }

@@ -5,3 +5,25 @@
 .logo{
     font-size:x-large;
 }
+
+.notifs{
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+}
+
+.notifs p {
+    margin: auto;
+    max-width: 100px;
+}
+
+.notifs:last-child {
+    border-bottom: 0cap;
+}
+  
+.notifs.empty {
+    text-align: center;
+}
+
+.notifications-icon.mat-badge-content {
+    color: white !important;
+}

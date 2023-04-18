@@ -10,6 +10,7 @@ import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatInputModule} from '@angular/material/input'; 
 import {MatCheckboxModule} from '@angular/material/checkbox'; 
 import {MatButtonToggleModule} from '@angular/material/button-toggle'; 
+import {MatBadgeModule} from '@angular/material/badge'; 
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -57,6 +58,7 @@ import { ForgotPasswordComponent } from './forgot-password/forgot-password.compo
     MatCheckboxModule,
     RouterModule,
     MatMenuModule,
+    MatBadgeModule,
   ],
   providers: [JwtHelperService],
   bootstrap: [AppComponent]
