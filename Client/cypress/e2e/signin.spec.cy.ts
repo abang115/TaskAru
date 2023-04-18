@@ -71,4 +71,15 @@ describe('signin', () => {
         cy.get('[data-cy="Sign Up"]').should('not.exist');
         cy.get('[data-cy="Sign Out"]').should('exist');
     })
+
+    it('Should successfully show notifications', () => {
+        cy.visit('/')
+        cy.get('[data-cy="Sign In"]').click();
+        cy.url().should('includes', 'signin');
+        cy.get('[formControlName="email"]').type('testing@gmail.com', {force: true});
+        cy.get('[formControlName="password"]').type('testing123', {force: true});
+        cy.get('[data-cy="Submit SignIn"]').click();
+        cy.get('[data-cy="Notifications"]').click();
+        cy.get('[data-cy="Notifications Bar"]').should('be.visible');
+    })
 })
