@@ -27,6 +27,7 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
   eventID = 1;
   groupID = '0';
   calendarName = 'Personal';
+  shareAbility: string[] = [];
 
   calendarOptions= {
     plugins: [
@@ -126,14 +127,20 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
     if(this.groupID == '0'){
       this.calendarName = 'Personal';
       await this.updateCal();
+      this.notificationService.clearEventData();
+      this.updateNotification();
     }
     else if(this.groupID == '1'){
       this.calendarName = 'Work';
       await this.updateCal();
+      this.notificationService.clearEventData();
+      this.updateNotification();
     }
     else if(this.groupID == '2'){
       this.calendarName = 'School';
       await this.updateCal();
+      this.notificationService.clearEventData();
+      this.updateNotification();
     }
     console.log('Selected Calendar:', this.groupID, this.calendarName);
   }
@@ -151,18 +158,12 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
   }
 
   updateNotification(){
-    const today = new Date();
-    const twoDaysInMs = 2 * 24 * 60 * 60 * 1000;
     for(let event of this.currentEvents){
-      const eventDate = new Date(event.end.substring(0,10));
-      let diff = eventDate.getTime() - today.getTime();
-      if(diff > 0 && diff <= twoDaysInMs){
-        const eventData: EventData = {
-          title: event.title,
-          date: event.end.substring(0,10)
-        };
-        this.notificationService.addEventData(eventData);
-      }
+      const eventData: EventData = {
+        title: event.title,
+        date: event.end.substring(0,10)
+      };
+      this.notificationService.addEventData(eventData);
     }
     this.notificationService.removePastDue();
   }
@@ -192,8 +193,13 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
     if(this.signedIn){
       let backendForm = parseToBackend(newEvent, formVars.eventDate || '', formVars.startTime || '', formVars.endTime || '', this.email);
       this.postEvent(backendForm);
+      
+      const eventData: EventData = {
+        title: formVars.eventTitle || '',
+        date: formVars.eventDate || ''
+      } 
+      this.notificationService.addEventData(eventData);
     }
-
     // Reset form with default values
     this.eventForm.reset();
     this.eventForm.get('reoccuring')?.setValue('once');
@@ -387,8 +393,9 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
             // Add events for each calendar feteched
             const events = await this.fetchEvents(sharedEmails, otherGroupID) || [];
             for(let event of events){
-              if(event.email != this.email){
+              if(sharedEmails != this.email){
                 event.groupID = '3';
+                event.title = sharedEmails.substring(0,sharedEmails.indexOf('@'))+ ' ' + event.title;
               }
               this.fullCalendarComponent.getApi().addEvent(event);
             }

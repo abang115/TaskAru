@@ -3,6 +3,7 @@ import { SignInService } from '../sign-in.service';
 import { Router } from '@angular/router'
 import { ThemeService } from '../theme.service';
 import { JwtHelperService } from '@auth0/angular-jwt';
+import { NotificationService } from '../notification.service';
 
 @Component({
   selector: 'app-navigation-bar',
@@ -12,7 +13,7 @@ import { JwtHelperService } from '@auth0/angular-jwt';
 export class NavigationBarComponent {
   signedIn: boolean = false;
   darkMode: boolean = false;
-  constructor(private signInService:SignInService, private themeService:ThemeService, private router:Router) {}
+  constructor(private signInService:SignInService, private themeService:ThemeService, private router:Router, private notificationService: NotificationService) {}
 
   ngOnInit(): void {
     let jwtHelper: JwtHelperService = new JwtHelperService
@@ -39,6 +40,7 @@ export class NavigationBarComponent {
   signOut() {
     this.signInService.signOut()
     this.signInService.removeEmail()
+    this.notificationService.clearEventData();
     setTimeout(() => {
       this.router.navigate(['/signin'])
     }, 2000)
