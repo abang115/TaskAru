@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Subject } from 'rxjs';
 
 export interface EventData{
   title: string,
@@ -10,6 +11,7 @@ export interface EventData{
 })
 export class NotificationService {
   private eventData: EventData[] = [];
+  public eventData$ = new Subject<EventData[]>()
 
   addEventData(eventData: EventData){
     const twoDaysInMs = 2 * 23 * 60 * 60 * 1000;
@@ -23,12 +25,14 @@ export class NotificationService {
     else if(diff > -82800000 && diff < twoDaysInMs){ // Adjust for UTC conversion
       this.eventData.push(eventData);
     }
+    this.eventData$.next(this.eventData)
   }
 
   removeLastEventData(){
     if(this.eventData.length != 0){
       this.eventData.pop();
     }
+    this.eventData$.next(this.eventData)
   }
 
   removeEventData(eventData: EventData){
@@ -39,6 +43,7 @@ export class NotificationService {
         break;
       }
     }
+    this.eventData$.next(this.eventData)
   } 
 
   removePastDue(): boolean{
@@ -51,14 +56,20 @@ export class NotificationService {
         return true;
       }
     }
+    this.eventData$.next(this.eventData)
     return false;
   }
 
   clearEventData(){
     this.eventData.splice(0, this.eventData.length);
+    this.eventData$.next(this.eventData)
   }
 
   getEventData(){
     return this.eventData;
+  }
+
+  getEventDataLen(){
+    return this.eventData.length;
   }
 }

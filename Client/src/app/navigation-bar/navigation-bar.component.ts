@@ -1,4 +1,4 @@
-import { Component, OnInit} from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { SignInService } from '../sign-in.service';
 import { NotificationService, EventData } from '../notification.service';
 import { Router } from '@angular/router'
@@ -14,7 +14,7 @@ export class NavigationBarComponent {
   constructor(private signInService:SignInService, private themeService:ThemeService, private router:Router, private notifService:NotificationService) {}
   signedIn: boolean = false;
   darkMode: boolean = false;
-  showBadge: boolean = true;
+  showBadge: boolean = false;
   notifications: EventData[] = [];
 
   ngOnInit(): void {
@@ -26,12 +26,23 @@ export class NavigationBarComponent {
       this.router.navigate(['/home'])
       const email = jwtHelper.decodeToken(token).iss
       this.signInService.setEmail(email)
-      console.log(email)
     }
     else {
       localStorage.removeItem('token')
     }
-    this.notifications = this.notifService.getEventData()
+
+    this.notifService.eventData$.subscribe((notifications: EventData[]) => {
+      setTimeout(() => {
+        this.notifications = notifications
+        if(this.notifications.length === 0) {
+          this.showBadge = false
+        }
+        else {
+          this.showBadge = true
+        }
+      }, 2000)
+    });
+
     this.signInService.isSignedIn$.subscribe((signInStatus: boolean) => {
       setTimeout(() => {
         this.signedIn = signInStatus

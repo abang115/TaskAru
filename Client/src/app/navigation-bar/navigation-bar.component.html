@@ -10,7 +10,7 @@
         <button mat-button data-cy="Sign In" routerLinkActive="active" routerLink="/signin" *ngIf="!signedIn">Sign In</button> &nbsp;&nbsp;
         <button mat-raised-button data-cy="Sign Up" routerLinkActive="active" routerLink="/signup" *ngIf="!signedIn">Sign Up</button> &nbsp;&nbsp;
         <button mat-icon-button [matMenuTriggerFor]="menu" *ngIf="signedIn" (click)="hideBadge()">
-            <mat-icon [matBadge]="showBadge ? '1' : null" matBadgeColor="warn" class="notifications-icon" matBadgeSize="small">notifications</mat-icon>
+            <mat-icon matBadge="1" [matBadgeHidden]="!showBadge" matBadgeColor="warn" class="notifications-icon" matBadgeSize="small">notifications</mat-icon>
         </button>
         <mat-menu #menu="matMenu" xPosition="before">
             <div *ngFor="let notification of notifications" class="notifs" mat-menu-item>
