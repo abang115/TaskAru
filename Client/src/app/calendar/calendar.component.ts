@@ -173,6 +173,9 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
   }
 
   addEvent(){
+    if(this.eventForm.invalid){
+      return;
+    }
     let formVars = this.eventForm.value;
     // Create new event struct using form vals
     let newEvent = {

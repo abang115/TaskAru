@@ -1,5 +1,6 @@
 import "./navigationbar.spec.cy"
 import "./signup.spec.cy"
 import "./signin.spec.cy"
+import "./calendar.spec.cy"
 import "./forgotpassword.spec.cy"
 import "./resetpassword.spec.cy"

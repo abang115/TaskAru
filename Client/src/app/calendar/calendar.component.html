@@ -1,15 +1,14 @@
 <div class="row">
     <div class="column left">
       <p>
-        <mat-button-toggle-group id="change-calendar" name="calSelect" (change)="onCalSelectChange($event)">
+        <mat-button-toggle-group name="calSelect" (change)="onCalSelectChange($event)">
           <mat-button-toggle value="0" checked>Personal</mat-button-toggle>
           <mat-button-toggle value="1">Work</mat-button-toggle>
           <mat-button-toggle value="2">School</mat-button-toggle>
         </mat-button-toggle-group>
       </p>
-      
-      <button id="share-event" type="submit" class="btn btn-primary btn-lg btn-block" (click)="shareButtonClick()">Share Calendar</button>
-      <button id="get-share-event" type="submit" class="btn btn-primary btn-lg btn-block" (click)="getShareButtonClick()">Get Shared</button>
+      <button data-cy="share-event" id="share-event" type="submit" class="btn btn-primary btn-lg btn-block" (click)="shareButtonClick()">Share Calendar</button>
+      <button data-cy="get-share-event" id="get-share-event" type="submit" class="btn btn-primary btn-lg btn-block" (click)="getShareButtonClick()">Get Shared</button>
     </div>
     <div class="column center">
       <full-calendar #cal [options]="calendarOptions"></full-calendar>
@@ -37,7 +36,7 @@
 <ng-template #addEventModal>
       <div class="modal-header">
         <h4 class="modal-title pull-left">Add Event</h4>
-        <button type="button" class="btn-close close pull-right" aria-label="Close" (click)="modalRef?.hide()">
+        <button data-cy="close-modal-button" type="button" class="btn-close close pull-right" aria-label="Close" (click)="modalRef?.hide()">
           <span aria-hidden="true" class="visually-hidden">&times;</span>
         </button>
       </div>
@@ -46,14 +45,14 @@
           <form [formGroup]="eventForm">
             <div class="form-group">
               <label>Title:</label>
-              <input id="event-title" type="text" formControlName="eventTitle" class="form-control" [ngClass]="{'is-invalid': eventForm.get('eventTitle')!.invalid && eventForm.get('eventTitle')!.touched}">
+              <input data-cy="event-title" id="event-title" type="text" formControlName="eventTitle" class="form-control" [ngClass]="{'is-invalid': eventForm.get('eventTitle')!.invalid && eventForm.get('eventTitle')!.touched}">
               <div class="error-message" style="color:red" *ngIf="eventForm.get('eventTitle')!.invalid && eventForm.get('eventTitle')!.touched">
                 Please enter a name.
               </div>
             </div>
             <div class="form-group">
                 <label>Date:</label>
-                <input id="event-date" type="date" formControlName="eventDate" class="form-control" [ngClass]="{'is-invalid': eventForm.get('eventDate')!.invalid && eventForm.get('eventDate')!.touched}">
+                <input data-cy="event-date" id="event-date" type="date" formControlName="eventDate" class="form-control" [ngClass]="{'is-invalid': eventForm.get('eventDate')!.invalid && eventForm.get('eventDate')!.touched}">
                 <div class="error-message" style="color:red" *ngIf="eventForm.get('eventDate')!.invalid && eventForm.get('eventDate')!.touched">
                   Please enter or select a date.
                 </div>
@@ -62,19 +61,19 @@
               <div class="col">
                 <div class="form-group">
                   <label>From:</label>
-                  <input id="event-start-time" type="time" formControlName="startTime" class="form-control">
+                  <input data-cy="event-start-time" id="event-start-time" type="time" formControlName="startTime" class="form-control">
                 </div>
               </div>
               <div class="col">
                 <div class="form-group">
                   <label>To:</label>
-                  <input id="event-end-time" type="time" formControlName="endTime" class="form-control">
+                  <input data-cy="event-end-time" id="event-end-time" type="time" formControlName="endTime" class="form-control">
                 </div>
               </div>
             <div class="col">
               <div class="form-group">
                 <label>Frequency:</label>
-                <select id="event-reoccuring" formControlName="reoccuring" class="custom-select">
+                <select data-cy="event-reoccuring" id="event-reoccuring" formControlName="reoccuring" class="custom-select">
                   <option value="once"selected>Once</option>
                   <option value="daily">Daily</option>
                   <option value="weekly">Weekly</option>
@@ -86,20 +85,20 @@
           </div>
             <div class="form-group">
                 <label>Event Description</label>
-                <textarea id="event-description" rows="2" formControlName="eventDescription" class="form-control"></textarea>
+                <textarea data-cy="event-description" id="event-description" rows="2" formControlName="eventDescription" class="form-control"></textarea>
             </div>
           </form>
         </form>
       </div>
       <div class="modal-footer">
-        <button id="event-button-submit" type="submit" class="btn btn-primary" (click)="addEvent()">Add Event</button>
+        <button  data-cy="event-submit-button" id="event-button-submit" type="submit" class="btn btn-primary" (click)="addEvent()">Add Event</button>
       </div>
     </ng-template>
 
     <ng-template #editEventModal>
       <div class="modal-header">
         <h4 class="modal-title pull-left">Edit Event</h4>
-        <button type="button" class="btn-close close pull-right" aria-label="Close" (click)="modalRef?.hide()">
+        <button data-cy="close-modal-button" type="button" class="btn-close close pull-right" aria-label="Close" (click)="modalRef?.hide()">
           <span aria-hidden="true" class="visually-hidden">&times;</span>
         </button>
       </div>
@@ -108,14 +107,14 @@
           <form [formGroup]="eventForm">
             <div class="form-group">
               <label>Title:</label>
-              <input id="event-title" type="text" formControlName="eventTitle" class="form-control" [ngClass]="{'is-invalid': eventForm.get('eventTitle')!.invalid && eventForm.get('eventTitle')!.touched}">
+              <input data-cy="event-title" id="event-title" type="text" formControlName="eventTitle" class="form-control" [ngClass]="{'is-invalid': eventForm.get('eventTitle')!.invalid && eventForm.get('eventTitle')!.touched}">
               <div class="error-message" style="color:red" *ngIf="eventForm.get('eventTitle')!.invalid && eventForm.get('eventTitle')!.touched">
                 Please enter a name.
               </div>
             </div>
             <div class="form-group">
                 <label>Date:</label>
-                <input id="event-date" type="date" formControlName="eventDate" class="form-control" [ngClass]="{'is-invalid': eventForm.get('eventDate')!.invalid && eventForm.get('eventDate')!.touched}">
+                <input data-cy="event-date" id="event-date" type="date" formControlName="eventDate" class="form-control" [ngClass]="{'is-invalid': eventForm.get('eventDate')!.invalid && eventForm.get('eventDate')!.touched}">
                 <div class="error-message" style="color:red" *ngIf="eventForm.get('eventDate')!.invalid && eventForm.get('eventDate')!.touched">
                   Please enter or select a date.
                 </div>
@@ -124,19 +123,19 @@
               <div class="col">
                 <div class="form-group">
                   <label>From:</label>
-                  <input id="event-start-time" type="time" formControlName="startTime" class="form-control">
+                  <input data-cy="event-start-time" id="event-start-time" type="time" formControlName="startTime" class="form-control">
                 </div>
               </div>
               <div class="col">
                 <div class="form-group">
                   <label>To:</label>
-                  <input id="event-end-time" type="time" formControlName="endTime" class="form-control">
+                  <input data-cy="event-end-time" id="event-end-time" type="time" formControlName="endTime" class="form-control">
                 </div>
               </div>
             <div class="col">
               <div class="form-group">
                 <label>Frequency:</label>
-                <select id="event-reoccuring" formControlName="reoccuring" class="custom-select">
+                <select data-cy="event-reoccuring" id="event-reoccuring" formControlName="reoccuring" class="custom-select">
                   <option value="once"selected>Once</option>
                   <option value="daily">Daily</option>
                   <option value="weekly">Weekly</option>
@@ -148,29 +147,32 @@
           </div>
             <div class="form-group">
                 <label>Event Description</label>
-                <textarea id="event-description" rows="2" formControlName="eventDescription" class="form-control"></textarea>
+                <textarea data-cy="event-description" id="event-description" rows="2" formControlName="eventDescription" class="form-control"></textarea>
             </div>
           </form>
         </form>
       </div>
       <div class="modal-footer">
-        <button id="save-button" type="submit" class="btn btn-primary" (click)="editedEventSubmission()">Save Event</button>
+        <button data-cy="save-button" id="save-button" type="submit" class="btn btn-primary" (click)="editedEventSubmission()">Save Event</button>
       </div>
     </ng-template>
 
     <ng-template #sharing>
       <div class="modal-header">
         <h4 class="modal-title pull-left">Sharing Current Calendar Events</h4>
+        <button data-cy="close-modal-button" type="button" class="btn-close close pull-right" aria-label="Close" (click)="modalRef?.hide()">
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
       </div>
       <div class="modal-body">
         <form [formGroup]="shareForm">
           <div class="form-group">
             <label>Enter recipent email:</label>
-            <input id="share-to" type="text" formControlName="shareEmail" class="form-control">
+            <input data-cy="share-to" id="share-to" type="text" formControlName="shareEmail" class="form-control">
           </div>
         </form>
       </div>
       <div class="modal-footer">
-        <button id="share-button" type="submit" class="btn btn-primary" (click)="shareCalSubmit()">Share</button>
+        <button data-cy="share-button" id="share-button" type="submit" class="btn btn-primary" (click)="shareCalSubmit()">Share</button>
       </div>
     </ng-template>
