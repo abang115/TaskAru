@@ -102,7 +102,8 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
       this.updateNotification();
       // Update the event ID only when events are present 
       if(this.currentEvents.length != 0){
-        this.eventID = ++this.currentEvents[this.currentEvents.length-1].id;
+        this.eventID = +this.currentEvents[this.currentEvents.length-1].id;
+        this.eventID++;
       }
     }
     else{ // Set default events
@@ -116,8 +117,8 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
   }
 
   handleDateClick(arg:any){
-    console.log(arg);
     this.selectedEvent = arg.event;
+    console.log(this.selectedEvent.toPlainObject());
     this.modalRef = this.modalService.show(this.showEvent, this.config);
   }
 
@@ -148,7 +149,6 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
   async updateCal(){
     let calAPI = this.fullCalendarComponent.getApi();
     this.currentEvents = await this.fetchEvents(this.email, this.groupID) || [];
-    console.log(this.currentEvents);
     calAPI.removeAllEvents();
     calAPI.setOption('events', this.currentEvents);
     setTimeout(() => {
@@ -265,10 +265,14 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
     }
     // Remove old event
     oldEvent?.remove();
-    
     // Add back the updated event
     this.fullCalendarComponent.getApi().addEvent(editedEvent);
-    
+    for(let i = 0; i < this.currentEvents.length; i++){
+      if(this.currentEvents.at(i).id == formVars.id){
+        this.currentEvents[i] = editedEvent;
+        break;
+      }
+    }
     if(this.signedIn){
       let backendForm = parseToBackend(editedEvent, formVars.eventDate || '', formVars.startTime || '', formVars.endTime || '', this.email);
       console.log(backendForm);
@@ -283,7 +287,6 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
   }
 
   patchEditToBackend(editedEvent:any){
-    // TODO FIX form of edited event
     this.http.patch('http://localhost:8080/api/event',editedEvent).subscribe({
       next: response => {
         console.log('Backend successfully reached: ', response)
@@ -308,6 +311,12 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
         date: eventObj.start.substring(0,10) || ''
       } 
       this.notificationService.removeEventData(eventData);
+      for(let i = 0; i < this.currentEvents.length; i++){
+        if(this.currentEvents.at(i).id == eventObj.id){
+          this.currentEvents.splice(i, 1);
+          break;
+        }
+      }
     }
     this.selectedEvent.remove(); 
     this.modalRef?.hide(); 
