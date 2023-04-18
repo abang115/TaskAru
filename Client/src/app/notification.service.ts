@@ -23,7 +23,6 @@ export class NotificationService {
     else if(diff > -82800000 && diff < twoDaysInMs){ // Adjust for UTC conversion
       this.eventData.push(eventData);
     }
-    console.log(this.eventData);
   }
 
   removeLastEventData(){
@@ -33,9 +32,12 @@ export class NotificationService {
   }
 
   removeEventData(eventData: EventData){
-    const index  = this.eventData.indexOf(eventData);
-    if(index != -1){
-      this.eventData.splice(index,1);
+    for(let i = 0; i < this.eventData.length; i++){
+      let cur = this.eventData.at(i);
+      if(cur?.title == eventData.title && cur.date == eventData.date){
+        this.eventData.splice(i,1);
+        break;
+      }
     }
   } 
 

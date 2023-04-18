@@ -186,6 +186,7 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
       backgroundColor: getRandomColor()
     }
     this.eventID++;
+    this.currentEvents.push(newEvent);
     console.log(newEvent);
 
     // Add event to calendar and send data to backend if user is signed in
@@ -193,7 +194,7 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
     if(this.signedIn){
       let backendForm = parseToBackend(newEvent, formVars.eventDate || '', formVars.startTime || '', formVars.endTime || '', this.email);
       this.postEvent(backendForm);
-      
+
       const eventData: EventData = {
         title: formVars.eventTitle || '',
         date: formVars.eventDate || ''
@@ -221,13 +222,26 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
   editEventButtonClick(){
     this.modalRef?.hide();
     var eventObj = this.selectedEvent.toPlainObject();
-    // Fetch previous event data
-    this.eventForm.get('id')?.setValue(eventObj.id);
-    this.eventForm.get('eventTitle')?.setValue(eventObj.title);
-    this.eventForm.get('eventDate')?.setValue(eventObj.start);
-    this.eventForm.get('eventDescription')?.setValue(eventObj.description);
-    
+    let EEvent;
+    for(let event of this.currentEvents){
+      if(eventObj.id == event.id){
+        EEvent = event;
+        break;
+      }
+    }
 
+    this.eventForm.get('id')?.setValue(EEvent.id);
+    this.eventForm.get('eventTitle')?.setValue(EEvent.title);
+    this.eventForm.get('eventDate')?.setValue(EEvent.start.substring(0,10));
+    this.eventForm.get('eventDescription')?.setValue(EEvent.description);
+    this.eventForm.get('color')?.setValue(EEvent.backgroundColor);
+    if(EEvent.rrule != undefined){
+      this.eventForm.get('reoccuring')?.setValue(EEvent.rrule.freq);
+    }
+    if(EEvent.start.length > 10){
+      this.eventForm.get('startTime')?.setValue(EEvent.start.substring(11,16));
+      this.eventForm.get('endTime')?.setValue(EEvent.end.substring(11,16));
+    }
     // Give time for previous modal to fully close
     setTimeout(() => {
       this.modalRef = this.modalService.show(this.editEventModal, this.config);
@@ -240,8 +254,7 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
     // create a new edited event
 
     let editedEvent = {
-      // Will add feature later 
-      // groupid: '0',
+      groupID: this.groupID,
       id: formVars.id || '',
       title: formVars.eventTitle || '',
       description: formVars.eventDescription || '',
@@ -250,21 +263,26 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
       rrule: parseToRRule(formVars.eventDate, formVars.reoccuring),
       backgroundColor: formVars.color || '',
     }
-
     // Remove old event
     oldEvent?.remove();
-
+    
     // Add back the updated event
     this.fullCalendarComponent.getApi().addEvent(editedEvent);
-    this.eventEditToBackend(editedEvent);
 
+    if(this.signedIn){
+      let backendForm = parseToBackend(editedEvent, formVars.eventDate || '', formVars.startTime || '', formVars.endTime || '', this.email);
+      console.log(backendForm);
+      this.patchEditToBackend(backendForm);
+    }
+    this.notificationService.clearEventData();
+    this.updateNotification();
     // Reset form
     this.eventForm.reset();
     this.eventForm.get('reoccuring')?.setValue('once');
     this.modalRef?.hide();
   }
 
-  eventEditToBackend(editedEvent:any){
+  patchEditToBackend(editedEvent:any){
     // TODO FIX form of edited event
     this.http.patch('http://localhost:8080/api/event',editedEvent).subscribe({
       next: response => {
@@ -277,13 +295,19 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
   }
 
   removeEventButtonClick(){
-    if(this.signedIn && (this.selectedEvent.toPlainObject().id != '3')){
+    var eventObj = this.selectedEvent.toPlainObject();
+    if(this.signedIn && (eventObj.id != '3')){
       let REvent = {
         email: this.email,
         groupID: this.groupID,
-        eventID: this.selectedEvent.toPlainObject().id
+        eventID: eventObj.id
       }
-      this.deleteEvent(REvent)
+      this.deleteEvent(REvent);
+      const eventData: EventData = {
+        title: eventObj.title || '',
+        date: eventObj.start.substring(0,10) || ''
+      } 
+      this.notificationService.removeEventData(eventData);
     }
     this.selectedEvent.remove(); 
     this.modalRef?.hide(); 

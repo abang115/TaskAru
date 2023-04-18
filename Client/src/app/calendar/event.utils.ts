@@ -86,7 +86,7 @@ export function parseToBackend(newEvent:any, EDate:string, startT:string, endT:s
   }
   // Create form that will be sent to backend
   const backendForm = {
-    email: eEmail, //TODO ADD EMAIL WHEN LOGGED IN, NEED GLOBAL
+    email: eEmail,
     groupID: newEvent.groupID,
     eventID: newEvent.id,
     eventTitle: newEvent.title,
