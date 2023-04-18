@@ -10,7 +10,9 @@ Detail Work Completed in Sprint 4
 ---
 Front-End
 
-  - 
+  - Added multiple calendar types for Personal, Work, and School purposes
+  - Implement calendar sharing with another user that will only get events of a specific calendar type
+  - Updated edit, adding, and removing event to function with multiple calendars
   - 
   - 
 
@@ -41,6 +43,12 @@ Frontend Unit Tests
  - Cypress e2e tests for reset-password
    -  Successfully tests whether a user is able to reset their password and sign in using that new password
    -  Catches when a attempts to submit the form, but have non-matching passwords
+ - Cypress e2e tests for calendar functionality
+   -  Successfully test users events are intially empty
+   -  Successfully adds events to the calendar and backend 
+   -  Successfully tests storing and displaying events
+   -  Successfully creates user 2 and shares calender to them
+   -  Successfully fetches shared calendar with user 1's name
  - Cypress component tests for sign-in
    - Successfully tests whether it mounts the sign-in component 
  - Cypress component tests for sign-up
