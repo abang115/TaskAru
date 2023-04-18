@@ -332,6 +332,13 @@ func TestCalendarGetHandler2(t *testing.T) {
 
 	var expected []models.Calendar
 	expected = append(expected, models.Calendar{
+		Email:        "janedoe@ufl.edu",
+		GroupID:      "0",
+		CalendarName: "School",
+		ShareAbility: "johndoe@ufl.edu jimdoe@ufl.edu",
+	})
+
+	expected = append(expected, models.Calendar{
 		Email:        "johndoe@ufl.edu",
 		GroupID:      "0",
 		CalendarName: "School",
