@@ -10,11 +10,11 @@ Detail Work Completed in Sprint 4
 ---
 Front-End
 
-  - Added multiple calendar types for Personal, Work, and School purposes
-  - Implement calendar sharing with another user that will only get events of a specific calendar type
+  - Made multiple calendar types for Personal, Work, and School purposes
+  - Implemented calendar sharing with another user that will only get events of a specific calendar type
   - Updated edit, adding, and removing event to function with multiple calendars
-  - 
-  - 
+  - Created notification bar with alerts when events are near
+  - Added remember me functionality so user remains signed in when page is refreshed
 
 Back-End
 
@@ -26,12 +26,19 @@ Back-End
 
 Frontend Unit Tests
 ---
+ - Cypress e2e tests for navigation bar
+   - Successfully tests whether website changes between light and dark mode
+   - Successfully tests whether it visits the home/calendar page on start up
+   - Successfully tests whether it visits the sign-in page when sign-in button is clicked
+   - Successfully tests whether it visits the sign-up page when sign-up button is clicked
  - Cypress e2e tests for sign-in
    - Catches when a user attempts to press the sign-in button if no fields are entered
    - Successfully tests whether it visits sign-up page when sign-up link is clicked  
    - Successfully tests whether it visits forgot-password page when forgot-password link is clicked
    - Successfully tests whether it signs-in a user if their email and password are found in the database
    - Succesfully tests whether after a user signs-in, that they can sign-out
+   - Successfully tests whether a user stays signed in after checking the remember me box and refreshing the page
+   - Successfully tests whether notifications can be viewed when signed in
  - Cypress e2e tests for sign-up
    - Catches when a user attempts to press the sign-up button if no fields are entered
    - Successfully tests whether it registers a user if their email is not found in the database
