@@ -268,7 +268,7 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
     
     // Add back the updated event
     this.fullCalendarComponent.getApi().addEvent(editedEvent);
-
+    
     if(this.signedIn){
       let backendForm = parseToBackend(editedEvent, formVars.eventDate || '', formVars.startTime || '', formVars.endTime || '', this.email);
       console.log(backendForm);
@@ -296,7 +296,7 @@ export class CalendarComponent implements OnInit, AfterViewInit  {
 
   removeEventButtonClick(){
     var eventObj = this.selectedEvent.toPlainObject();
-    if(this.signedIn && (eventObj.id != '3')){
+    if(this.signedIn && (eventObj.groupID != '3')){
       let REvent = {
         email: this.email,
         groupID: this.groupID,
