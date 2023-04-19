@@ -39,7 +39,6 @@ SMTP_PASS=examplepass
 
 JWT_KEY=super_secret_key
 ```
-5. Then navigate to the **Client** folder and run ```ng serve``` to start the front-end
-6. Then navigate to the **TaskAru** folder and run ```go run server.go``` to start the server
+5. Then navigate to the **Client** folder and run ```npm start``` to run the app
 7. The website can then be accessed at http://localhost:4200/ and the back-end can be reached at http://localhost:8080/ 
 8. (Optional) Testing can be done in the front-end with e2e and component tests using cypress via  ```npx cypress open``` and can be done in the back-end through the ```server_test.go``` file via ```go run server_test.go```
