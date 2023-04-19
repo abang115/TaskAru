@@ -26,4 +26,5 @@ The front-end is located in the Client folder and the back-end is located in the
 3. Navigate to the **Client** folder and run ```npm install``` to install all dependencies
 4. Then start the front-end using ```ng serve``` 
 5. Then navigate to the **TaskAru** folder and run ```go run server.go``` to start the server
-6. The website can then be accessed at http://localhost:4200/ in your browser
+6. The website can then be accessed at http://localhost:4200/ and the back-end can be reached at http://localhost:8080/ 
+7. (Optional) Testing can be done in the front-end with e2e and component tests using cypress via  ```npx cypress open``` and can be done in the back-end through the ```server_test.go``` file via ```go run server_test.go```
