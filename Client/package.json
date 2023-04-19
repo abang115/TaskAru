@@ -3,7 +3,9 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "start-client": "ng serve",
+    "start-server": "cd .. && cd TaskAru && go run server.go",
+    "start": "concurrently --kill-others \"npm run start-client\" \"npm run start-server\"",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
@@ -50,6 +52,7 @@
     "@cypress/schematic": "^2.5.0",
     "@types/jasmine": "~4.3.0",
     "@types/jsonwebtoken": "^9.0.1",
+    "concurrently": "^8.0.1",
     "cypress": "^12.7.0",
     "jasmine-core": "~4.5.0",
     "karma": "~6.4.0",
