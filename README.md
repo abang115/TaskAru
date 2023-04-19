@@ -26,7 +26,6 @@ The front-end is located in the Client folder and the back-end is located in the
 3. Navigate to the **Client** folder and run ```npm install``` to install all dependencies
 4. Then in the **TaskAru** folder, create a ```.env file```, replacing the values with the desired cloud hosting service for the MySQL database(AWS, Azure, etc.) and Email service(MailTrap, PostMark, etc.) used in the website
 ```
-.env
 USER=example
 PASSWORD=examplepassword
 HOST=examplehost
