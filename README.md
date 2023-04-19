@@ -24,7 +24,7 @@ The front-end is located in the Client folder and the back-end is located in the
 1. Clone the repo into the directory of your choice
 2. Install [Node.js](https://nodejs.org/en/), [Go](https://go.dev/), and the [Angular CLI](https://angular.io/cli)
 3. Navigate to the **Client** folder and run ```npm install``` to install all dependencies
-4. Then in the **TaskAru** folder, create a ```.env file```, replacing the values with the desired cloud hosting service for the MySQL database(AWS, Azure, etc.) and Email service(MailTrap, PostMark, etc.) used in the website
+4. Then in the **TaskAru** folder, create a ```.env file```, replacing the values with the desired cloud hosting service for the MySQL database(AWS, Azure, etc.) and Email service(MailTrap, PostMark, etc.) used in the website as well as a JWT key
 ```
 USER=example
 PASSWORD=examplepassword
