@@ -141,19 +141,19 @@ URL: <code>/api/event</code>
   - Integrated EditEventPatchHandler() function which is a <code>PATCH</code> request. The function allows the user to edit any feature of the event in their calendar which includes the email, title, description, date, start time, end time, frequency, date start for reoccuring events, date end for reoccuring events, and background color.
 
 URL: <code>/api/event</code>
-  - Integrated ReceiveEventGetHandler() function which is a <code>GET</code> request. The function allows front end to receive events from the database based on the user logged in.
+  - Integrated ReceiveEventGetHandler() function which is a <code>GET</code> request. The function allows front end to receive events that belong to a certain calendar from the database based on the user logged in (given by the email of the current user) and the groupID (which is the calendar's unique ID).
 
 URL: <code>/api/event</code>
-  - Integrated RemoveEventDeleteHandler() function which is a <code>DELETE</code> request. The function allows the user to indicate that the user wants to delete an event in their desired calendar.
+  - Integrated RemoveEventDeleteHandler() function which is a <code>DELETE</code> request. The function allows the user to indicate that the user wants to delete an event in their desired calendar using the email of the current user, the groupID of the calendar, and the eventID.
 
 URL: <code>/api/calendar</code>
-  - Integrated CalendarPostHandler() function which is a <code>POST</code> request. This function allows the user to create a calendar in their account so they're able to have multiple calendars.
+  - Integrated CalendarPostHandler() function which is a <code>POST</code> request. This function allows the user to have three calendars (personal, work, and school) by passing in the signed in users email, name of the calendar (personal, work, and school), groupID, and email of those who the user wants to share the calendar with (defaulted to null).
 
 URL: <code>/api/calendar</code>
-  - Integrated CalendarGetHandler() function which is a <code>GET</code> request. The function allows front end to receive calendars from the database based on the user logged in.
+  - Integrated CalendarGetHandler() function which is a <code>GET</code> request. The function allows front end to receive calendars owned by and shared to the current user from the database (given by the email of the current user in either the email or shareAbility section of the calendar struct).
 
 URL: <code>/api/calendar</code>
-  - Integrated CalendarPatchHandler() function which is a <code>PATCH</code> request. This function allows the user to edit the name and shareability of the calendar.
+  - Integrated CalendarPatchHandler() function which is a <code>PATCH</code> request. This function allows the features of the calendar to be changed which includes the name and shareability of the calendar. In the case of our project, only the shareability can be changed by the user. 
 
 URL: <code>/api/calendar</code>
-  - Integrated CalendarDeleteHandler() function which is a <code>DELETE</code> request. The function allows front end to indicate that the user wants to delete a calendar.
+  - Integrated CalendarDeleteHandler() function which is a <code>DELETE</code> request. The function allows front end to indicate that the user wants to delete a calendar using the email of the current user and the groupID of the calendar.
