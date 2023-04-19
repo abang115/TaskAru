@@ -18,7 +18,7 @@
             <mat-form-field>
                 <mat-label>Enter your password</mat-label>
                 <input matInput formControlName="password" placeholder="Minimum 8 characters" type="password" required minlength="8" [type]="hide ? 'password' : 'text'"/>
-                <button mat-icon-button matSuffix (click)="hide = !hide" color="primary">
+                <button mat-icon-button matSuffix (click)="hide = !hide" color="primary" type="button">
                     <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
                 </button>
                 <mat-error class="custom-error" *ngIf="signinForm.get('password')!.hasError('required')">
