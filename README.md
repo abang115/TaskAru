@@ -24,7 +24,22 @@ The front-end is located in the Client folder and the back-end is located in the
 1. Clone the repo into the directory of your choice
 2. Install [Node.js](https://nodejs.org/en/), [Go](https://go.dev/), and the [Angular CLI](https://angular.io/cli)
 3. Navigate to the **Client** folder and run ```npm install``` to install all dependencies
-4. Then start the front-end using ```ng serve``` 
-5. Then navigate to the **TaskAru** folder and run ```go run server.go``` to start the server
-6. The website can then be accessed at http://localhost:4200/ and the back-end can be reached at http://localhost:8080/ 
-7. (Optional) Testing can be done in the front-end with e2e and component tests using cypress via  ```npx cypress open``` and can be done in the back-end through the ```server_test.go``` file via ```go run server_test.go```
+4. Then in the **TaskAru** folder, create a ```.env file```, replacing the values with the desired cloud hosting service for the MySQL database(AWS, Azure, etc.) and Email service(MailTrap, PostMark, etc.) used in the website
+```
+.env
+USER=example
+PASSWORD=examplepassword
+HOST=examplehost
+DBNAME=exampledb
+
+EMAIL_FROM=example@example.com
+SMTP_HOST=examplehost
+SMTP_USER=exampleuser
+SMTP_PASS=examplepass
+
+JWT_KEY=super_secret_key
+```
+5. Then navigate to the **Client** folder and run ```ng serve``` to start the front-end
+6. Then navigate to the **TaskAru** folder and run ```go run server.go``` to start the server
+7. The website can then be accessed at http://localhost:4200/ and the back-end can be reached at http://localhost:8080/ 
+8. (Optional) Testing can be done in the front-end with e2e and component tests using cypress via  ```npx cypress open``` and can be done in the back-end through the ```server_test.go``` file via ```go run server_test.go```
